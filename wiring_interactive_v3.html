@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Câblage Interactif — Robot Labyrinthe v3</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #1a1a1a; color: #d4d0c8; padding: 20px; }
+.container { max-width: 1100px; margin: 0 auto; }
+h1 { font-size: 1.8rem; color: #f5f0e6; margin-bottom: 4px; }
+.sub { color: #8a8578; font-size: 0.95rem; margin-bottom: 20px; }
+
+.app { display: grid; grid-template-columns: 250px 1fr; gap: 20px; }
+@media (max-width: 768px) { .app { grid-template-columns: 1fr; } }
+
+/* Sidebar */
+.sidebar { background: #222; border: 1px solid #333; border-radius: 12px; padding: 16px; height: fit-content; }
+.sidebar h3 { font-size: 1rem; color: #f5f0e6; margin-bottom: 12px; }
+.comp-btn { display: block; width: 100%; text-align: left; padding: 10px 14px; margin-bottom: 6px; border: 2px solid #333; border-radius: 8px; background: #222; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; font-family: inherit; color: #d4d0c8; }
+.comp-btn:hover { background: #2a2a2a; border-color: #444; }
+.comp-btn.active { border-color: #e8a435; background: #2a2a2a; }
+.comp-btn .dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 8px; }
+.progress { margin-top: 16px; padding-top: 12px; border-top: 1px solid #333; }
+.progress-label { font-size: 0.82rem; color: #8a8578; margin-bottom: 6px; }
+.progress-bar { height: 8px; background: #2a2a2a; border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: #16a34a; border-radius: 4px; transition: width 0.3s; }
+.check-list { margin-top: 12px; }
+.check-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 0.82rem; color: #8a8578; }
+.check-item input { accent-color: #16a34a; }
+.check-item.done { color: #5a5350; text-decoration: line-through; }
+
+/* Main canvas area */
+.canvas-area { background: #222; border: 1px solid #333; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.info-bar { background: #2a2a2a; border: 1px solid #333; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 0.9rem; color: #d4d0c8; min-height: 48px; }
+.info-bar h4 { color: #e8a435; font-size: 0.95rem; margin-bottom: 4px; }
+.info-bar .wires { margin-top: 8px; }
+.wire-line { display: flex; align-items: center; gap: 8px; padding: 3px 0; font-size: 0.85rem; }
+.wire-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.78rem; font-weight: 700; color: #1a1a1a; }
+.canvas-wrap { position: relative; overflow-x: auto; }
+
+/* Legend at bottom */
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 16px; padding: 12px 16px; background: #2a2a2a; border-radius: 8px; font-size: 0.82rem; color: #8a8578; }
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-dot { width: 14px; height: 14px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Câblage Interactif — v3</h1>
+<p class="sub">Clique sur un composant pour voir ses connexions en surbrillance et les instructions de câblage</p>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h3>Composants</h3>
+    <button class="comp-btn" onclick="select('battery')" id="btn-battery"><span class="dot" style="background:#dc2626"></span>Batterie 3S</button>
+    <button class="comp-btn" onclick="select('bms')" id="btn-bms"><span class="dot" style="background:#dc2626"></span>BMS 3S</button>
+    <button class="comp-btn" onclick="select('switch')" id="btn-switch"><span class="dot" style="background:#f59e0b"></span>Interrupteur</button>
+    <button class="comp-btn" onclick="select('lm2596')" id="btn-lm2596"><span class="dot" style="background:#ea580c"></span>LM2596</button>
+    <button class="comp-btn" onclick="select('l298n')" id="btn-l298n"><span class="dot" style="background:#16a34a"></span>L298N</button>
+    <button class="comp-btn" onclick="select('esp32')" id="btn-esp32"><span class="dot" style="background:#2563eb"></span>ESP32</button>
+    <button class="comp-btn" onclick="select('motors')" id="btn-motors"><span class="dot" style="background:#888"></span>Moteurs (×4)</button>
+    <button class="comp-btn" onclick="select('tof')" id="btn-tof"><span class="dot" style="background:#2563eb"></span>ToF VL53L0X (×3)</button>
+    <button class="comp-btn" onclick="select('perfboard')" id="btn-perfboard"><span class="dot" style="background:#7c3aed"></span>Perfboard</button>
+    <button class="comp-btn" onclick="select('all')" id="btn-all" style="background:#252538"><span class="dot" style="background:#aaa"></span><b>Tout afficher</b></button>
+
+    <div class="progress">
+      <div class="progress-label" id="progressLabel">0 / 9 câblés</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+    <div class="check-list" id="checkList"></div>
+  </div>
+
+  <!-- MAIN AREA -->
+  <div class="canvas-area">
+    <div class="info-bar" id="infoBar">
+      <h4>Sélectionne un composant</h4>
+      <p>Clique sur un composant dans la liste de gauche pour voir ses fils et connexions en détail sur le schéma.</p>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="c" width="800" height="580" style="border:1px solid #3a3a50;border-radius:8px;max-width:100%;cursor:pointer;"></canvas>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div> 12V</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ea580c"></div> 5V</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ca8a04"></div> 3.3V</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#aaa"></div> GND</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#2563eb"></div> I2C / capteurs</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div> Moteur signal</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div> Encodeur</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+// Component positions
+const comps = {
+  battery:  { x: 40,  y: 240, w: 110, h: 60, label: 'Batterie 3S', sub: '11.1V', color: '#dc2626', border: '#dc2626' },
+  bms:      { x: 180, y: 240, w: 90,  h: 60, label: 'BMS 3S', sub: 'Protection', color: '#dc2626', border: '#dc2626' },
+  switch:   { x: 300, y: 250, w: 70,  h: 40, label: 'Switch', sub: 'ON/OFF', color: '#f59e0b', border: '#f59e0b' },
+  lm2596:   { x: 400, y: 330, w: 130, h: 70, label: 'LM2596', sub: '12V→5.0V', color: '#ea580c', border: '#ea580c' },
+  l298n:    { x: 400, y: 150, w: 130, h: 90, label: 'L298N', sub: 'Pont-H', color: '#16a34a', border: '#16a34a' },
+  esp32:    { x: 580, y: 180, w: 170, h: 240, label: 'ESP32', sub: 'WROOM-32D', color: '#2563eb', border: '#2563eb' },
+  motorsL:  { x: 400, y: 30,  w: 130, h: 60, label: 'M1+M3 Gauche', sub: 'OUT1/OUT2', color: '#888', border: '#888' },
+  motorsR:  { x: 400, y: 470, w: 130, h: 60, label: 'M2+M4 Droite', sub: 'OUT3/OUT4', color: '#888', border: '#888' },
+  tofF:     { x: 40,  y: 60,  w: 120, h: 45, label: 'ToF AVANT', sub: '0x30 GPIO15', color: '#2563eb', border: '#2563eb' },
+  tofL:     { x: 40,  y: 120, w: 120, h: 45, label: 'ToF GAUCHE', sub: '0x31 GPIO4', color: '#2563eb', border: '#2563eb' },
+  tofR:     { x: 40,  y: 180, w: 120, h: 45, label: 'ToF DROITE', sub: '0x32 GPIO5', color: '#2563eb', border: '#2563eb' },
+  perfboard:{ x: 580, y: 460, w: 170, h: 60, label: 'Perfboard', sub: '9×7cm', color: '#7c3aed', border: '#7c3aed' },
+  gnd:      { x: 40,  y: 540, w: 720, h: 30, label: 'GND COMMUN', sub: '', color: '#aaa', border: '#aaa' }
+};
+
+// Wires: [from_comp, from_side, to_comp, to_side, color, label]
+const wires = [
+  // Power chain
+  ['battery','right','bms','left','#dc2626','12V'],
+  ['bms','right','switch','left','#dc2626','12V'],
+  ['switch','right','l298n','left','#dc2626','12V'],
+  ['switch','right','lm2596','left','#dc2626','12V'],
+  ['lm2596','right','esp32','left','#ea580c','5V→VIN'],
+  // L298N signals
+  ['esp32','left','l298n','right','#16a34a','IN1-4 ENA/B'],
+  // L298N to motors
+  ['l298n','top','motorsL','bottom','#888','OUT1/2'],
+  ['l298n','bottom','motorsR','top','#888','OUT3/4'],
+  // Encoder signals
+  ['motorsL','right','esp32','right','#7c3aed','GPIO34,35'],
+  ['motorsR','right','esp32','right','#7c3aed','GPIO36,39'],
+  // I2C bus
+  ['tofF','right','esp32','left','#2563eb','SDA SCL'],
+  ['tofL','right','esp32','left','#2563eb','I2C'],
+  ['tofR','right','esp32','left','#2563eb','I2C'],
+  // 3.3V from ESP32
+  ['esp32','bottom','perfboard','top','#ca8a04','3.3V'],
+  // GND (implicit — all to bottom)
+];
+
+// Which wires belong to which component selection
+const wireGroups = {
+  battery: [0],
+  bms: [0,1],
+  switch: [1,2,3],
+  lm2596: [3,4],
+  l298n: [2,5,6,7],
+  esp32: [4,5,8,9,10,11,12,13],
+  motors: [6,7,8,9],
+  tof: [10,11,12],
+  perfboard: [13],
+  all: Array.from({length:14},(_, i)=>i)
+};
+
+const info = {
+  battery: {
+    title: 'Batterie 3S (3× 18650)',
+    desc: 'La source de tout le courant. 11.1V nominal.',
+    wires: [
+      {color:'#dc2626', text:'+ (Rouge) → BMS B+ (entrée positive)'},
+      {color:'#aaa', text:'− (Noir) → BMS B− (entrée négative)'}
+    ]
+  },
+  bms: {
+    title: 'BMS 3S 10A',
+    desc: 'Protège la batterie contre surcharge, décharge profonde et court-circuit.',
+    wires: [
+      {color:'#dc2626', text:'B+ ← Batterie + (rouge)'},
+      {color:'#aaa', text:'B− ← Batterie − (noir)'},
+      {color:'#dc2626', text:'P+ → Interrupteur (sortie 12V protégée)'},
+      {color:'#aaa', text:'P− → Rail GND du perfboard'}
+    ]
+  },
+  switch: {
+    title: 'Interrupteur ON/OFF',
+    desc: 'Coupe le 12V. Borne 1 = entrée du BMS, Borne 2 = sortie vers rail 12V.',
+    wires: [
+      {color:'#dc2626', text:'Borne 1 ← BMS P+ (rouge)'},
+      {color:'#dc2626', text:'Borne 2 → Rail 12V du perfboard'}
+    ]
+  },
+  lm2596: {
+    title: 'LM2596 (12V → 5V)',
+    desc: 'RÉGLER À 5.0V AVANT de brancher l\'ESP32 ! Tourner la vis bleue + mesurer au multimètre.',
+    wires: [
+      {color:'#dc2626', text:'IN+ ← Rail 12V du perfboard'},
+      {color:'#aaa', text:'IN− ← Rail GND du perfboard'},
+      {color:'#ea580c', text:'OUT+ → Rail 5V du perfboard → ESP32 VIN'},
+      {color:'#aaa', text:'OUT− → Rail GND (déjà connecté)'}
+    ]
+  },
+  l298n: {
+    title: 'L298N Pont-H Double',
+    desc: 'RETIRER LES JUMPERS ENA/ENB ! Contrôle la direction et la vitesse des 4 moteurs.',
+    wires: [
+      {color:'#dc2626', text:'12V ← Rail 12V du perfboard'},
+      {color:'#aaa', text:'GND ← Rail GND du perfboard'},
+      {color:'#16a34a', text:'IN1 ← ESP32 GPIO26'},
+      {color:'#16a34a', text:'IN2 ← ESP32 GPIO27'},
+      {color:'#16a34a', text:'IN3 ← ESP32 GPIO25'},
+      {color:'#16a34a', text:'IN4 ← ESP32 GPIO33'},
+      {color:'#16a34a', text:'ENA ← ESP32 GPIO14 (PWM gauche)'},
+      {color:'#16a34a', text:'ENB ← ESP32 GPIO32 (PWM droite)'},
+      {color:'#888', text:'OUT1/OUT2 → M1+M3 (gauche parallèle)'},
+      {color:'#888', text:'OUT3/OUT4 → M2+M4 (droite parallèle)'}
+    ]
+  },
+  esp32: {
+    title: 'ESP32-WROOM-32D',
+    desc: 'Le cerveau du robot. Reçoit 5V sur VIN, sort 3.3V sur 3V3.',
+    wires: [
+      {color:'#ea580c', text:'VIN ← 5.0V du LM2596 (orange)'},
+      {color:'#aaa', text:'GND → Rail GND commun (noir)'},
+      {color:'#ca8a04', text:'3V3 → Rail 3.3V perfboard (jaune)'},
+      {color:'#16a34a', text:'GPIO26,27,25,33 → L298N IN1-IN4'},
+      {color:'#16a34a', text:'GPIO14,32 → L298N ENA,ENB (PWM)'},
+      {color:'#7c3aed', text:'GPIO34,35 ← Encodeurs M1,M3 (gauche)'},
+      {color:'#7c3aed', text:'GPIO36,39 ← Encodeurs M2,M4 (droite)'},
+      {color:'#2563eb', text:'GPIO21 → SDA (I2C, bus commun)'},
+      {color:'#2563eb', text:'GPIO22 → SCL (I2C, bus commun)'},
+      {color:'#2563eb', text:'GPIO15 → ToF avant XSHUT'},
+      {color:'#2563eb', text:'GPIO4 → ToF gauche XSHUT'},
+      {color:'#2563eb', text:'GPIO5 → ToF droite XSHUT'}
+    ]
+  },
+  motors: {
+    title: 'Moteurs JGB37-520 (×4)',
+    desc: 'Chaque moteur a 6 fils. Le vert (Signal B) n\'est PAS utilisé.',
+    wires: [
+      {color:'#dc2626', text:'Rouge (moteur+) → L298N OUT (parallèle par côté)'},
+      {color:'#e0e0e8', text:'Blanc (moteur−) → L298N OUT (autre borne)'},
+      {color:'#2563eb', text:'Bleu (encodeur VCC) → Rail 3.3V (PAS 5V !)'},
+      {color:'#aaa', text:'Noir (encodeur GND) → Rail GND'},
+      {color:'#ca8a04', text:'Jaune (Signal A) → ESP32 GPIO (34/35/36/39)'},
+      {color:'#16a34a', text:'Vert (Signal B) → NON CONNECTÉ'}
+    ]
+  },
+  tof: {
+    title: 'ToF VL53L0X (×3)',
+    desc: 'Partagent le même bus I2C. XSHUT permet de donner des adresses uniques.',
+    wires: [
+      {color:'#ca8a04', text:'VCC → Rail 3.3V (tous les 3)'},
+      {color:'#aaa', text:'GND → Rail GND (tous les 3)'},
+      {color:'#2563eb', text:'SDA → ESP32 GPIO21 (bus commun)'},
+      {color:'#2563eb', text:'SCL → ESP32 GPIO22 (bus commun)'},
+      {color:'#2563eb', text:'Avant XSHUT → GPIO15 (addr 0x30)'},
+      {color:'#2563eb', text:'Gauche XSHUT → GPIO4 (addr 0x31)'},
+      {color:'#2563eb', text:'Droite XSHUT → GPIO5 (addr 0x32)'}
+    ]
+  },
+  perfboard: {
+    title: 'Perfboard 9×7cm',
+    desc: 'Distribue les tensions et accueille les pull-ups I2C + condensateurs.',
+    wires: [
+      {color:'#ca8a04', text:'Rail R1 (3.3V) ← ESP32 3V3'},
+      {color:'#dc2626', text:'Rail R2 cols 1-9 (12V) ← Interrupteur'},
+      {color:'#ea580c', text:'Rail R2 cols 11-18 (5V) ← LM2596 OUT+'},
+      {color:'#aaa', text:'Rail R12 (GND) ← BMS P−'},
+      {color:'#7c3aed', text:'R1: 4.7kΩ entre 3.3V et SDA'},
+      {color:'#7c3aed', text:'R2: 4.7kΩ entre 3.3V et SCL'}
+    ]
+  },
+  all: {
+    title: 'Vue complète',
+    desc: 'Toutes les connexions du robot sont affichées.',
+    wires: []
+  }
+};
+
+let selected = null;
+let checked = {};
+const compNames = ['battery','bms','switch','lm2596','l298n','esp32','motors','tof','perfboard'];
+
+function getAnchor(comp, side) {
+  const c = comps[comp];
+  if (!c) return {x:0,y:0};
+  switch(side) {
+    case 'left': return {x: c.x, y: c.y + c.h/2};
+    case 'right': return {x: c.x + c.w, y: c.y + c.h/2};
+    case 'top': return {x: c.x + c.w/2, y: c.y};
+    case 'bottom': return {x: c.x + c.w/2, y: c.y + c.h};
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#2a2a2a';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const activeWires = selected ? (wireGroups[selected] || []) : [];
+
+  // Draw wires
+  wires.forEach((w, i) => {
+    const active = selected === 'all' || activeWires.includes(i);
+    const from = getAnchor(w[0], w[1]);
+    const to = getAnchor(w[2], w[3]);
+    ctx.strokeStyle = active ? w[4] : '#333';
+    ctx.lineWidth = active ? 3 : 1;
+    ctx.setLineDash(active ? [] : [4,4]);
+    ctx.beginPath();
+    // Curved path
+    const mx = (from.x + to.x) / 2;
+    ctx.moveTo(from.x, from.y);
+    ctx.bezierCurveTo(mx, from.y, mx, to.y, to.x, to.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // Label
+    if (active && w[5]) {
+      const lx = (from.x + to.x) / 2, ly = (from.y + to.y) / 2 - 8;
+      ctx.fillStyle = w[4];
+      ctx.font = 'bold 9px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(w[5], lx, ly);
+    }
+  });
+
+  // Draw GND bus
+  const gnd = comps.gnd;
+  const gndActive = selected && selected !== null;
+  ctx.fillStyle = gndActive ? '#aaa' : '#333';
+  ctx.fillRect(gnd.x, gnd.y, gnd.w, gnd.h);
+  ctx.fillStyle = '#d4d0c8';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('GND COMMUN — tous les composants', gnd.x + gnd.w/2, gnd.y + 19);
+
+  // Draw components
+  for (const [key, c] of Object.entries(comps)) {
+    if (key === 'gnd') continue;
+    const isSelected = selected === 'all' ||
+      (selected === 'motors' && (key === 'motorsL' || key === 'motorsR')) ||
+      (selected === 'tof' && (key === 'tofF' || key === 'tofL' || key === 'tofR')) ||
+      selected === key;
+    const dim = selected && !isSelected ? 0.3 : 1;
+
+    ctx.globalAlpha = dim;
+    // Box
+    ctx.fillStyle = '#222';
+    ctx.strokeStyle = c.border;
+    ctx.lineWidth = isSelected ? 3 : 1.5;
+    roundRect(ctx, c.x, c.y, c.w, c.h, 8);
+    ctx.fill();
+    ctx.stroke();
+    // Label
+    ctx.fillStyle = c.color;
+    ctx.font = 'bold 12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(c.label, c.x + c.w/2, c.y + c.h/2 - 4);
+    ctx.font = '9px sans-serif';
+    ctx.fillStyle = '#8a8578';
+    ctx.fillText(c.sub, c.x + c.w/2, c.y + c.h/2 + 12);
+    ctx.globalAlpha = 1;
+  }
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function select(name) {
+  selected = name;
+  // Update buttons
+  document.querySelectorAll('.comp-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('btn-' + name);
+  if (btn) btn.classList.add('active');
+
+  // Update info
+  const d = info[name];
+  if (d) {
+    let html = `<h4>${d.title}</h4><p>${d.desc}</p>`;
+    if (d.wires.length) {
+      html += '<div class="wires">';
+      d.wires.forEach(w => {
+        const bg = w.color === '#d4d0c8' ? '#d4d0c8' : w.color;
+        const fg = (w.color === '#d4d0c8' || w.color === '#ca8a04') ? '#1a1a1a' : '#d4d0c8';
+        html += `<div class="wire-line"><span class="wire-badge" style="background:${bg};color:${fg}">●</span>${w.text}</div>`;
+      });
+      html += '</div>';
+    }
+    document.getElementById('infoBar').innerHTML = html;
+  }
+  draw();
+}
+
+// Click on canvas to select component
+canvas.addEventListener('click', function(e) {
+  const rect = canvas.getBoundingClientRect();
+  const sx = canvas.width / rect.width, sy = canvas.height / rect.height;
+  const mx = (e.clientX - rect.left) * sx, my = (e.clientY - rect.top) * sy;
+
+  for (const [key, c] of Object.entries(comps)) {
+    if (key === 'gnd') continue;
+    if (mx >= c.x && mx <= c.x+c.w && my >= c.y && my <= c.y+c.h) {
+      let sel = key;
+      if (key === 'motorsL' || key === 'motorsR') sel = 'motors';
+      if (key === 'tofF' || key === 'tofL' || key === 'tofR') sel = 'tof';
+      select(sel);
+      return;
+    }
+  }
+});
+
+// Checklist
+function renderChecklist() {
+  const el = document.getElementById('checkList');
+  let html = '';
+  compNames.forEach(name => {
+    const done = checked[name] ? 'done' : '';
+    const ch = checked[name] ? 'checked' : '';
+    html += `<div class="check-item ${done}"><input type="checkbox" ${ch} onchange="toggleCheck('${name}')"> ${info[name].title}</div>`;
+  });
+  el.innerHTML = html;
+  const count = Object.values(checked).filter(Boolean).length;
+  document.getElementById('progressLabel').textContent = `${count} / ${compNames.length} câblés`;
+  document.getElementById('progressFill').style.width = (count/compNames.length*100) + '%';
+}
+
+function toggleCheck(name) {
+  checked[name] = !checked[name];
+  renderChecklist();
+}
+
+renderChecklist();
+draw();
+</script>
+
+</div>
+</body>
+</html>
