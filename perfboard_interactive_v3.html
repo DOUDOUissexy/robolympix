@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfboard Interactif — Robot Labyrinthe v3</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #1a1a1a; color: #d4d0c8; overflow: hidden; height: 100vh; }
+
+.layout { display: flex; height: 100vh; }
+
+/* ── LEFT SIDEBAR ── */
+.sidebar { width: 260px; background: #2a2a2a; border-right: 1px solid #333; display: flex; flex-direction: column; flex-shrink: 0; }
+.sidebar-header { padding: 16px 16px 12px; border-bottom: 1px solid #333; }
+.sidebar-header h1 { font-size: 1.05rem; color: #f5f0e6; margin-bottom: 2px; }
+.sidebar-header p { font-size: 0.75rem; color: #8a8578; }
+
+.comp-list { flex: 1; overflow-y: auto; padding: 8px; }
+.comp-btn { width: 100%; text-align: left; padding: 10px 12px; margin-bottom: 4px; background: #222; border: 1px solid #333; border-radius: 8px; color: #d4d0c8; cursor: pointer; font-size: 0.82rem; transition: all 0.15s; border-left: 4px solid transparent; }
+.comp-btn:hover { background: #2a2a2a; }
+.comp-btn.active { background: #2a2518; border-left-color: #e8a435; color: #e8a435; }
+.comp-btn .label { font-weight: 600; display: block; }
+.comp-btn .sub { font-size: 0.72rem; color: #8a8578; margin-top: 2px; }
+.comp-btn.active .sub { color: #e8a435; opacity: 0.7; }
+
+.legend-section { padding: 12px; border-top: 1px solid #333; }
+.legend-section h3 { font-size: 0.78rem; color: #8a8578; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.legend-row { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; font-size: 0.75rem; color: #d4d0c8; }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+/* ── CENTER: CANVAS ── */
+.center { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.toolbar { display: flex; align-items: center; gap: 12px; padding: 8px 16px; background: #2a2a2a; border-bottom: 1px solid #333; }
+.toolbar label { font-size: 0.78rem; color: #8a8578; }
+.toolbar input[type=range] { width: 100px; accent-color: #e8a435; }
+.toolbar button { padding: 5px 12px; background: #333; border: 1px solid #444; border-radius: 6px; color: #d4d0c8; cursor: pointer; font-size: 0.78rem; }
+.toolbar button:hover { background: #3a3a3a; }
+.toolbar .zoom-val { font-size: 0.78rem; color: #e8a435; min-width: 36px; }
+.canvas-wrap { flex: 1; overflow: auto; position: relative; background: #1a1a1a; }
+canvas { display: block; }
+
+/* ── RIGHT: INFO PANEL ── */
+.info-panel { width: 280px; background: #2a2a2a; border-left: 1px solid #333; display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; }
+.info-header { padding: 14px 14px 10px; border-bottom: 1px solid #333; }
+.info-header h2 { font-size: 0.95rem; color: #f5f0e6; }
+.info-header p { font-size: 0.75rem; color: #8a8578; margin-top: 2px; }
+.info-body { padding: 12px 14px; flex: 1; overflow-y: auto; }
+.info-body h3 { font-size: 0.82rem; color: #e8a435; margin: 12px 0 6px; }
+.info-body h3:first-child { margin-top: 0; }
+.info-body p { font-size: 0.8rem; line-height: 1.55; color: #d4d0c8; margin-bottom: 6px; }
+.info-body .warn { background: #2a1e1e; border: 1px solid #d47272; border-radius: 6px; padding: 8px 10px; font-size: 0.78rem; color: #d47272; margin: 8px 0; }
+.info-body .tip { background: #1e2a1e; border: 1px solid #7cc47c; border-radius: 6px; padding: 8px 10px; font-size: 0.78rem; color: #7cc47c; margin: 8px 0; }
+.conn-row { display: flex; align-items: center; gap: 6px; padding: 5px 0; border-bottom: 1px solid #333; font-size: 0.78rem; }
+.conn-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.conn-label { color: #d4d0c8; }
+.conn-dest { color: #8a8578; margin-left: auto; font-family: monospace; font-size: 0.72rem; }
+
+/* ── PROGRESS ── */
+.progress-section { padding: 12px; border-top: 1px solid #333; }
+.progress-section h3 { font-size: 0.78rem; color: #8a8578; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.check-row { display: flex; align-items: center; gap: 6px; padding: 3px 0; font-size: 0.75rem; color: #d4d0c8; }
+.check-row input { accent-color: #7cc47c; }
+.check-row.done { color: #8a8578; text-decoration: line-through; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ══════ LEFT SIDEBAR ══════ -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h1>Perfboard Interactif</h1>
+    <p>Clique sur un composant pour voir ses connexions</p>
+  </div>
+  <div class="comp-list" id="compList"></div>
+  <div class="legend-section">
+    <h3>Couleurs des rails</h3>
+    <div class="legend-row"><div class="legend-dot" style="background:#ca8a04"></div> 3.3V</div>
+    <div class="legend-row"><div class="legend-dot" style="background:#dc2626"></div> 12V</div>
+    <div class="legend-row"><div class="legend-dot" style="background:#ea580c"></div> 5V</div>
+    <div class="legend-row"><div class="legend-dot" style="background:#666"></div> GND</div>
+    <div class="legend-row"><div class="legend-dot" style="background:#e8a435"></div> Signal I2C</div>
+  </div>
+</div>
+
+<!-- ══════ CENTER CANVAS ══════ -->
+<div class="center">
+  <div class="toolbar">
+    <label>Zoom:</label>
+    <input type="range" id="zoomSlider" min="60" max="200" value="100">
+    <span class="zoom-val" id="zoomVal">100%</span>
+    <button onclick="resetZoom()">Réinitialiser</button>
+    <span style="flex:1"></span>
+    <button onclick="selectComp(null)">Tout afficher</button>
+  </div>
+  <div class="canvas-wrap" id="canvasWrap">
+    <canvas id="board"></canvas>
+  </div>
+</div>
+
+<!-- ══════ RIGHT INFO PANEL ══════ -->
+<div class="info-panel">
+  <div class="info-header">
+    <h2 id="infoTitle">Vue d'ensemble</h2>
+    <p id="infoSub">18 colonnes × 12 rangées — pas 2.54mm</p>
+  </div>
+  <div class="info-body" id="infoBody">
+    <p>Clique sur un composant à gauche ou directement sur le perfboard pour voir les détails et les connexions.</p>
+    <h3>Ce qu'on met dessus</h3>
+    <p>4 rails de distribution (3.3V, 12V, 5V, GND), 2 résistances pull-up 4.7kΩ pour I2C, 1 condensateur 100µF (12V), 2 condensateurs 100nF (3.3V et 5V).</p>
+    <h3>Astuce</h3>
+    <div class="tip">Commence par souder les rails, puis les composants passifs. Teste chaque rail au multimètre avant de connecter l'ESP32 !</div>
+  </div>
+  <div class="progress-section">
+    <h3>Progression soudure</h3>
+    <div id="progressList"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// BOARD CONFIGURATION
+// ═══════════════════════════════════════════════════
+const COLS = 18, ROWS = 12;
+const PAD = 50;       // padding around board
+const CELL = 30;      // cell size (px at 100%)
+const BOARD_W = COLS * CELL;
+const BOARD_H = ROWS * CELL;
+const CW = BOARD_W + PAD * 2;
+const CH = BOARD_H + PAD * 2 + 30; // extra for labels
+
+const canvas = document.getElementById('board');
+const ctx = canvas.getContext('2d');
+
+let zoom = 1;
+let selected = null; // currently selected component id
+
+// ═══════════════════════════════════════════════════
+// COMPONENT DATA
+// ═══════════════════════════════════════════════════
+const COMPS = [
+  {
+    id: 'rail33',
+    name: 'Rail 3.3V',
+    sub: 'R1, cols 1→18',
+    color: '#ca8a04',
+    cells: Array.from({length:18}, (_,i) => ({r:0, c:i})),
+    info: {
+      title: 'Rail 3.3V — Rangée 1',
+      sub: 'Toute la longueur du perfboard',
+      html: `<h3>Rôle</h3><p>Distribue le 3.3V de la sortie 3.3V de l'ESP32 à tous les composants qui en ont besoin : capteurs ToF, résistances pull-up I2C.</p>
+<h3>Comment créer</h3><p>Soude un fil de cuivre nu le long de toutes les pastilles de la rangée 1 (R1), de la colonne 1 à 18.</p>
+<h3>Source</h3><p>ESP32 pin <b>3V3</b> → fil jusqu'à R1.</p>
+<h3>Connexions</h3>`,
+      connections: [
+        {color:'#ca8a04', label:'ESP32 3V3', dest:'R1'},
+        {color:'#e8a435', label:'R1 pull-up SDA', dest:'R1-C3'},
+        {color:'#e8a435', label:'R2 pull-up SCL', dest:'R1-C6'},
+        {color:'#ca8a04', label:'C3 100nF (3.3V)', dest:'R1-C5'},
+        {color:'#ca8a04', label:'ToF VCC ×3', dest:'Capteurs'},
+      ]
+    }
+  },
+  {
+    id: 'rail12',
+    name: 'Rail 12V',
+    sub: 'R2, cols 1→9',
+    color: '#dc2626',
+    cells: Array.from({length:9}, (_,i) => ({r:1, c:i})),
+    info: {
+      title: 'Rail 12V — Rangée 2 gauche',
+      sub: 'Cols 1 à 9 (stop à col 10)',
+      html: `<h3>Rôle</h3><p>Distribue le 12V du pack batterie 3S (via BMS) au L298N pour alimenter les moteurs.</p>
+<h3>Comment créer</h3><p>Soude un fil de cuivre nu sur R2, pastilles cols 1 à 9. <b>STOP à la colonne 10</b> — laisse un trou vide pour séparer du 5V !</p>
+<h3>Source</h3><p>BMS sortie + → interrupteur → R2-C1.</p>
+<div class="warn">⚠️ 12V peut endommager l'ESP32 ! Ne connecte JAMAIS le 12V à un pin GPIO.</div>`,
+      connections: [
+        {color:'#dc2626', label:'Batterie (via BMS)', dest:'R2-C1'},
+        {color:'#dc2626', label:'L298N +12V', dest:'R2'},
+        {color:'#d97706', label:'C1 100µF (+)', dest:'R2-C1'},
+      ]
+    }
+  },
+  {
+    id: 'rail5',
+    name: 'Rail 5V',
+    sub: 'R2, cols 11→18',
+    color: '#ea580c',
+    cells: Array.from({length:8}, (_,i) => ({r:1, c:10+i})),
+    info: {
+      title: 'Rail 5V — Rangée 2 droite',
+      sub: 'Cols 11 à 18 (séparé du 12V)',
+      html: `<h3>Rôle</h3><p>Distribue le 5V du LM2596 (step-down depuis 12V) à l'ESP32 VIN et au L298N 5V logic.</p>
+<h3>Comment créer</h3><p>Soude un fil de cuivre nu sur R2, pastilles cols 11 à 18.</p>
+<h3>Source</h3><p>LM2596 OUT+ → R2-C11.</p>
+<div class="tip">💡 Règle le LM2596 à exactement 5.0V AVANT de le connecter. Utilise un multimètre !</div>`,
+      connections: [
+        {color:'#ea580c', label:'LM2596 OUT+', dest:'R2-C11'},
+        {color:'#ea580c', label:'ESP32 VIN', dest:'R2'},
+        {color:'#ea580c', label:'L298N 5V logic', dest:'R2'},
+        {color:'#ea580c', label:'C2 100nF (5V)', dest:'R2-C12'},
+      ]
+    }
+  },
+  {
+    id: 'railgnd',
+    name: 'Rail GND',
+    sub: 'R12, cols 1→18',
+    color: '#666',
+    cells: Array.from({length:18}, (_,i) => ({r:11, c:i})),
+    info: {
+      title: 'Rail GND — Rangée 12',
+      sub: 'Toute la longueur du perfboard',
+      html: `<h3>Rôle</h3><p>Le « retour » commun de tout le circuit. TOUS les composants se connectent au GND : ESP32, L298N, capteurs, condensateurs.</p>
+<h3>Comment créer</h3><p>Soude un fil de cuivre nu le long de toutes les pastilles de R12.</p>
+<h3>Règle d'or</h3>
+<div class="tip">💡 Le GND est la connexion la PLUS importante. Un mauvais GND = tout bug. Soude bien chaque point !</div>`,
+      connections: [
+        {color:'#666', label:'ESP32 GND', dest:'R12'},
+        {color:'#666', label:'L298N GND', dest:'R12'},
+        {color:'#666', label:'ToF GND ×3', dest:'R12'},
+        {color:'#666', label:'LM2596 OUT−', dest:'R12'},
+        {color:'#666', label:'BMS GND', dest:'R12'},
+        {color:'#666', label:'C1 100µF (−)', dest:'R12-C2'},
+        {color:'#666', label:'C2 100nF', dest:'R12-C13'},
+        {color:'#666', label:'C3 100nF', dest:'R12-C6'},
+      ]
+    }
+  },
+  {
+    id: 'sep',
+    name: 'Séparateur col 10',
+    sub: 'R2 — trou vide',
+    color: '#f7768e',
+    cells: [{r:1, c:9}],
+    info: {
+      title: 'Séparateur — Colonne 10',
+      sub: 'PAS de cuivre ici !',
+      html: `<h3>Pourquoi ?</h3><p>La colonne 10 de R2 est volontairement laissée VIDE. Elle sépare le rail 12V (gauche) du rail 5V (droite).</p>
+<div class="warn">⚠️ Si tu connectes accidentellement le 12V au 5V ici, tu grilles l'ESP32 et les capteurs instantanément !</div>
+<h3>Vérification</h3><p>Avec un multimètre en mode continuité, vérifie qu'il n'y a PAS de contact entre R2-C9 (12V) et R2-C11 (5V).</p>`
+    }
+  },
+  {
+    id: 'r1_sda',
+    name: 'R1 pull-up SDA',
+    sub: '4.7kΩ — R4, cols 3→5',
+    color: '#e8a435',
+    cells: [{r:3,c:2},{r:3,c:3},{r:3,c:4}],
+    info: {
+      title: 'Résistance Pull-up SDA',
+      sub: '4.7kΩ — entre 3.3V et GPIO21 (SDA)',
+      html: `<h3>Rôle</h3><p>Le bus I2C a besoin de résistances « pull-up » pour fonctionner. Cette résistance tire la ligne SDA (data) vers le 3.3V quand personne ne parle sur le bus.</p>
+<h3>Placement</h3><p>Rangée R4, une patte en colonne 3 (connectée au rail 3.3V par un fil vertical), l'autre patte en colonne 5 (connectée au fil SDA qui va à l'ESP32 GPIO21).</p>
+<h3>Pas de polarité</h3>
+<div class="tip">💡 Les résistances n'ont PAS de sens. Tu peux les souder dans n'importe quel sens.</div>`,
+      connections: [
+        {color:'#ca8a04', label:'Patte gauche → 3.3V', dest:'R1-C3'},
+        {color:'#e8a435', label:'Patte droite → SDA', dest:'GPIO21'},
+      ]
+    }
+  },
+  {
+    id: 'r2_scl',
+    name: 'R2 pull-up SCL',
+    sub: '4.7kΩ — R4, cols 6→8',
+    color: '#e8a435',
+    cells: [{r:3,c:5},{r:3,c:6},{r:3,c:7}],
+    info: {
+      title: 'Résistance Pull-up SCL',
+      sub: '4.7kΩ — entre 3.3V et GPIO22 (SCL)',
+      html: `<h3>Rôle</h3><p>Même rôle que R1, mais pour la ligne SCL (clock) du bus I2C. Tire SCL vers le 3.3V.</p>
+<h3>Placement</h3><p>Rangée R4, patte en colonne 6 (vers 3.3V), patte en colonne 8 (vers SCL / GPIO22).</p>`,
+      connections: [
+        {color:'#ca8a04', label:'Patte gauche → 3.3V', dest:'R1-C6'},
+        {color:'#e8a435', label:'Patte droite → SCL', dest:'GPIO22'},
+      ]
+    }
+  },
+  {
+    id: 'c1',
+    name: 'C1 — 100µF 16V',
+    sub: 'Électrolytique — R6-R9, cols 1-2',
+    color: '#d97706',
+    cells: [{r:5,c:0},{r:5,c:1},{r:6,c:0},{r:6,c:1},{r:7,c:0},{r:7,c:1},{r:8,c:0},{r:8,c:1}],
+    info: {
+      title: 'C1 — Condensateur 100µF 16V',
+      sub: 'Électrolytique — Filtre 12V moteurs',
+      html: `<h3>Rôle</h3><p>Les moteurs DC créent des pics de courant qui perturbent l'alimentation. Ce gros condensateur « lisse » le 12V en absorbant les variations brusques.</p>
+<h3>Placement</h3><p>Rangées R6 à R9, colonnes 1-2. La patte + (longue) va en haut vers le rail 12V, la patte − (courte, marquée) va en bas vers le rail GND.</p>
+<div class="warn">⚠️ POLARITÉ ! Si tu le soudes à l'envers, il peut EXPLOSER. La bande marquée sur le côté indique le −.</div>`,
+      connections: [
+        {color:'#dc2626', label:'Patte + → Rail 12V', dest:'R2-C1'},
+        {color:'#666', label:'Patte − → Rail GND', dest:'R12-C2'},
+      ]
+    }
+  },
+  {
+    id: 'c2',
+    name: 'C2 — 100nF (5V)',
+    sub: 'Céramique — R6-R7, cols 12-13',
+    color: '#ea580c',
+    cells: [{r:5,c:11},{r:5,c:12},{r:6,c:11},{r:6,c:12}],
+    info: {
+      title: 'C2 — Condensateur 100nF céramique',
+      sub: 'Filtre parasites sur le 5V',
+      html: `<h3>Rôle</h3><p>Filtre les parasites haute fréquence sur le rail 5V. Protège l'ESP32 VIN des perturbations.</p>
+<h3>Placement</h3><p>R6-R7, cols 12-13. Une patte vers le rail 5V (fil vertical vers R2), l'autre vers GND (fil vertical vers R12).</p>
+<div class="tip">💡 Céramique = pas de polarité. Tu peux le souder dans n'importe quel sens.</div>`,
+      connections: [
+        {color:'#ea580c', label:'Patte → Rail 5V', dest:'R2-C12'},
+        {color:'#666', label:'Patte → Rail GND', dest:'R12-C13'},
+      ]
+    }
+  },
+  {
+    id: 'c3',
+    name: 'C3 — 100nF (3.3V)',
+    sub: 'Céramique — R6-R7, cols 5-6',
+    color: '#ca8a04',
+    cells: [{r:5,c:4},{r:5,c:5},{r:6,c:4},{r:6,c:5}],
+    info: {
+      title: 'C3 — Condensateur 100nF céramique',
+      sub: 'Filtre parasites sur le 3.3V',
+      html: `<h3>Rôle</h3><p>Filtre les parasites haute fréquence sur le rail 3.3V. Protège les capteurs ToF.</p>
+<h3>Placement</h3><p>R6-R7, cols 5-6. Une patte vers le rail 3.3V, l'autre vers GND.</p>`,
+      connections: [
+        {color:'#ca8a04', label:'Patte → Rail 3.3V', dest:'R1-C5'},
+        {color:'#666', label:'Patte → Rail GND', dest:'R12-C6'},
+      ]
+    }
+  },
+];
+
+// ═══════════════════════════════════════════════════
+// WIRES (connections drawn on the board)
+// ═══════════════════════════════════════════════════
+const WIRES = [
+  // Pull-up R1 SDA → 3.3V
+  {from:{r:3,c:2}, to:{r:0,c:2}, color:'#ca8a04', dash:true, owner:['r1_sda','rail33']},
+  // Pull-up R1 SDA → SDA output
+  {from:{r:3,c:4}, to:{r:4,c:4}, color:'#e8a435', dash:false, owner:['r1_sda'], label:'SDA'},
+  // Pull-up R2 SCL → 3.3V
+  {from:{r:3,c:5}, to:{r:0,c:5}, color:'#ca8a04', dash:true, owner:['r2_scl','rail33']},
+  // Pull-up R2 SCL → SCL output
+  {from:{r:3,c:7}, to:{r:4,c:7}, color:'#e8a435', dash:false, owner:['r2_scl'], label:'SCL'},
+  // C1 + → 12V
+  {from:{r:5,c:0}, to:{r:1,c:0}, color:'#dc2626', dash:false, owner:['c1','rail12']},
+  // C1 - → GND
+  {from:{r:8,c:1}, to:{r:11,c:1}, color:'#666', dash:false, owner:['c1','railgnd']},
+  // C2 → 5V
+  {from:{r:5,c:11}, to:{r:1,c:11}, color:'#ea580c', dash:true, owner:['c2','rail5']},
+  // C2 → GND
+  {from:{r:6,c:12}, to:{r:11,c:12}, color:'#666', dash:true, owner:['c2','railgnd']},
+  // C3 → 3.3V
+  {from:{r:5,c:4}, to:{r:0,c:4}, color:'#ca8a04', dash:true, owner:['c3','rail33']},
+  // C3 → GND
+  {from:{r:6,c:5}, to:{r:11,c:5}, color:'#666', dash:true, owner:['c3','railgnd']},
+];
+
+// ═══════════════════════════════════════════════════
+// PROGRESS STEPS
+// ═══════════════════════════════════════════════════
+const STEPS = [
+  'Souder le rail GND (R12)',
+  'Souder le rail 3.3V (R1)',
+  'Souder le rail 12V (R2 gauche)',
+  'Souder le rail 5V (R2 droite)',
+  'Vérifier séparateur col 10',
+  'Souder R1 pull-up SDA',
+  'Souder R2 pull-up SCL',
+  'Souder C1 100µF (polarité !)',
+  'Souder C2 100nF (5V)',
+  'Souder C3 100nF (3.3V)',
+  'Test continuité au multimètre',
+];
+
+// ═══════════════════════════════════════════════════
+// BUILD SIDEBAR
+// ═══════════════════════════════════════════════════
+function buildSidebar() {
+  const list = document.getElementById('compList');
+  list.innerHTML = '';
+  COMPS.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'comp-btn' + (selected === c.id ? ' active' : '');
+    btn.innerHTML = `<span class="label">${c.name}</span><span class="sub">${c.sub}</span>`;
+    btn.style.borderLeftColor = selected === c.id ? c.color : 'transparent';
+    if (selected === c.id) btn.style.color = c.color;
+    btn.onclick = () => selectComp(c.id);
+    list.appendChild(btn);
+  });
+}
+
+function buildProgress() {
+  const el = document.getElementById('progressList');
+  el.innerHTML = '';
+  STEPS.forEach((s, i) => {
+    const row = document.createElement('label');
+    row.className = 'check-row';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.onchange = () => {
+      row.classList.toggle('done', cb.checked);
+      localStorage.setItem('pb_step_' + i, cb.checked ? '1' : '');
+    };
+    if (localStorage.getItem('pb_step_' + i)) { cb.checked = true; row.classList.add('done'); }
+    row.appendChild(cb);
+    row.appendChild(document.createTextNode(s));
+    el.appendChild(row);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// INFO PANEL
+// ═══════════════════════════════════════════════════
+function updateInfo() {
+  const titleEl = document.getElementById('infoTitle');
+  const subEl = document.getElementById('infoSub');
+  const bodyEl = document.getElementById('infoBody');
+
+  if (!selected) {
+    titleEl.textContent = 'Vue d\'ensemble';
+    subEl.textContent = '18 colonnes × 12 rangées — pas 2.54mm';
+    bodyEl.innerHTML = `<p>Clique sur un composant à gauche ou directement sur le perfboard pour voir les détails et les connexions.</p>
+<h3>Ce qu'on met dessus</h3>
+<p>4 rails de distribution (3.3V, 12V, 5V, GND), 2 résistances pull-up 4.7kΩ pour I2C, 1 condensateur 100µF, 2 condensateurs 100nF.</p>
+<h3>Ordre de soudure</h3>
+<p>1. Rails GND et 3.3V → 2. Rails 12V et 5V → 3. Résistances → 4. Condensateurs → 5. Test</p>
+<h3>Astuce</h3>
+<div class="tip">💡 Commence par souder les rails, puis les composants passifs. Teste chaque rail au multimètre avant de connecter l'ESP32 !</div>`;
+    return;
+  }
+
+  const comp = COMPS.find(c => c.id === selected);
+  if (!comp) return;
+  titleEl.textContent = comp.info.title;
+  subEl.textContent = comp.info.sub;
+
+  let html = comp.info.html;
+  if (comp.info.connections) {
+    comp.info.connections.forEach(cn => {
+      html += `<div class="conn-row"><div class="conn-dot" style="background:${cn.color}"></div><span class="conn-label">${cn.label}</span><span class="conn-dest">${cn.dest}</span></div>`;
+    });
+  }
+  bodyEl.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════
+// SELECTION
+// ═══════════════════════════════════════════════════
+function selectComp(id) {
+  selected = (selected === id) ? null : id;
+  buildSidebar();
+  updateInfo();
+  draw();
+}
+
+// ═══════════════════════════════════════════════════
+// CANVAS DRAWING
+// ═══════════════════════════════════════════════════
+function cellX(c) { return PAD + c * CELL + CELL / 2; }
+function cellY(r) { return PAD + r * CELL + CELL / 2; }
+
+function draw() {
+  const w = CW * zoom;
+  const h = CH * zoom;
+  canvas.width = w;
+  canvas.height = h;
+  ctx.setTransform(zoom, 0, 0, zoom, 0, 0);
+
+  // Background
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(0, 0, CW, CH);
+
+  // Board
+  ctx.fillStyle = '#1e2518';
+  ctx.strokeStyle = '#3a3518';
+  ctx.lineWidth = 2;
+  roundRect(PAD - 10, PAD - 10, BOARD_W + 20, BOARD_H + 20, 8);
+  ctx.fill();
+  ctx.stroke();
+
+  // Grid dots (copper pads)
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const x = cellX(c), y = cellY(r);
+      ctx.beginPath();
+      ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(184,115,51,0.2)';
+      ctx.fill();
+      // Inner hole
+      ctx.beginPath();
+      ctx.arc(x, y, 2, 0, Math.PI * 2);
+      ctx.fillStyle = '#1e2518';
+      ctx.fill();
+    }
+  }
+
+  // Column labels
+  ctx.font = '9px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#8a8578';
+  for (let c = 0; c < COLS; c++) {
+    ctx.fillStyle = (c === 9) ? '#d47272' : '#8a8578';
+    ctx.fillText(c + 1, cellX(c), PAD + BOARD_H + 26);
+  }
+  // Row labels
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#8a8578';
+  for (let r = 0; r < ROWS; r++) {
+    ctx.fillText('R' + (r + 1), PAD - 16, cellY(r) + 3);
+  }
+
+  // Separator marker at col 10
+  const sepX = cellX(9), sepY = cellY(1);
+  ctx.save();
+  ctx.setLineDash([3, 2]);
+  ctx.strokeStyle = '#d47272';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(sepX - 8, sepY - 8, 16, 16);
+  ctx.setLineDash([]);
+  ctx.restore();
+  ctx.font = '7px sans-serif';
+  ctx.fillStyle = '#d47272';
+  ctx.textAlign = 'center';
+  ctx.fillText('VIDE', sepX, sepY - 12);
+
+  // Draw wires
+  WIRES.forEach(w => {
+    const active = !selected || w.owner.includes(selected);
+    ctx.save();
+    ctx.globalAlpha = active ? 0.9 : 0.1;
+    ctx.strokeStyle = w.color;
+    ctx.lineWidth = active ? 2.5 : 1;
+    if (w.dash) ctx.setLineDash([5, 3]);
+    ctx.beginPath();
+    ctx.moveTo(cellX(w.from.c), cellY(w.from.r));
+    ctx.lineTo(cellX(w.to.c), cellY(w.to.r));
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // Label
+    if (w.label && active) {
+      const mx = (cellX(w.from.c) + cellX(w.to.c)) / 2 + 12;
+      const my = (cellY(w.from.r) + cellY(w.to.r)) / 2;
+      ctx.font = '8px sans-serif';
+      ctx.fillStyle = w.color;
+      ctx.textAlign = 'left';
+      ctx.fillText(w.label, mx, my);
+    }
+    ctx.restore();
+  });
+
+  // Draw components (highlighted cells)
+  COMPS.forEach(comp => {
+    const isSelected = selected === comp.id;
+    const dimmed = selected && !isSelected;
+
+    comp.cells.forEach(cell => {
+      const x = cellX(cell.c), y = cellY(cell.r);
+      // Active copper pad
+      ctx.beginPath();
+      ctx.arc(x, y, 5.5, 0, Math.PI * 2);
+      ctx.fillStyle = dimmed ? 'rgba(184,115,51,0.15)' : comp.color;
+      ctx.globalAlpha = dimmed ? 0.3 : (isSelected ? 1 : 0.7);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+
+    // Component bounding box
+    if (comp.cells.length > 1) {
+      let minC = 99, maxC = 0, minR = 99, maxR = 0;
+      comp.cells.forEach(({r, c}) => { minC = Math.min(minC, c); maxC = Math.max(maxC, c); minR = Math.min(minR, r); maxR = Math.max(maxR, r); });
+      const x1 = cellX(minC) - 10;
+      const y1 = cellY(minR) - 10;
+      const w = cellX(maxC) - cellX(minC) + 20;
+      const h = cellY(maxR) - cellY(minR) + 20;
+
+      ctx.save();
+      ctx.globalAlpha = dimmed ? 0.1 : (isSelected ? 0.9 : 0.5);
+      ctx.strokeStyle = comp.color;
+      ctx.lineWidth = isSelected ? 2.5 : 1.5;
+      if (isSelected) {
+        ctx.shadowColor = comp.color;
+        ctx.shadowBlur = 10;
+      }
+      roundRect(x1, y1, w, h, 5);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.restore();
+
+      // Component label
+      if (!dimmed) {
+        const cx = x1 + w / 2;
+        const cy = y1 - 6;
+        ctx.font = 'bold 9px sans-serif';
+        ctx.fillStyle = comp.color;
+        ctx.globalAlpha = isSelected ? 1 : 0.7;
+        ctx.textAlign = 'center';
+        ctx.fillText(comp.name, cx, cy);
+        ctx.globalAlpha = 1;
+      }
+    }
+  });
+
+  // Rail labels (big, always visible)
+  drawRailLabels();
+
+  // C1 polarity marker
+  const c1 = COMPS.find(c => c.id === 'c1');
+  const c1Active = !selected || selected === 'c1';
+  if (c1Active) {
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillStyle = '#dc2626';
+    ctx.textAlign = 'center';
+    ctx.fillText('+', cellX(0), cellY(5) - 12);
+    ctx.fillStyle = '#8a8578';
+    ctx.fillText('−', cellX(1), cellY(8) + 16);
+  }
+}
+
+function drawRailLabels() {
+  const dimmed33 = selected && selected !== 'rail33';
+  const dimmed12 = selected && selected !== 'rail12';
+  const dimmed5 = selected && selected !== 'rail5';
+  const dimmedGnd = selected && selected !== 'railgnd';
+
+  // 3.3V rail line
+  ctx.save();
+  ctx.globalAlpha = dimmed33 ? 0.15 : 1;
+  ctx.strokeStyle = '#ca8a04';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(cellX(0), cellY(0));
+  ctx.lineTo(cellX(17), cellY(0));
+  ctx.stroke();
+  // Label
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(cellX(17) + 8, cellY(0) - 9, 36, 18);
+  ctx.fillStyle = '#ca8a04';
+  ctx.fillRect(cellX(17) + 8, cellY(0) - 9, 36, 18);
+  ctx.fillStyle = '#1a1a1a';
+  ctx.font = 'bold 10px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('3.3V', cellX(17) + 26, cellY(0) + 4);
+  ctx.restore();
+
+  // 12V rail
+  ctx.save();
+  ctx.globalAlpha = dimmed12 ? 0.15 : 1;
+  ctx.strokeStyle = '#dc2626';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(cellX(0), cellY(1));
+  ctx.lineTo(cellX(8), cellY(1));
+  ctx.stroke();
+  ctx.font = '9px sans-serif';
+  ctx.fillStyle = '#dc2626';
+  ctx.textAlign = 'center';
+  ctx.fillText('12V', (cellX(0) + cellX(8)) / 2, cellY(1) - 10);
+  ctx.restore();
+
+  // 5V rail
+  ctx.save();
+  ctx.globalAlpha = dimmed5 ? 0.15 : 1;
+  ctx.strokeStyle = '#ea580c';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(cellX(10), cellY(1));
+  ctx.lineTo(cellX(17), cellY(1));
+  ctx.stroke();
+  ctx.font = '9px sans-serif';
+  ctx.fillStyle = '#ea580c';
+  ctx.textAlign = 'center';
+  ctx.fillText('5V', (cellX(10) + cellX(17)) / 2, cellY(1) - 10);
+  ctx.restore();
+
+  // GND rail
+  ctx.save();
+  ctx.globalAlpha = dimmedGnd ? 0.15 : 1;
+  ctx.strokeStyle = '#666';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(cellX(0), cellY(11));
+  ctx.lineTo(cellX(17), cellY(11));
+  ctx.stroke();
+  ctx.fillStyle = '#d4d0c8';
+  ctx.fillRect(cellX(17) + 8, cellY(11) - 9, 36, 18);
+  ctx.fillStyle = '#666';
+  ctx.fillRect(cellX(17) + 8, cellY(11) - 9, 36, 18);
+  ctx.fillStyle = '#d4d0c8';
+  ctx.font = 'bold 10px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('GND', cellX(17) + 26, cellY(11) + 4);
+  ctx.restore();
+}
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+// ═══════════════════════════════════════════════════
+// CANVAS CLICK DETECTION
+// ═══════════════════════════════════════════════════
+canvas.addEventListener('click', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) / zoom;
+  const my = (e.clientY - rect.top) / zoom;
+
+  // Check which component cell was clicked
+  for (const comp of COMPS) {
+    for (const cell of comp.cells) {
+      const cx = cellX(cell.c), cy = cellY(cell.r);
+      const dx = mx - cx, dy = my - cy;
+      if (dx * dx + dy * dy < 12 * 12) {
+        selectComp(comp.id);
+        return;
+      }
+    }
+  }
+  // Clicked empty area → deselect
+  selectComp(null);
+});
+
+// Hover cursor
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) / zoom;
+  const my = (e.clientY - rect.top) / zoom;
+  let onComp = false;
+  for (const comp of COMPS) {
+    for (const cell of comp.cells) {
+      const cx = cellX(cell.c), cy = cellY(cell.r);
+      const dx = mx - cx, dy = my - cy;
+      if (dx * dx + dy * dy < 12 * 12) { onComp = true; break; }
+    }
+    if (onComp) break;
+  }
+  canvas.style.cursor = onComp ? 'pointer' : 'default';
+});
+
+// ═══════════════════════════════════════════════════
+// ZOOM
+// ═══════════════════════════════════════════════════
+const zoomSlider = document.getElementById('zoomSlider');
+const zoomVal = document.getElementById('zoomVal');
+zoomSlider.oninput = () => {
+  zoom = parseInt(zoomSlider.value) / 100;
+  zoomVal.textContent = zoomSlider.value + '%';
+  draw();
+};
+function resetZoom() {
+  zoom = 1;
+  zoomSlider.value = 100;
+  zoomVal.textContent = '100%';
+  draw();
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+buildSidebar();
+buildProgress();
+updateInfo();
+draw();
+</script>
+</body>
+</html>
