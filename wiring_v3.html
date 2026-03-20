@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schéma de Câblage Complet — Robot Labyrinthe v3</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #1a1a1a; color: #d4d0c8; padding: 20px; }
+.container { max-width: 1100px; margin: 0 auto; }
+h1 { font-size: 1.8rem; color: #f5f0e6; margin-bottom: 4px; }
+.sub { color: #8a8578; font-size: 0.95rem; margin-bottom: 20px; }
+h2 { font-size: 1.25rem; color: #f5f0e6; margin: 32px 0 14px; padding-bottom: 8px; border-bottom: 2px solid #333; }
+h3 { font-size: 1.05rem; color: #f5f0e6; margin: 16px 0 8px; }
+p, li { font-size: 0.92rem; line-height: 1.65; color: #d4d0c8; }
+
+/* Intro box */
+.intro-box { background: #2a2518; border: 1px solid #e8a435; border-radius: 10px; padding: 18px 22px; margin-bottom: 24px; }
+.intro-box h3 { color: #e8a435; margin-top: 0; }
+.intro-box p { color: #d4d0c8; }
+
+/* Warning boxes */
+.warnings { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 28px; }
+.warn-box { background: #2a1e1e; border: 1px solid #d47272; border-radius: 10px; padding: 14px 18px; }
+.warn-box .title { color: #d47272; font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; }
+.warn-box .desc { color: #d4d0c8; font-size: 0.85rem; line-height: 1.5; }
+
+/* Tip boxes */
+.tip-box { background: #1e2a1e; border: 1px solid #7cc47c; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+.tip-box .title { color: #7cc47c; font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; }
+.tip-box .desc { color: #d4d0c8; font-size: 0.85rem; line-height: 1.5; }
+
+/* Danger boxes */
+.danger-box { background: #2a1e1e; border: 1px solid #d47272; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+.danger-box .title { color: #d47272; font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; }
+.danger-box .desc { color: #d4d0c8; font-size: 0.85rem; line-height: 1.5; }
+
+/* Pin table */
+.pin-table { width: 100%; border-collapse: collapse; background: #222; border: 1px solid #333; border-radius: 8px; overflow: hidden; margin-bottom: 20px; }
+.pin-table th { background: #2a2a2a; padding: 10px 14px; text-align: left; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; color: #8a8578; border-bottom: 2px solid #333; }
+.pin-table td { padding: 10px 14px; border-bottom: 1px solid #333; font-size: 0.9rem; color: #d4d0c8; }
+.pin-table tr:hover { background: #262626; }
+.gpio { font-family: 'Consolas', 'Courier New', monospace; font-weight: 700; color: #e8a435; background: #262626; padding: 2px 6px; border-radius: 3px; }
+
+/* Wire color badges */
+.wire { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 0.82rem; font-weight: 700; }
+.w-red { background: #dc2626; color: #1a1a1a; }
+.w-orange { background: #ea580c; color: #1a1a1a; }
+.w-yellow { background: #ca8a04; color: #1a1a1a; }
+.w-black { background: #333; color: #d4d0c8; }
+.w-blue { background: #2563eb; color: #d4d0c8; }
+.w-green { background: #16a34a; color: #d4d0c8; }
+.w-purple { background: #7c3aed; color: #d4d0c8; }
+.w-white { background: #333; color: #d4d0c8; border: 1px solid #333; }
+
+/* SVG diagram */
+.diagram-wrap { background: #262626; border: 1px solid #333; border-radius: 12px; padding: 24px; margin: 20px 0; overflow-x: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+svg text { font-family: 'Segoe UI', system-ui, sans-serif; }
+
+/* Legend */
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 16px 0; padding: 14px 18px; background: #222; border: 1px solid #333; border-radius: 10px; }
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 0.85rem; color: #d4d0c8; }
+.legend-dot { width: 16px; height: 16px; border-radius: 4px; }
+
+/* Step-by-step sections */
+.step-section { background: #222; border: 1px solid #333; border-radius: 10px; padding: 20px 24px; margin-bottom: 18px; }
+.step-section h3 { font-size: 1.05rem; color: #f5f0e6; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.step-num { background: #e8a435; color: #1a1a1a; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; flex-shrink: 0; }
+.conn-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 0.9rem; flex-wrap: wrap; border-bottom: 1px solid #333; color: #d4d0c8; }
+.conn-row:last-child { border-bottom: none; }
+.arrow { color: #8a8578; font-weight: 700; }
+.explanation { background: #262626; border-radius: 6px; padding: 10px 14px; margin-top: 10px; font-size: 0.85rem; color: #8a8578; line-height: 1.6; }
+.explanation b { color: #d4d0c8; }
+
+/* Motor detail */
+.motor-wire { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #333; color: #d4d0c8; }
+.motor-wire:last-child { border-bottom: none; }
+.motor-wire-desc { font-size: 0.88rem; }
+
+/* Vocab */
+.vocab { background: #222; border: 1px solid #e8a435; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+.vocab dt { font-weight: 700; color: #e8a435; font-size: 0.88rem; margin-top: 8px; }
+.vocab dt:first-child { margin-top: 0; }
+.vocab dd { font-size: 0.85rem; color: #d4d0c8; margin-left: 16px; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Schéma de Câblage Complet — v3</h1>
+<p class="sub">Guide pas-à-pas pour débutant &bull; ESP32-WROOM-32D &bull; L298N &bull; 4 moteurs DC &bull; 3 capteurs ToF &bull; Batterie 3S</p>
+
+<!-- ═══ BEGINNER INTRO ═══ -->
+<div class="intro-box">
+  <h3>Tu débutes en électronique ? Lis ça d'abord !</h3>
+  <p>Ce guide te montre <b>exactement quel fil va où</b>. Chaque connexion est expliquée avec la couleur du fil et pourquoi on le branche là. Prends ton temps, fais une connexion à la fois, et vérifie au multimètre avant d'allumer.</p>
+  <p style="margin-top:8px">Tu as besoin : d'un <b>fer à souder</b>, du <b>fil à souder (étain)</b>, du <b>fil de câblage</b> (plusieurs couleurs), un <b>multimètre</b>, et de la <b>patience</b>.</p>
+</div>
+
+<!-- ═══ VOCABULARY ═══ -->
+<div class="vocab">
+  <h3 style="color:#e8a435;margin:0 0 8px">Mini-vocabulaire</h3>
+  <dl>
+    <dt>GND (Ground / Masse)</dt>
+    <dd>Le fil de référence 0V. Tous les composants partagent le même GND — c'est le « retour » du courant.</dd>
+    <dt>VCC / VIN</dt>
+    <dd>L'entrée d'alimentation positive d'un composant (ex: 3.3V, 5V, ou 12V selon le composant).</dd>
+    <dt>GPIO (General Purpose Input/Output)</dt>
+    <dd>Les broches programmables de l'ESP32. Chaque broche a un numéro (ex: GPIO21).</dd>
+    <dt>I2C (SDA + SCL)</dt>
+    <dd>Un protocole de communication à 2 fils. SDA = données, SCL = horloge. Plusieurs capteurs partagent le même bus.</dd>
+    <dt>PWM (Pulse Width Modulation)</dt>
+    <dd>Un signal qui contrôle la vitesse des moteurs en allumant/éteignant très rapidement.</dd>
+    <dt>Pull-up (résistance de tirage)</dt>
+    <dd>Une résistance qui maintient un signal au niveau HAUT (3.3V) quand personne ne parle sur le fil. Nécessaire pour I2C.</dd>
+  </dl>
+</div>
+
+<!-- ═══ CRITICAL WARNINGS ═══ -->
+<h2>⚠️ Avertissements CRITIQUES — Lire avant de brancher quoi que ce soit</h2>
+<div class="warnings">
+  <div class="warn-box">
+    <div class="title">1. RETIRER les jumpers ENA/ENB du L298N</div>
+    <div class="desc">Sur la carte L298N, il y a 2 petits cavaliers en plastique (jumpers) sur les broches ENA et ENB. <b>Retire-les avec les doigts ou une pince.</b> Si tu les laisses, l'ESP32 ne pourra pas contrôler la vitesse des moteurs.</div>
+  </div>
+  <div class="warn-box">
+    <div class="title">2. Régler le LM2596 à EXACTEMENT 5.0V</div>
+    <div class="desc">Le module LM2596 a un petit potentiomètre (vis bleue). <b>Avant de brancher l'ESP32</b>, branche le LM2596 à la batterie, allume, et tourne la vis avec un tournevis. Mesure la sortie avec un multimètre jusqu'à lire exactement 5.0V. Trop haut = ESP32 grillé.</div>
+  </div>
+  <div class="warn-box">
+    <div class="title">3. Encodeurs en 3.3V, PAS en 5V !</div>
+    <div class="desc">Le fil bleu de chaque encodeur (VCC) doit aller au rail <b>3.3V</b>. Si tu branches en 5V, les signaux de 5V envoyés aux GPIO de l'ESP32 vont le <b>détruire définitivement</b> (les GPIO supportent max 3.3V).</div>
+  </div>
+  <div class="warn-box">
+    <div class="title">4. GPIO 34/35/36/39 = Entrée seule</div>
+    <div class="desc">Ces 4 broches ne peuvent que <b>recevoir</b> des signaux (pas en envoyer). C'est parfait pour les encodeurs. Elles n'ont pas de résistance pull-up interne, mais les encodeurs ont la leur — donc pas de souci.</div>
+  </div>
+</div>
+
+<!-- ═══ COLOR LEGEND ═══ -->
+<h2>Code couleur des fils</h2>
+<p style="margin-bottom:12px">Utilise ces couleurs pour tes fils. Ça rend le débogage 10× plus facile !</p>
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div> <b>Rouge</b> = 12V (batterie)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ea580c"></div> <b>Orange</b> = 5V (sortie LM2596)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ca8a04"></div> <b>Jaune</b> = 3.3V (sortie ESP32)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#333;border:1px solid #8a8578"></div> <b>Noir</b> = GND (masse)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#2563eb"></div> <b>Bleu</b> = I2C / capteurs</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div> <b>Vert</b> = Signaux moteur</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div> <b>Violet</b> = Signaux encodeur</div>
+</div>
+
+<!-- ═══ MAIN BLOCK DIAGRAM (SVG) ═══ -->
+<h2>Schéma Général — Vue d'ensemble</h2>
+<p style="margin-bottom:12px">Ce schéma montre comment tous les blocs sont connectés entre eux. Les détails fil par fil sont plus bas.</p>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 1020 720" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:1020px;">
+  <!-- Background -->
+  <rect width="1020" height="720" fill="#262626"/>
+  <!-- Subtle grid -->
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#333" stroke-width="0.5"/>
+    </pattern>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#dc2626"/></marker>
+    <marker id="arrowO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ea580c"/></marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#16a34a"/></marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2563eb"/></marker>
+    <marker id="arrowP" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#7c3aed"/></marker>
+    <marker id="arrowK" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#8a8578"/></marker>
+  </defs>
+  <rect width="1020" height="720" fill="url(#grid)"/>
+
+  <!-- ══ TITLE ══ -->
+  <text x="510" y="30" text-anchor="middle" fill="#f5f0e6" font-size="15" font-weight="700">Schéma de Câblage — Vue d'ensemble (v3)</text>
+
+  <!-- ══ BATTERY ══ -->
+  <rect x="30" y="280" width="120" height="70" rx="8" fill="#222" stroke="#dc2626" stroke-width="2.5"/>
+  <text x="90" y="306" text-anchor="middle" fill="#d4d0c8" font-size="13" font-weight="700">Batterie 3S</text>
+  <text x="90" y="322" text-anchor="middle" fill="#8a8578" font-size="10">3× 18650</text>
+  <text x="90" y="337" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="700">11.1V</text>
+  <!-- Battery terminals -->
+  <text x="35" y="276" fill="#dc2626" font-size="12" font-weight="700">+</text>
+  <text x="140" y="276" fill="#8a8578" font-size="12" font-weight="700">−</text>
+
+  <!-- ══ BMS ══ -->
+  <rect x="190" y="280" width="100" height="70" rx="8" fill="#222" stroke="#dc2626" stroke-width="2"/>
+  <text x="240" y="308" text-anchor="middle" fill="#d4d0c8" font-size="12" font-weight="700">BMS 3S</text>
+  <text x="240" y="324" text-anchor="middle" fill="#8a8578" font-size="9">Protection</text>
+  <text x="240" y="338" text-anchor="middle" fill="#8a8578" font-size="9">10A max</text>
+  <!-- Battery → BMS -->
+  <line x1="150" y1="315" x2="190" y2="315" stroke="#dc2626" stroke-width="3" marker-end="url(#arrowR)"/>
+  <text x="170" y="308" text-anchor="middle" fill="#dc2626" font-size="8" font-weight="700">12V</text>
+
+  <!-- ══ SWITCH ══ -->
+  <rect x="330" y="290" width="80" height="50" rx="8" fill="#222" stroke="#f59e0b" stroke-width="2"/>
+  <text x="370" y="312" text-anchor="middle" fill="#d4d0c8" font-size="12" font-weight="700">Interrupteur</text>
+  <text x="370" y="328" text-anchor="middle" fill="#8a8578" font-size="9">ON / OFF</text>
+  <!-- BMS → Switch -->
+  <line x1="290" y1="315" x2="330" y2="315" stroke="#dc2626" stroke-width="3" marker-end="url(#arrowR)"/>
+
+  <!-- ══ 12V RAIL SPLIT ══ -->
+  <circle cx="445" cy="315" r="8" fill="#dc2626"/>
+  <text x="445" y="300" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="700">12V</text>
+  <line x1="410" y1="315" x2="437" y2="315" stroke="#dc2626" stroke-width="3"/>
+
+  <!-- ══ L298N ══ -->
+  <rect x="480" y="170" width="160" height="120" rx="10" fill="#222" stroke="#16a34a" stroke-width="2.5"/>
+  <text x="560" y="198" text-anchor="middle" fill="#d4d0c8" font-size="14" font-weight="700">L298N</text>
+  <text x="560" y="216" text-anchor="middle" fill="#8a8578" font-size="10">Pont-H Double</text>
+  <text x="560" y="232" text-anchor="middle" fill="#8a8578" font-size="9">(contrôle 4 moteurs)</text>
+  <!-- Labels on L298N -->
+  <text x="488" y="258" fill="#dc2626" font-size="8">12V IN</text>
+  <text x="488" y="272" fill="#8a8578" font-size="8">GND</text>
+  <text x="592" y="258" fill="#16a34a" font-size="8" text-anchor="end">OUT1-OUT4</text>
+  <text x="592" y="272" fill="#16a34a" font-size="8" text-anchor="end">→ moteurs</text>
+  <text x="560" y="284" text-anchor="middle" fill="#f87171" font-size="8" font-weight="700">⚠ RETIRER JUMPERS</text>
+  <!-- 12V → L298N -->
+  <line x1="453" y1="315" x2="453" y2="250" stroke="#dc2626" stroke-width="2.5"/>
+  <line x1="453" y1="250" x2="480" y2="250" stroke="#dc2626" stroke-width="2.5" marker-end="url(#arrowR)"/>
+
+  <!-- ══ LM2596 ══ -->
+  <rect x="480" y="380" width="160" height="90" rx="10" fill="#222" stroke="#ea580c" stroke-width="2.5"/>
+  <text x="560" y="410" text-anchor="middle" fill="#d4d0c8" font-size="14" font-weight="700">LM2596</text>
+  <text x="560" y="428" text-anchor="middle" fill="#8a8578" font-size="10">Convertisseur</text>
+  <text x="560" y="444" text-anchor="middle" fill="#ea580c" font-size="10" font-weight="700">12V → 5.0V</text>
+  <text x="560" y="462" text-anchor="middle" fill="#f87171" font-size="8" font-weight="700">⚠ RÉGLER AVANT !</text>
+  <!-- 12V → LM2596 -->
+  <line x1="453" y1="315" x2="453" y2="420" stroke="#dc2626" stroke-width="2.5"/>
+  <line x1="453" y1="420" x2="480" y2="420" stroke="#dc2626" stroke-width="2.5" marker-end="url(#arrowR)"/>
+  <!-- 5V out -->
+  <line x1="640" y1="420" x2="700" y2="420" stroke="#ea580c" stroke-width="3" marker-end="url(#arrowO)"/>
+  <text x="670" y="412" text-anchor="middle" fill="#ea580c" font-size="10" font-weight="700">5.0V</text>
+
+  <!-- ══ ESP32 ══ -->
+  <rect x="700" y="220" width="180" height="250" rx="12" fill="#222" stroke="#2563eb" stroke-width="2.5"/>
+  <text x="790" y="250" text-anchor="middle" fill="#d4d0c8" font-size="15" font-weight="700">ESP32</text>
+  <text x="790" y="268" text-anchor="middle" fill="#8a8578" font-size="10">WROOM-32D</text>
+  <text x="790" y="282" text-anchor="middle" fill="#8a8578" font-size="9">Le cerveau du robot</text>
+
+  <!-- ESP32 left pins (labels) -->
+  <text x="712" y="310" fill="#e8a435" font-size="8.5" font-family="monospace" font-weight="700">GPIO21 SDA</text>
+  <text x="712" y="325" fill="#e8a435" font-size="8.5" font-family="monospace" font-weight="700">GPIO22 SCL</text>
+  <text x="712" y="345" fill="#16a34a" font-size="8.5" font-family="monospace">GPIO26 IN1</text>
+  <text x="712" y="358" fill="#16a34a" font-size="8.5" font-family="monospace">GPIO27 IN2</text>
+  <text x="712" y="371" fill="#16a34a" font-size="8.5" font-family="monospace">GPIO25 IN3</text>
+  <text x="712" y="384" fill="#16a34a" font-size="8.5" font-family="monospace">GPIO33 IN4</text>
+  <text x="712" y="400" fill="#16a34a" font-size="8.5" font-family="monospace">GPIO14 ENA</text>
+  <text x="712" y="413" fill="#16a34a" font-size="8.5" font-family="monospace">GPIO32 ENB</text>
+  <text x="712" y="430" fill="#ea580c" font-size="8.5" font-family="monospace" font-weight="700">VIN ← 5V</text>
+  <text x="712" y="445" fill="#8a8578" font-size="8.5" font-family="monospace">GND</text>
+  <text x="712" y="458" fill="#ca8a04" font-size="8.5" font-family="monospace" font-weight="700">3V3 → 3.3V</text>
+
+  <!-- ESP32 right pins -->
+  <text x="870" y="310" fill="#c27db5" font-size="8.5" font-family="monospace" text-anchor="end">GPIO34 ENC_L1</text>
+  <text x="870" y="325" fill="#c27db5" font-size="8.5" font-family="monospace" text-anchor="end">GPIO35 ENC_L2</text>
+  <text x="870" y="345" fill="#c27db5" font-size="8.5" font-family="monospace" text-anchor="end">GPIO36 ENC_R1</text>
+  <text x="870" y="358" fill="#c27db5" font-size="8.5" font-family="monospace" text-anchor="end">GPIO39 ENC_R2</text>
+  <text x="870" y="380" fill="#2563eb" font-size="8.5" font-family="monospace" text-anchor="end">GPIO15 XSHUT_F</text>
+  <text x="870" y="393" fill="#2563eb" font-size="8.5" font-family="monospace" text-anchor="end">GPIO4 XSHUT_L</text>
+  <text x="870" y="406" fill="#2563eb" font-size="8.5" font-family="monospace" text-anchor="end">GPIO5 XSHUT_R</text>
+  <text x="870" y="428" fill="#8a8578" font-size="8.5" font-family="monospace" text-anchor="end">GPIO2 LED</text>
+
+  <!-- 5V → ESP32 VIN -->
+  <line x1="700" y1="420" x2="700" y2="426" stroke="#ea580c" stroke-width="2.5"/>
+
+  <!-- L298N control lines → ESP32 -->
+  <line x1="640" y1="230" x2="700" y2="360" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="665" y="285" fill="#16a34a" font-size="8" transform="rotate(60,665,285)">IN1-IN4</text>
+  <line x1="640" y1="245" x2="700" y2="406" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="660" y="330" fill="#16a34a" font-size="8" transform="rotate(65,660,330)">ENA/ENB</text>
+
+  <!-- ══ MOTORS LEFT ══ -->
+  <rect x="480" y="50" width="160" height="80" rx="8" fill="#222" stroke="#8a8578" stroke-width="2"/>
+  <text x="560" y="76" text-anchor="middle" fill="#d4d0c8" font-size="12" font-weight="700">M1 + M3 (Gauche)</text>
+  <text x="560" y="94" text-anchor="middle" fill="#8a8578" font-size="9">2 moteurs en parallèle</text>
+  <text x="560" y="108" text-anchor="middle" fill="#8a8578" font-size="8">→ OUT1 / OUT2 du L298N</text>
+  <text x="560" y="122" text-anchor="middle" fill="#c27db5" font-size="8">Encodeurs → GPIO34, GPIO35</text>
+  <!-- L298N → Motors Left -->
+  <line x1="560" y1="170" x2="560" y2="130" stroke="#8a8578" stroke-width="2" marker-end="url(#arrowK)"/>
+
+  <!-- ══ MOTORS RIGHT ══ -->
+  <rect x="480" y="530" width="160" height="80" rx="8" fill="#222" stroke="#8a8578" stroke-width="2"/>
+  <text x="560" y="556" text-anchor="middle" fill="#d4d0c8" font-size="12" font-weight="700">M2 + M4 (Droite)</text>
+  <text x="560" y="574" text-anchor="middle" fill="#8a8578" font-size="9">2 moteurs en parallèle</text>
+  <text x="560" y="588" text-anchor="middle" fill="#8a8578" font-size="8">→ OUT3 / OUT4 du L298N</text>
+  <text x="560" y="602" text-anchor="middle" fill="#c27db5" font-size="8">Encodeurs → GPIO36, GPIO39</text>
+  <!-- L298N → Motors Right -->
+  <line x1="560" y1="290" x2="560" y2="530" stroke="#8a8578" stroke-width="2" marker-end="url(#arrowK)"/>
+
+  <!-- Encoder lines to ESP32 -->
+  <line x1="640" y1="85" x2="880" y2="315" stroke="#c27db5" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="640" y1="570" x2="880" y2="350" stroke="#c27db5" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="780" y="200" fill="#c27db5" font-size="8" transform="rotate(42,780,200)">encodeurs gauche</text>
+  <text x="780" y="480" fill="#c27db5" font-size="8" transform="rotate(-30,780,480)">encodeurs droite</text>
+
+  <!-- ══ ToF SENSORS ══ -->
+  <rect x="30" y="80" width="150" height="60" rx="8" fill="#222" stroke="#2563eb" stroke-width="2"/>
+  <text x="105" y="104" text-anchor="middle" fill="#d4d0c8" font-size="12" font-weight="700">ToF AVANT</text>
+  <text x="105" y="118" text-anchor="middle" fill="#e8a435" font-size="9">VL53L0X • addr 0x30</text>
+  <text x="105" y="132" text-anchor="middle" fill="#8a8578" font-size="8">XSHUT → GPIO15</text>
+
+  <rect x="30" y="155" width="150" height="60" rx="8" fill="#222" stroke="#2563eb" stroke-width="2"/>
+  <text x="105" y="179" text-anchor="middle" fill="#d4d0c8" font-size="12" font-weight="700">ToF GAUCHE</text>
+  <text x="105" y="193" text-anchor="middle" fill="#e8a435" font-size="9">VL53L0X • addr 0x31</text>
+  <text x="105" y="207" text-anchor="middle" fill="#8a8578" font-size="8">XSHUT → GPIO4</text>
+
+  <rect x="30" y="230" width="150" height="60" rx="8" fill="#222" stroke="#2563eb" stroke-width="2"/>
+  <text x="105" y="254" text-anchor="middle" fill="#d4d0c8" font-size="12" font-weight="700">ToF DROITE</text>
+  <text x="105" y="268" text-anchor="middle" fill="#e8a435" font-size="9">VL53L0X • addr 0x32</text>
+  <text x="105" y="282" text-anchor="middle" fill="#8a8578" font-size="8">XSHUT → GPIO5</text>
+
+  <!-- I2C bus from ToFs to ESP32 -->
+  <line x1="180" y1="110" x2="260" y2="110" stroke="#2563eb" stroke-width="1.5"/>
+  <line x1="180" y1="185" x2="260" y2="185" stroke="#2563eb" stroke-width="1.5"/>
+  <line x1="180" y1="260" x2="260" y2="260" stroke="#2563eb" stroke-width="1.5"/>
+  <!-- vertical bus line -->
+  <line x1="260" y1="110" x2="260" y2="315" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="260" y1="315" x2="700" y2="315" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowB)"/>
+  <text x="380" y="308" fill="#2563eb" font-size="9" font-weight="700">I2C : SDA (GPIO21) + SCL (GPIO22)</text>
+  <!-- I2C label -->
+  <rect x="210" y="140" width="40" height="20" rx="4" fill="#262626" stroke="#e8a435" stroke-width="1"/>
+  <text x="230" y="154" text-anchor="middle" fill="#e8a435" font-size="9" font-weight="700">I2C</text>
+
+  <!-- ══ PERFBOARD ══ -->
+  <rect x="700" y="510" width="180" height="70" rx="8" fill="#222" stroke="#e8a435" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="790" y="536" text-anchor="middle" fill="#e8a435" font-size="11" font-weight="700">PERFBOARD 9×7cm</text>
+  <text x="790" y="554" text-anchor="middle" fill="#8a8578" font-size="9">Pull-ups 4.7kΩ (I2C)</text>
+  <text x="790" y="568" text-anchor="middle" fill="#8a8578" font-size="9">Condensateurs + Rails</text>
+
+  <!-- ══ GND BUS ══ -->
+  <line x1="30" y1="680" x2="990" y2="680" stroke="#8a8578" stroke-width="4"/>
+  <text x="510" y="705" text-anchor="middle" fill="#8a8578" font-size="12" font-weight="700">GND COMMUN — tous les composants connectés ici (fil noir)</text>
+  <!-- GND drops -->
+  <line x1="90" y1="350" x2="90" y2="680" stroke="#8a8578" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.5"/>
+  <line x1="240" y1="350" x2="240" y2="680" stroke="#8a8578" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.5"/>
+  <line x1="560" y1="470" x2="560" y2="680" stroke="#8a8578" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.5"/>
+  <line x1="560" y1="610" x2="560" y2="680" stroke="#8a8578" stroke-width="1" stroke-dasharray="5,4" opacity="0.3"/>
+  <line x1="790" y1="470" x2="790" y2="680" stroke="#8a8578" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.5"/>
+
+  <!-- 3.3V distribution (from ESP32) -->
+  <line x1="700" y1="455" x2="680" y2="455" stroke="#ca8a04" stroke-width="2"/>
+  <line x1="680" y1="455" x2="680" y2="650" stroke="#ca8a04" stroke-width="2"/>
+  <line x1="680" y1="650" x2="340" y2="650" stroke="#ca8a04" stroke-width="2"/>
+  <text x="510" y="644" text-anchor="middle" fill="#ca8a04" font-size="9" font-weight="700">3.3V → encodeurs VCC + ToF VCC (via perfboard)</text>
+
+  <!-- ══ FLOW EXPLANATION ══ -->
+  <rect x="30" y="490" width="400" height="160" rx="10" fill="#2a2518" stroke="#e8a435" stroke-width="1"/>
+  <text x="230" y="515" text-anchor="middle" fill="#e8a435" font-size="12" font-weight="700">Chaîne d'alimentation (dans l'ordre)</text>
+  <text x="50" y="540" fill="#d4d0c8" font-size="10">1. Batterie 3S (11.1V) → BMS → Interrupteur → Rail 12V</text>
+  <text x="50" y="560" fill="#d4d0c8" font-size="10">2. Rail 12V → L298N VCC (moteurs)</text>
+  <text x="50" y="580" fill="#d4d0c8" font-size="10">3. Rail 12V → LM2596 → 5.0V → ESP32 VIN</text>
+  <text x="50" y="600" fill="#d4d0c8" font-size="10">4. ESP32 3V3 → 3.3V → Encodeurs + ToF</text>
+  <text x="50" y="625" fill="#dc2626" font-size="10" font-weight="700">5. GND de TOUT est connecté ensemble !</text>
+
+</svg>
+</div>
+
+<!-- ═══ COMPLETE GPIO TABLE ═══ -->
+<h2>Table Complète des GPIO de l'ESP32</h2>
+<p style="margin-bottom:12px">Voici chaque broche utilisée sur l'ESP32. La colonne "Fil" indique la couleur à utiliser.</p>
+
+<table class="pin-table">
+  <tr><th>GPIO</th><th>Fonction</th><th>Connecté à</th><th>Fil</th><th>Explication pour débutant</th></tr>
+  <tr><td><span class="gpio">2</span></td><td>LED</td><td>LED intégrée ESP32</td><td>—</td><td>La petite lumière bleue sur la carte ESP32. Clignote pour indiquer l'état du robot. Pas de fil à brancher.</td></tr>
+  <tr><td><span class="gpio">4</span></td><td>XSHUT Left</td><td>VL53L0X Gauche</td><td><span class="wire w-blue">bleu</span></td><td>Contrôle l'allumage du capteur gauche. Permet de lui donner une adresse I2C unique (0x31).</td></tr>
+  <tr><td><span class="gpio">5</span></td><td>XSHUT Right</td><td>VL53L0X Droite</td><td><span class="wire w-blue">bleu</span></td><td>Contrôle l'allumage du capteur droit. Adresse I2C = 0x32.</td></tr>
+  <tr><td><span class="gpio">14</span></td><td>ENA (PWM)</td><td>L298N ENA</td><td><span class="wire w-green">vert</span></td><td>Contrôle la <b>vitesse</b> des moteurs gauche. Le PWM envoie des impulsions rapides — plus c'est large, plus le moteur tourne vite.</td></tr>
+  <tr><td><span class="gpio">15</span></td><td>XSHUT Front</td><td>VL53L0X Avant</td><td><span class="wire w-blue">bleu</span></td><td>Contrôle l'allumage du capteur avant. Adresse I2C = 0x30.</td></tr>
+  <tr><td><span class="gpio">21</span></td><td>SDA</td><td>Bus I2C (3× ToF)</td><td><span class="wire w-blue">bleu</span></td><td>Fil de <b>données</b> I2C. Les 3 capteurs ToF partagent ce même fil. Besoin d'une résistance pull-up 4.7kΩ vers 3.3V.</td></tr>
+  <tr><td><span class="gpio">22</span></td><td>SCL</td><td>Bus I2C (3× ToF)</td><td><span class="wire w-blue">bleu</span></td><td>Fil d'<b>horloge</b> I2C. Aussi partagé par les 3 capteurs. Besoin d'une résistance pull-up 4.7kΩ vers 3.3V.</td></tr>
+  <tr><td><span class="gpio">25</span></td><td>IN3</td><td>L298N IN3</td><td><span class="wire w-green">vert</span></td><td>Direction moteurs droite (signal A). IN3 + IN4 ensemble déterminent si le côté droit avance ou recule.</td></tr>
+  <tr><td><span class="gpio">26</span></td><td>IN1</td><td>L298N IN1</td><td><span class="wire w-green">vert</span></td><td>Direction moteurs gauche (signal A). IN1 + IN2 ensemble déterminent si le côté gauche avance ou recule.</td></tr>
+  <tr><td><span class="gpio">27</span></td><td>IN2</td><td>L298N IN2</td><td><span class="wire w-green">vert</span></td><td>Direction moteurs gauche (signal B).</td></tr>
+  <tr><td><span class="gpio">32</span></td><td>ENB (PWM)</td><td>L298N ENB</td><td><span class="wire w-green">vert</span></td><td>Contrôle la <b>vitesse</b> des moteurs droite.</td></tr>
+  <tr><td><span class="gpio">33</span></td><td>IN4</td><td>L298N IN4</td><td><span class="wire w-green">vert</span></td><td>Direction moteurs droite (signal B).</td></tr>
+  <tr><td><span class="gpio">34</span></td><td>Encodeur M1</td><td>M1 Signal A (jaune)</td><td><span class="wire w-purple">violet</span></td><td>Reçoit les impulsions de l'encodeur du moteur avant-gauche. Chaque impulsion = le moteur a tourné un petit peu.</td></tr>
+  <tr><td><span class="gpio">35</span></td><td>Encodeur M3</td><td>M3 Signal A (jaune)</td><td><span class="wire w-purple">violet</span></td><td>Impulsions de l'encodeur du moteur arrière-gauche.</td></tr>
+  <tr><td><span class="gpio">36</span></td><td>Encodeur M2</td><td>M2 Signal A (jaune)</td><td><span class="wire w-purple">violet</span></td><td>Impulsions de l'encodeur du moteur avant-droit.</td></tr>
+  <tr><td><span class="gpio">39</span></td><td>Encodeur M4</td><td>M4 Signal A (jaune)</td><td><span class="wire w-purple">violet</span></td><td>Impulsions de l'encodeur du moteur arrière-droit.</td></tr>
+  <tr><td><span class="gpio">VIN</span></td><td>Alimentation</td><td>LM2596 VOUT (5V)</td><td><span class="wire w-orange">orange</span></td><td>L'ESP32 reçoit son courant ici. Doit être exactement 5.0V (mesuré au multimètre) !</td></tr>
+  <tr><td><span class="gpio">GND</span></td><td>Masse</td><td>GND commun</td><td><span class="wire w-black">noir</span></td><td>Le « retour » du courant. Un seul fil GND de l'ESP32 vers le rail GND commun suffit.</td></tr>
+  <tr><td><span class="gpio">3V3</span></td><td>Sortie 3.3V</td><td>Rail 3.3V perfboard</td><td><span class="wire w-yellow">jaune</span></td><td>L'ESP32 produit du 3.3V ici. On l'utilise pour alimenter les encodeurs et les capteurs ToF.</td></tr>
+</table>
+
+<!-- ═══ STEP-BY-STEP WIRING ═══ -->
+<h2>Câblage pas-à-pas — Dans l'ordre</h2>
+<p style="margin-bottom:16px">Fais les connexions dans cet ordre. Chaque étape est détaillée avec les fils exacts à brancher.</p>
+
+<!-- STEP 1: Power chain -->
+<div class="step-section">
+  <h3><span class="step-num">1</span> Chaîne d'alimentation (12V)</h3>
+  <p style="margin-bottom:10px">C'est le courant qui vient de la batterie et alimente tout le système.</p>
+  <div class="conn-row"><span class="wire w-red">Rouge</span> Batterie + <span class="arrow">→</span> BMS B+ (entrée positive du BMS)</div>
+  <div class="conn-row"><span class="wire w-black">Noir</span> Batterie − <span class="arrow">→</span> BMS B− (entrée négative du BMS)</div>
+  <div class="conn-row"><span class="wire w-red">Rouge</span> BMS P+ (sortie) <span class="arrow">→</span> Interrupteur (borne 1)</div>
+  <div class="conn-row"><span class="wire w-red">Rouge</span> Interrupteur (borne 2) <span class="arrow">→</span> Rail 12V du perfboard (R2, cols 1-9)</div>
+  <div class="conn-row"><span class="wire w-black">Noir</span> BMS P− (sortie) <span class="arrow">→</span> Rail GND du perfboard (R12)</div>
+  <div class="explanation">
+    <b>Pourquoi le BMS ?</b> Il protège la batterie contre la surcharge, la décharge profonde, et les courts-circuits. Sans BMS, ta batterie peut gonfler ou prendre feu.<br>
+    <b>Pourquoi l'interrupteur ?</b> Pour pouvoir éteindre le robot sans débrancher la batterie à chaque fois.
+  </div>
+</div>
+
+<!-- STEP 2: L298N -->
+<div class="step-section">
+  <h3><span class="step-num">2</span> L298N — Pont-H moteur</h3>
+  <p style="margin-bottom:10px">Le L298N reçoit les ordres de l'ESP32 et alimente les moteurs en conséquence.</p>
+  <div class="danger-box">
+    <div class="title">AVANT de câbler : retirer les jumpers ENA et ENB !</div>
+    <div class="desc">Ce sont 2 petits capuchons en plastique noir sur les broches ENA et ENB de la carte L298N. Retire-les avec tes doigts ou une pince.</div>
+  </div>
+  <div class="conn-row"><span class="wire w-red">Rouge</span> Rail 12V perfboard <span class="arrow">→</span> L298N borne « 12V » (ou « VCC »)</div>
+  <div class="conn-row"><span class="wire w-black">Noir</span> Rail GND perfboard <span class="arrow">→</span> L298N borne « GND »</div>
+  <div class="conn-row"><span class="wire w-green">Vert</span> ESP32 GPIO26 <span class="arrow">→</span> L298N IN1</div>
+  <div class="conn-row"><span class="wire w-green">Vert</span> ESP32 GPIO27 <span class="arrow">→</span> L298N IN2</div>
+  <div class="conn-row"><span class="wire w-green">Vert</span> ESP32 GPIO25 <span class="arrow">→</span> L298N IN3</div>
+  <div class="conn-row"><span class="wire w-green">Vert</span> ESP32 GPIO33 <span class="arrow">→</span> L298N IN4</div>
+  <div class="conn-row"><span class="wire w-green">Vert</span> ESP32 GPIO14 <span class="arrow">→</span> L298N ENA (vitesse gauche)</div>
+  <div class="conn-row"><span class="wire w-green">Vert</span> ESP32 GPIO32 <span class="arrow">→</span> L298N ENB (vitesse droite)</div>
+  <div class="explanation">
+    <b>IN1/IN2 contrôlent la direction du côté gauche :</b> IN1=HIGH + IN2=LOW = avancer, IN1=LOW + IN2=HIGH = reculer.<br>
+    <b>IN3/IN4 font pareil pour le côté droit.</b><br>
+    <b>ENA/ENB contrôlent la vitesse</b> avec un signal PWM (0 à 255 = arrêt à pleine vitesse).
+  </div>
+</div>
+
+<!-- STEP 3: LM2596 -->
+<div class="step-section">
+  <h3><span class="step-num">3</span> LM2596 — Convertisseur 12V → 5V</h3>
+  <div class="conn-row"><span class="wire w-red">Rouge</span> Rail 12V perfboard <span class="arrow">→</span> LM2596 IN+ (entrée positive)</div>
+  <div class="conn-row"><span class="wire w-black">Noir</span> Rail GND perfboard <span class="arrow">→</span> LM2596 IN− (entrée négative)</div>
+  <div class="conn-row"><span class="wire w-orange">Orange</span> LM2596 OUT+ (sortie) <span class="arrow">→</span> Rail 5V perfboard (R2, cols 11-18)</div>
+  <div class="conn-row"><span class="wire w-black">Noir</span> LM2596 OUT− (sortie) <span class="arrow">→</span> Rail GND perfboard (déjà connecté)</div>
+  <div class="danger-box">
+    <div class="title">CRITIQUE : Régler à 5.0V AVANT de brancher l'ESP32 !</div>
+    <div class="desc">1) Branche le LM2596 à la batterie (via le rail 12V). 2) Allume l'interrupteur. 3) Avec un multimètre sur les bornes OUT+ et OUT−, tourne la vis bleue du potentiomètre jusqu'à lire <b>exactement 5.0V</b>. 4) Seulement ensuite, branche le fil orange vers l'ESP32 VIN.</div>
+  </div>
+</div>
+
+<!-- STEP 4: ESP32 power -->
+<div class="step-section">
+  <h3><span class="step-num">4</span> ESP32 — Alimentation</h3>
+  <div class="conn-row"><span class="wire w-orange">Orange</span> Rail 5V perfboard <span class="arrow">→</span> ESP32 VIN</div>
+  <div class="conn-row"><span class="wire w-black">Noir</span> Rail GND perfboard <span class="arrow">→</span> ESP32 GND</div>
+  <div class="conn-row"><span class="wire w-yellow">Jaune</span> ESP32 3V3 <span class="arrow">→</span> Rail 3.3V perfboard (R1)</div>
+  <div class="explanation">
+    <b>VIN</b> accepte du 5V et le convertit en 3.3V interne pour le processeur.<br>
+    <b>3V3</b> est la sortie 3.3V de l'ESP32. On l'utilise pour alimenter les encodeurs et les capteurs ToF via le perfboard.
+  </div>
+</div>
+
+<!-- STEP 5: Motors -->
+<div class="step-section">
+  <h3><span class="step-num">5</span> Moteurs (6 fils chacun)</h3>
+  <p style="margin-bottom:12px">Chaque moteur JGB37-520 a <b>6 fils</b>. Voici ce que chacun fait :</p>
+
+  <div class="motor-wire"><span class="wire w-red">Rouge</span> <span class="motor-wire-desc"><b>Moteur +</b> → se branche aux sorties OUT du L298N (pour faire tourner le moteur)</span></div>
+  <div class="motor-wire"><span class="wire w-white">Blanc</span> <span class="motor-wire-desc"><b>Moteur −</b> → se branche aux sorties OUT du L298N (l'autre borne)</span></div>
+  <div class="motor-wire"><span class="wire w-blue">Bleu</span> <span class="motor-wire-desc"><b>Encodeur VCC</b> → Rail <span class="wire w-yellow">3.3V</span> du perfboard (PAS 5V !)</span></div>
+  <div class="motor-wire"><span class="wire w-black">Noir</span> <span class="motor-wire-desc"><b>Encodeur GND</b> → Rail GND du perfboard</span></div>
+  <div class="motor-wire"><span style="background:#ca8a04;color:#1a1a1a;display:inline-block;padding:2px 10px;border-radius:4px;font-size:0.82rem;font-weight:700">Jaune</span> <span class="motor-wire-desc"><b>Signal A</b> → ESP32 GPIO (c'est celui qu'on utilise pour compter les tours)</span></div>
+  <div class="motor-wire"><span class="wire w-green">Vert</span> <span class="motor-wire-desc"><b>Signal B</b> → <b>Non connecté</b> (on n'a pas besoin du 2e canal)</span></div>
+
+  <h3 style="margin-top:16px">Branchement par moteur :</h3>
+  <table class="pin-table">
+    <tr><th>Moteur</th><th>Position</th><th>Rouge + Blanc</th><th>Jaune (Signal A)</th></tr>
+    <tr><td><b>M1</b></td><td>Avant-gauche</td><td>OUT1 / OUT2 du L298N</td><td><span class="gpio">GPIO34</span></td></tr>
+    <tr><td><b>M2</b></td><td>Avant-droit</td><td>OUT3 / OUT4 du L298N</td><td><span class="gpio">GPIO36</span></td></tr>
+    <tr><td><b>M3</b></td><td>Arrière-gauche</td><td>OUT1 / OUT2 du L298N (parallèle avec M1)</td><td><span class="gpio">GPIO35</span></td></tr>
+    <tr><td><b>M4</b></td><td>Arrière-droit</td><td>OUT3 / OUT4 du L298N (parallèle avec M2)</td><td><span class="gpio">GPIO39</span></td></tr>
+  </table>
+
+  <div class="explanation">
+    <b>Parallèle ?</b> Ça veut dire que M1 et M3 partagent les mêmes bornes OUT1/OUT2. Tu branches le rouge de M1 ET le rouge de M3 ensemble sur OUT1. Pareil pour les blancs sur OUT2. Idem pour M2+M4 sur OUT3/OUT4.<br><br>
+    <b>Pourquoi ?</b> Le L298N n'a que 2 canaux (A et B), mais on a 4 moteurs. En les mettant en parallèle, 2 moteurs du même côté tournent exactement à la même vitesse, ce qui fait avancer le robot droit.
+  </div>
+
+  <div class="danger-box">
+    <div class="title">ENCODEURS EN 3.3V !</div>
+    <div class="desc">Le fil <b>bleu</b> de chaque moteur (encodeur VCC) doit aller au rail 3.3V. Si tu le branches en 5V, le signal de l'encodeur sera en 5V et les GPIO de l'ESP32 (qui ne supportent que 3.3V max) seront <b>détruits définitivement</b>.</div>
+  </div>
+</div>
+
+<!-- STEP 6: ToF sensors -->
+<div class="step-section">
+  <h3><span class="step-num">6</span> Capteurs ToF VL53L0X (I2C)</h3>
+  <p style="margin-bottom:12px">Les 3 capteurs de distance partagent le même bus I2C (SDA + SCL). On les différencie grâce à la broche XSHUT.</p>
+
+  <h3>Fils communs (les 3 capteurs) :</h3>
+  <div class="conn-row"><span class="wire w-yellow">Jaune</span> ToF VCC <span class="arrow">→</span> Rail 3.3V du perfboard</div>
+  <div class="conn-row"><span class="wire w-black">Noir</span> ToF GND <span class="arrow">→</span> Rail GND du perfboard</div>
+  <div class="conn-row"><span class="wire w-blue">Bleu</span> ToF SDA <span class="arrow">→</span> ESP32 GPIO21 (SDA)</div>
+  <div class="conn-row"><span class="wire w-blue">Bleu</span> ToF SCL <span class="arrow">→</span> ESP32 GPIO22 (SCL)</div>
+
+  <h3>Fils XSHUT (un par capteur, tous différents) :</h3>
+  <table class="pin-table">
+    <tr><th>Capteur</th><th>XSHUT →</th><th>Adresse I2C</th><th>Orientation</th></tr>
+    <tr><td><b>ToF Avant</b></td><td><span class="gpio">GPIO15</span></td><td>0x30</td><td>Pointe devant le robot</td></tr>
+    <tr><td><b>ToF Gauche</b></td><td><span class="gpio">GPIO4</span></td><td>0x31</td><td>Pointe à 90° vers la gauche</td></tr>
+    <tr><td><b>ToF Droite</b></td><td><span class="gpio">GPIO5</span></td><td>0x32</td><td>Pointe à 90° vers la droite</td></tr>
+  </table>
+
+  <div class="explanation">
+    <b>Pourquoi XSHUT ?</b> Les 3 capteurs VL53L0X ont tous la même adresse I2C par défaut (0x29). On ne peut pas avoir 3 composants avec la même adresse sur le même bus ! La broche XSHUT permet d'allumer les capteurs un par un : on allume le premier, on lui donne l'adresse 0x30, puis le deuxième (0x31), puis le troisième (0x32).<br><br>
+    <b>Pull-ups I2C :</b> Le bus I2C a besoin de 2 résistances de 4.7kΩ (une sur SDA, une sur SCL) connectées vers 3.3V. Elles sont sur le perfboard.
+  </div>
+</div>
+
+<!-- STEP 7: I2C pull-ups -->
+<div class="step-section">
+  <h3><span class="step-num">7</span> Pull-ups I2C (sur le perfboard)</h3>
+  <div class="conn-row">Résistance 4.7kΩ entre <span class="wire w-yellow">3.3V</span> et <span class="wire w-blue">SDA (GPIO21)</span></div>
+  <div class="conn-row">Résistance 4.7kΩ entre <span class="wire w-yellow">3.3V</span> et <span class="wire w-blue">SCL (GPIO22)</span></div>
+  <div class="explanation">
+    <b>Sans ces résistances, les capteurs ToF ne fonctionneront pas.</b> Le bus I2C a besoin de ces pull-ups pour maintenir le signal haut quand personne ne communique. C'est comme un « ressort » qui ramène le fil à 3.3V.
+  </div>
+</div>
+
+<!-- ═══ TESTING ORDER ═══ -->
+<h2>Ordre de test (très important !)</h2>
+<div class="tip-box">
+  <div class="title">Ne branche pas tout d'un coup. Teste étape par étape !</div>
+  <div class="desc">
+    <b>1.</b> Branche la batterie → BMS → interrupteur. Mesure 12V sur le rail.<br>
+    <b>2.</b> Branche le LM2596. Règle à 5.0V. Mesure avec le multimètre.<br>
+    <b>3.</b> Branche l'ESP32 (VIN + GND). Vérifie que la LED bleue clignote au démarrage.<br>
+    <b>4.</b> Upload un sketch de test basique (ex: blink). Si ça marche, l'ESP32 est bien alimenté.<br>
+    <b>5.</b> Branche UN moteur. Teste qu'il tourne avec un sketch simple.<br>
+    <b>6.</b> Branche les 3 autres moteurs et teste.<br>
+    <b>7.</b> Branche UN capteur ToF. Teste qu'il retourne des distances.<br>
+    <b>8.</b> Branche les 2 autres ToF et teste.<br>
+    <b>9.</b> Teste les encodeurs un par un.<br>
+    <b>10.</b> Tout fonctionne ? Upload le code du robot !
+  </div>
+</div>
+
+<div class="danger-box">
+  <div class="title">Si quelque chose ne marche pas</div>
+  <div class="desc">
+    <b>Pas de courant :</b> Vérifie que l'interrupteur est allumé. Vérifie les soudures avec le multimètre en mode « continuité » (le bip).<br>
+    <b>ESP32 ne démarre pas :</b> Mesure le VIN. Est-ce bien 5.0V ? Vérifie le GND.<br>
+    <b>Moteur ne tourne pas :</b> As-tu retiré les jumpers ENA/ENB ? Vérifie le câblage IN1-IN4 et ENA/ENB.<br>
+    <b>Capteur ToF ne répond pas :</b> Vérifie les pull-ups I2C. Vérifie que XSHUT est bien câblé. Lance un scan I2C dans le Serial Monitor.
+  </div>
+</div>
+
+</div>
+</body>
+</html>
