@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoboLymix — Mon Plan Robot Labyrinthe</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c8;padding:0}
+
+/* ── NAV ── */
+.topbar{position:sticky;top:0;z-index:100;background:#1a1a1a;border-bottom:1px solid #333;padding:12px 24px;display:flex;align-items:center;gap:16px;backdrop-filter:blur(10px)}
+.topbar h1{font-size:1.1rem;color:#f5f0e6;flex:1}
+.topbar .progress-wrap{display:flex;align-items:center;gap:8px}
+.topbar .bar{width:160px;height:8px;background:#333;border-radius:4px;overflow:hidden}
+.topbar .bar .fill{height:100%;background:linear-gradient(90deg,#5a8a5a,#7cc47c);border-radius:4px;transition:width .4s}
+.topbar .pct{font-size:.85rem;color:#7cc47c;font-weight:600;min-width:40px}
+.topbar .count{font-size:.75rem;color:#8a8578}
+
+.container{max-width:900px;margin:0 auto;padding:24px}
+
+/* ── HERO ── */
+.hero{text-align:center;padding:32px 20px;margin-bottom:24px;background:linear-gradient(135deg,#2a2518 0%,#1a1a1a 60%,#1e2a1e 100%);border:1px solid #333;border-radius:16px}
+.hero h2{font-size:1.6rem;color:#f5f0e6;margin-bottom:6px}
+.hero p{color:#8a8578;font-size:.9rem;margin-bottom:16px}
+.hero .specs{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.hero .spec{background:#222;border:1px solid #333;border-radius:8px;padding:6px 12px;font-size:.78rem;color:#d4d0c8}
+.hero .spec b{color:#e8a435}
+
+/* ── PHASES ── */
+.phase{margin-bottom:32px}
+.phase-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:10px 16px;background:#222;border:1px solid #333;border-radius:10px;cursor:pointer;user-select:none}
+.phase-header:hover{background:#262626}
+.phase-num{background:#e8a435;color:#1a1a1a;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;flex-shrink:0}
+.phase-header h3{flex:1;font-size:1.05rem;color:#f5f0e6}
+.phase-header .phase-count{font-size:.75rem;color:#8a8578;background:#2a2a2a;padding:2px 8px;border-radius:10px}
+.phase-header .toggle{color:#8a8578;font-size:1.2rem;transition:transform .2s}
+.phase-header.collapsed .toggle{transform:rotate(-90deg)}
+.phase-body{overflow:hidden;transition:max-height .3s}
+.phase-body.collapsed{max-height:0!important}
+
+/* ── STEPS ── */
+.step{display:flex;gap:12px;padding:12px 14px;margin-bottom:6px;background:#1e1e1e;border:1px solid #2a2a2a;border-radius:10px;transition:all .15s;align-items:flex-start}
+.step:hover{background:#222;border-color:#333}
+.step.done{opacity:.45}
+.step.done .step-title{text-decoration:line-through}
+.step-check{flex-shrink:0;margin-top:2px}
+.step-check input{width:20px;height:20px;accent-color:#7cc47c;cursor:pointer}
+.step-content{flex:1;min-width:0}
+.step-title{font-size:.9rem;color:#f5f0e6;font-weight:600;margin-bottom:3px}
+.step-desc{font-size:.8rem;color:#8a8578;line-height:1.5}
+.step-desc a{color:#e8a435;text-decoration:none}
+.step-desc a:hover{text-decoration:underline}
+.step-time{font-size:.7rem;color:#5a8a5a;background:#1e2a1e;padding:2px 8px;border-radius:4px;display:inline-block;margin-top:4px}
+.step-warn{font-size:.75rem;color:#d47272;margin-top:4px}
+
+/* ── EXPANDABLE DETAILS ── */
+.step-content{cursor:pointer}
+.step-detail{display:none;margin-top:8px;padding-top:10px;border-top:1px solid #333}
+.step-detail.open{display:block}
+.step-detail-inner{font-size:.82rem;color:#b0ac9f;line-height:1.7}
+.step-detail-inner h4{color:#e8a435;font-size:.82rem;font-weight:700;margin:8px 0 4px 0}
+.step-detail-inner h4:first-child{margin-top:0}
+.step-detail-inner ul{margin:4px 0 8px 18px;list-style:disc}
+.step-detail-inner li{margin-bottom:3px}
+.step-detail-inner code{background:#2a2a2a;color:#e8a435;padding:1px 5px;border-radius:3px;font-size:.78rem}
+.step-detail-inner .detail-tip{background:#1e2a1e;border:1px solid #333;border-radius:6px;padding:8px 12px;margin:8px 0;font-size:.78rem;color:#7cc47c}
+.step-detail-inner .detail-warn{background:#2a1e1e;border:1px solid #333;border-radius:6px;padding:8px 12px;margin:8px 0;font-size:.78rem;color:#d47272}
+.step-detail-inner img{max-width:100%;border-radius:6px;margin:6px 0}
+.expand-hint{font-size:.68rem;color:#8a8578;margin-top:6px;font-style:italic;cursor:pointer;display:inline-block;padding:2px 0}
+
+/* ── TAGS ── */
+.tag{display:inline-block;font-size:.65rem;padding:2px 6px;border-radius:4px;margin-right:4px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.tag-buy{background:#2a2518;color:#e8a435;border:1px solid #e8a435}
+.tag-print{background:#2a1e28;color:#c27db5;border:1px solid #c27db5}
+.tag-solder{background:#2a1e1e;color:#d47272;border:1px solid #d47272}
+.tag-code{background:#1e2a1e;color:#7cc47c;border:1px solid #7cc47c}
+.tag-test{background:#1e2520;color:#4acfb0;border:1px solid #4acfb0}
+.tag-build{background:#2a2a2a;color:#d4d0c8;border:1px solid #666}
+
+/* ── FILE LINKS ── */
+.files{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.file-link{font-size:.72rem;color:#e8a435;background:#2a2518;padding:3px 8px;border-radius:4px;text-decoration:none;border:1px solid #333;display:inline-flex;align-items:center;gap:4px}
+.file-link:hover{background:#333;border-color:#e8a435}
+.file-link .icon{font-size:.8rem}
+
+/* ── FOOTER ── */
+.footer{text-align:center;padding:24px;margin-top:32px;border-top:1px solid #333;color:#666;font-size:.8rem}
+
+/* ══════════════════════════════════
+   MOBILE (≤ 600px)
+   ══════════════════════════════════ */
+@media(max-width:600px){
+
+  /* Top bar: stack title above progress */
+  .topbar{flex-direction:column;align-items:flex-start;gap:8px;padding:10px 14px}
+  .topbar h1{font-size:.95rem}
+  .topbar .progress-wrap{width:100%}
+  .topbar .bar{flex:1}
+
+  /* Container: tighter padding */
+  .container{padding:12px 10px}
+
+  /* Hero: smaller fonts, less padding */
+  .hero{padding:20px 12px;border-radius:12px}
+  .hero h2{font-size:1.25rem}
+  .hero p{font-size:.82rem}
+  .hero .spec{font-size:.72rem;padding:4px 9px}
+
+  /* Phase header */
+  .phase-header{padding:9px 12px;gap:9px;border-radius:8px}
+  .phase-num{width:30px;height:30px;font-size:.9rem}
+  .phase-header h3{font-size:.92rem}
+
+  /* Steps */
+  .step{padding:10px 10px;gap:9px;border-radius:8px}
+  .step-check input{width:22px;height:22px} /* bigger tap target */
+  .step-title{font-size:.85rem}
+  .step-desc{font-size:.77rem}
+  .step-time{font-size:.67rem}
+  .step-warn{font-size:.72rem}
+
+  /* Tags: allow wrap, slightly smaller */
+  .tag{font-size:.6rem;padding:2px 5px;margin-bottom:2px}
+
+  /* File links: allow wrap, full-width feel */
+  .files{gap:5px}
+  .file-link{font-size:.68rem;padding:4px 8px}
+
+  /* Expand hint */
+  .expand-hint{font-size:.65rem}
+
+  /* Detail inner */
+  .step-detail-inner{font-size:.78rem}
+  .step-detail-inner h4{font-size:.78rem}
+  .step-detail-inner code{font-size:.74rem}
+  .step-detail-inner .detail-tip,
+  .step-detail-inner .detail-warn{font-size:.74rem;padding:7px 10px}
+  .step-detail-inner ul{margin-left:14px}
+
+  /* Footer */
+  .footer{padding:16px 10px;font-size:.72rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOP BAR ═══ -->
+<div class="topbar">
+  <h1>RoboLymix · INSAT — Plan Complet</h1>
+  <div class="progress-wrap">
+    <span class="count" id="counter">0 / 42</span>
+    <div class="bar"><div class="fill" id="bar" style="width:0%"></div></div>
+    <span class="pct" id="pct">0%</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <h2>RoboLymix — Maze-Solver · RoboCup Tunisie</h2>
+  <p>Tout ce que je dois faire, de zéro au robot terminé. Chaque étape cochée = un pas de plus vers le tournoi.</p>
+  <div class="specs">
+    <div class="spec"><b>ESP32</b> WROOM-32D</div>
+    <div class="spec"><b>4×</b> JGB37-520</div>
+    <div class="spec"><b>L298N</b> Dual H-Bridge</div>
+    <div class="spec"><b>3×</b> VL53L0X ToF</div>
+    <div class="spec"><b>MPU9250</b> 9-axis</div>
+    <div class="spec"><b>Flood Fill</b> Algorithm</div>
+    <div class="spec"><b>150×150mm</b> Chassis</div>
+    <div class="spec"><b>3</b> Étages</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--                    PHASE 1: ACHATS                      -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="phase" id="phase1">
+  <div class="phase-header" onclick="togglePhase(1)">
+    <div class="phase-num">1</div>
+    <h3>Acheter les composants</h3>
+    <span class="phase-count" id="pc1">0/6</span>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="phase-body" id="pb1">
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="0"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-buy">Achat</span> Commander les composants principaux</div>
+      <div class="step-desc">ESP32 DevKitC 30-pin, L298N, 3× VL53L0X GY-530, 1× MPU9250 GY-91. Vérifie que chaque VL53L0X a le pin XSHUT accessible.</div>
+      <div class="files"><a class="file-link" href="liste_pieces_v3.html"><span class="icon">📋</span> liste_pieces_v3.html</a></div>
+      <div class="step-time">⏱ 1-2 jours (local) ou 15-30 jours (AliExpress)</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Pourquoi ces composants ?</h4>
+        <ul>
+          <li><b>ESP32 DevKitC 30-pin</b> : c'est le cerveau du robot. Il a le Wi-Fi, le Bluetooth, assez de GPIO pour tout connecter, et 2 cœurs pour gérer les encodeurs en temps réel. Le modèle 30-pin (pas 38-pin) car il rentre mieux dans notre châssis 150mm.</li>
+          <li><b>L298N</b> : pont H double — il permet de contrôler 2 groupes de moteurs (gauche et droit) en vitesse et en direction. Il supporte jusqu'à 2A par canal, parfait pour nos JGB37-520.</li>
+          <li><b>VL53L0X (×3)</b> : capteurs laser Time-of-Flight. Ils mesurent la distance aux murs avec une précision de ~3mm sur 0-120cm. On en met 3 : devant, gauche, droite.</li>
+          <li><b>MPU9250 GY-91</b> : 9 axes (gyroscope + accéléromètre + magnétomètre). Le gyroscope corrige les dérives de cap pendant les virages, et le magnétomètre donne un cap absolu.</li>
+        </ul>
+        <h4>Où acheter en Tunisie ?</h4>
+        <ul>
+          <li><b>Local (rapide, plus cher)</b> : Sattari Electronics (Tunis Médina), ElectroPlanet, des boutiques à Sousse/Sfax. Prix ~40-60% plus cher qu'AliExpress.</li>
+          <li><b>AliExpress (lent, pas cher)</b> : cherche "ESP32 DevKitC V2", "L298N module", "VL53L0X GY-530", "MPU9250 GY-91". Commande ASAP car 15-30 jours de livraison.</li>
+        </ul>
+        <div class="detail-tip">💡 Astuce : vérifie sur chaque VL53L0X que le pin XSHUT est bien accessible (petit header 6 pins). Certaines cartes chinoises ne le soudent pas — il faut alors souder un header soi-même.</div>
+        <h4>Vérification à la réception</h4>
+        <ul>
+          <li>ESP32 : brancher en USB → doit apparaître comme port COM/serial</li>
+          <li>L298N : vérifier les 2 jumpers ENA/ENB sont présents (on les retirera plus tard)</li>
+          <li>VL53L0X : 6 pins visibles (VCC, GND, SDA, SCL, GPIO1, XSHUT)</li>
+          <li>MPU9250 : puce marquée "InvenSense MPU-9250" — attention aux faux MPU6500 vendus comme MPU9250</li>
+        </ul>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="1"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-buy">Achat</span> Commander les moteurs + roues</div>
+      <div class="step-desc">4× JGB37-520 (12V, ratio 30:1, avec encodeur Hall intégré) + 4× roues Ø65mm (axe 6mm). Vérifie que chaque moteur a 6 fils (2 moteur + 4 encodeur).</div>
+      <div class="step-time">⏱ 15-30 jours (AliExpress — commence par ça !)</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Pourquoi le JGB37-520 ?</h4>
+        <ul>
+          <li><b>Ratio 30:1</b> : bon compromis vitesse/couple. ~300 RPM à vide → assez rapide pour le speed run, assez de couple pour démarrer/tourner sans patiner.</li>
+          <li><b>Encodeur Hall intégré</b> : 11 impulsions par tour moteur × 30 (ratio) = 330 impulsions par tour de roue. Ça donne la précision nécessaire pour le PID et la navigation cellule par cellule.</li>
+          <li><b>12V nominal</b> : correspond à notre pack 3S (11.1-12.6V).</li>
+        </ul>
+        <h4>Ce qu'il faut vérifier à la commande</h4>
+        <ul>
+          <li>Commande exactement <b>30:1 ratio</b> (pas 100:1 ni 10:1)</li>
+          <li>Version <b>avec encodeur</b> (6 fils : 2 rouges/noirs pour le moteur + 4 pour l'encodeur)</li>
+          <li>Axe de <b>6mm de diamètre</b> (pour les roues)</li>
+        </ul>
+        <h4>Les roues</h4>
+        <ul>
+          <li>Ø65mm en caoutchouc, trou central 6mm</li>
+          <li>Assez petites pour rester sous la limite de hauteur du labyrinthe</li>
+          <li>Le caoutchouc donne une bonne adhérence sur MDF/bois (surface typique RoboCup)</li>
+        </ul>
+        <div class="detail-warn">⚠ Commande les moteurs EN PREMIER — c'est le composant avec le plus long délai de livraison (15-30j). Tu peux travailler sur le perfboard et le code en attendant.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="2"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-buy">Achat</span> Alimentation : batteries + BMS + LM2596</div>
+      <div class="step-desc">3× 18650 flat-top 3400mAh + 1× BMS 3S 10A + 1× LM2596 step-down + 1× chargeur individuel + 1× interrupteur 3A.</div>
+      <div class="step-warn">⚠ FLAT-TOP uniquement, pas button-top !</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Pourquoi 3S (3 cellules en série) ?</h4>
+        <ul>
+          <li>3 × 3.7V = <b>11.1V nominal</b> (range 9.9V-12.6V)</li>
+          <li>Les moteurs JGB37-520 sont optimaux à 12V</li>
+          <li>Le L298N a besoin de 7-12V pour fonctionner</li>
+          <li>Le LM2596 step-down convertit 12V → 5V pour l'ESP32</li>
+        </ul>
+        <h4>Le BMS (Battery Management System)</h4>
+        <ul>
+          <li>Protège contre la <b>surcharge</b> (>4.2V par cellule), la <b>décharge profonde</b> (<2.5V), et le <b>court-circuit</b></li>
+          <li>3S 10A = supporte 10A en continu, largement assez pour 4 moteurs (~2A pic total)</li>
+          <li>OBLIGATOIRE — sans BMS, les batteries Li-ion peuvent gonfler ou prendre feu</li>
+        </ul>
+        <h4>Le LM2596</h4>
+        <ul>
+          <li>Module step-down (buck converter) réglable</li>
+          <li>Entrée : 12V du pack → Sortie : <b>5.0V exactement</b> (réglable via vis)</li>
+          <li>L'ESP32 VIN accepte 5V — NE PAS envoyer 12V dessus !</li>
+          <li>Le module a une LED de fonctionnement et un potentiomètre bleu à tourner</li>
+        </ul>
+        <div class="detail-warn">⚠ FLAT-TOP = la face positive (+) est plate. Button-top = petit bouton qui dépasse. Le BMS et les supports de batteries ne marchent qu'avec flat-top. Vérifie AVANT d'acheter.</div>
+        <div class="detail-tip">💡 Achète un chargeur individuel de 18650 (pas un chargeur de pack). Ça permet de charger chaque cellule séparément et de vérifier leur tension.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="3"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-buy">Achat</span> Composants passifs + perfboard</div>
+      <div class="step-desc">1× perfboard 9×7cm (pastilles individuelles, PAS stripboard), 2× résistance 4.7kΩ, 1× condensateur 100µF 16V, 3× condensateur 100nF, kit soudure.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Perfboard vs Stripboard</h4>
+        <ul>
+          <li><b>Perfboard (pastilles individuelles)</b> : chaque trou est isolé — TU choisis les connexions avec du fil/soudure. C'est ce qu'on utilise.</li>
+          <li><b>Stripboard (bandes de cuivre)</b> : les trous sont connectés en lignes. Plus facile mais moins flexible. PAS adapté à notre layout.</li>
+        </ul>
+        <h4>Rôle de chaque composant passif</h4>
+        <ul>
+          <li><b>2× résistances 4.7kΩ</b> : pull-up pour le bus I2C (SDA et SCL). Sans elles, les capteurs ToF et le MPU9250 ne communiquent pas avec l'ESP32.</li>
+          <li><b>1× condensateur 100µF 16V (électrolytique)</b> : filtrage du rail 12V. Absorbe les pics de courant quand les moteurs démarrent/s'arrêtent.</li>
+          <li><b>3× condensateur 100nF (céramique)</b> : découplage haute fréquence sur chaque rail (3.3V, 5V, 12V). Élimine le bruit électrique qui perturbe les capteurs.</li>
+        </ul>
+        <h4>Kit soudure minimum</h4>
+        <ul>
+          <li>Fer à souder 30-60W (pointe fine ~1mm)</li>
+          <li>Fil d'étain 0.6-0.8mm (avec flux intégré)</li>
+          <li>Éponge ou laine de laiton pour nettoyer la panne</li>
+          <li>Optionnel mais utile : troisième main / support, pompe à dessouder</li>
+        </ul>
+        <div class="detail-tip">💡 Si c'est ta première soudure : entraîne-toi sur un bout de perfboard vide. Fais des ponts de soudure entre 2 pastilles. Quand tu es à l'aise, passe au vrai circuit.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="4"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-buy">Achat</span> Câblage + fixation</div>
+      <div class="step-desc">2m fil 22AWG (rouge+noir), jumper M-F 20cm ×30, jumper M-M 20cm ×10, serre-câbles, foam tape 3M, Velcro, Loctite bleu, vis/écrous/entretoises M3 nylon, câble micro-USB.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Pourquoi chaque item ?</h4>
+        <ul>
+          <li><b>Fil 22AWG</b> : assez épais pour le courant moteur (~2A), assez fin pour passer dans les fentes du châssis. Rouge = VCC, Noir = GND.</li>
+          <li><b>Jumper M-F (mâle-femelle)</b> : pour connecter l'ESP32 (broches mâles) au perfboard et aux capteurs. 30 pièces car on a beaucoup de connexions.</li>
+          <li><b>Jumper M-M</b> : pour les connexions entre modules (L298N → perfboard, etc.)</li>
+          <li><b>Serre-câbles</b> : organisation des câbles — un robot propre = moins de bugs et plus facile à debugger.</li>
+          <li><b>Foam tape 3M</b> : fixation des composants légers (BMS, LM2596) qui n'ont pas de trous de vis.</li>
+          <li><b>Velcro</b> : fixation de la batterie — permet de la retirer facilement pour la charger.</li>
+          <li><b>Loctite bleu (243)</b> : frein-filet pour les vis moteur — empêche les vis de se desserrer avec les vibrations. BLEU pas rouge ! (Le rouge est permanent.)</li>
+          <li><b>Entretoises M3 nylon</b> : séparent les étages du châssis. Nylon = isolant et léger.</li>
+        </ul>
+        <div class="detail-tip">💡 Achète des serre-câbles en excès — tu en utiliseras plus que prévu. Et garde le câble micro-USB pour programmer l'ESP32 depuis ton PC.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="5"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-buy">Achat</span> Filament PLA pour le châssis</div>
+      <div class="step-desc">~250g de PLA 1.75mm pour imprimer les 3 plateaux. Si tu n'as pas d'imprimante 3D, trouve un fablab ou un service d'impression en Tunisie.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Paramètres d'impression recommandés</h4>
+        <ul>
+          <li><b>Matériau</b> : PLA (facile à imprimer, rigide, pas cher)</li>
+          <li><b>Épaisseur de couche</b> : 0.2mm (bon compromis vitesse/qualité)</li>
+          <li><b>Remplissage (infill)</b> : 30% (assez solide sans être trop lourd)</li>
+          <li><b>Parois</b> : 3 périmètres minimum (solidité des trous de vis)</li>
+          <li><b>Support</b> : non nécessaire (les plateaux sont plats)</li>
+          <li><b>Temps estimé</b> : F1 ~3-4h, F2 ~3h, F3 ~2h</li>
+        </ul>
+        <h4>Si tu n'as pas d'imprimante 3D</h4>
+        <ul>
+          <li><b>FabLab INSAT</b> : vérifie si le fablab a une imprimante disponible</li>
+          <li><b>Alternative MDF/acrylique</b> : tu peux découper les plateaux en MDF 3mm avec une scie à chantourner. Dessine les dimensions sur papier, colle sur le MDF, et découpe. Plus long mais ça marche.</li>
+          <li><b>Services en ligne</b> : il y a des services d'impression 3D en Tunisie (cherche sur Facebook/Instagram)</li>
+        </ul>
+        <div class="detail-tip">💡 Imprime un petit morceau test (30×30mm) d'abord pour vérifier que les dimensions sont correctes et que les trous M3 s'alignent avec tes vis.</div>
+      </div></div>
+    </div></div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--                PHASE 2: CHÂSSIS                         -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="phase" id="phase2">
+  <div class="phase-header" onclick="togglePhase(2)">
+    <div class="phase-num">2</div>
+    <h3>Imprimer et assembler le châssis</h3>
+    <span class="phase-count" id="pc2">0/7</span>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="phase-body" id="pb2">
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="6"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-print">3D</span> Imprimer Floor 1 (150×150mm)</div>
+      <div class="step-desc">Avec les 4 encoches moteur aux coins, les trous M3 pour entretoises, la fente câbles au centre, et le trou interrupteur au bord arrière.</div>
+      <div class="files">
+        <a class="file-link" href="chassis/chassis_floor1_v3.html"><span class="icon">📐</span> floor1_v3</a>
+        <a class="file-link" href="chassis/chassis_assembly_guide_v3.html"><span class="icon">🔧</span> guide assemblage</a>
+      </div>
+      <div class="step-time">⏱ 3-4h d'impression (PLA 30% infill, 0.2mm)</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Le Floor 1 — l'étage puissance</h4>
+        <ul>
+          <li>C'est la base du robot — tout le poids repose dessus</li>
+          <li>Dimensions exactes : <b>150×150mm</b>, épaisseur 3mm</li>
+          <li>4 encoches de <b>42×25mm</b> aux coins pour les moteurs JGB37-520</li>
+          <li>Les moteurs dépassent par les côtés — c'est normal, les arbres sortent pour les roues</li>
+        </ul>
+        <h4>Éléments à intégrer dans l'impression</h4>
+        <ul>
+          <li><b>4 trous M3</b> pour les entretoises vers Floor 2 (positions : 20mm du bord, en rectangle)</li>
+          <li><b>Fente centrale</b> (~10×30mm) pour passer les câbles vers Floor 2</li>
+          <li><b>Trou interrupteur</b> au bord arrière (diamètre selon ton interrupteur, ~12mm typique)</li>
+          <li><b>4 paires de trous M3</b> pour fixer les moteurs dans les encoches (2 vis par moteur)</li>
+        </ul>
+        <h4>Composants qui vont sur Floor 1</h4>
+        <ul>
+          <li><b>L298N</b> : centre-avant (fixé par vis M3 sur rondelles nylon isolantes)</li>
+          <li><b>Batterie 3S</b> : centre-arrière (fixée par Velcro pour retrait facile)</li>
+          <li><b>BMS</b> : arrière-gauche (fixé par foam tape)</li>
+          <li><b>LM2596</b> : arrière-droit (fixé par foam tape)</li>
+          <li><b>Interrupteur</b> : bord arrière (clipsé ou vissé)</li>
+        </ul>
+        <div class="detail-tip">💡 Ouvre le diagramme floor1_v3 pendant l'impression pour vérifier que chaque trou et encoche est au bon endroit. Imprime d'abord un test à 50% de taille pour valider l'alignement.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="7"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-print">3D</span> Imprimer Floor 2 (150×150mm)</div>
+      <div class="step-desc">Avec 2 jeux de trous M3 (4 pour F1, 4 pour F3), 2 fentes câbles (bas vers F1, haut vers F3).</div>
+      <div class="files"><a class="file-link" href="chassis/chassis_floor2_v3.html"><span class="icon">📐</span> floor2_v3</a></div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Le Floor 2 — l'étage cerveau</h4>
+        <ul>
+          <li>Même dimensions que F1 : <b>150×150mm</b>, épaisseur 3mm</li>
+          <li>Suspendu à <b>30mm</b> au-dessus de F1 par les entretoises M3×30mm</li>
+          <li>C'est ici que se trouve toute l'intelligence : ESP32 + perfboard + MPU9250</li>
+        </ul>
+        <h4>Deux jeux de trous</h4>
+        <ul>
+          <li><b>4 trous M3 "bas"</b> : s'alignent avec les entretoises de F1 (mêmes positions)</li>
+          <li><b>4 trous M3 "haut"</b> : pour les entretoises M3×20mm vers F3 (positions différentes, plus proches du centre-avant car F3 est plus petit)</li>
+        </ul>
+        <h4>Fentes câbles</h4>
+        <ul>
+          <li><b>Fente vers le bas</b> (vers F1) : passage des câbles moteurs, encodeurs, alimentation</li>
+          <li><b>Fente vers le haut</b> (vers F3) : passage des 15 câbles des 3 ToF (5 par capteur) + câble LED</li>
+        </ul>
+        <h4>Composants sur Floor 2</h4>
+        <ul>
+          <li><b>ESP32</b> : côté avant, port USB accessible par le bord pour programmer</li>
+          <li><b>Perfboard 90×70mm</b> : au centre, contient les rails d'alimentation, résistances I2C, condensateurs</li>
+          <li><b>MPU9250</b> : soudé au centre du perfboard (position idéale = centre de rotation du robot)</li>
+        </ul>
+        <div class="detail-tip">💡 Le MPU9250 doit être le plus près possible du centre de rotation du robot. Si tu le places excentré, les accélérations en virage créent des mesures parasites.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="8"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-print">3D</span> Imprimer Floor 3 (150×100mm)</div>
+      <div class="step-desc">Plus petit. Avec les 3 clips ToF intégrés (centre de chaque bord : avant, gauche, droite), trou LED, fente câbles vers F2.</div>
+      <div class="files"><a class="file-link" href="chassis/chassis_floor3_v3.html"><span class="icon">📐</span> floor3_v3</a></div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Le Floor 3 — l'étage capteurs</h4>
+        <ul>
+          <li>Plus petit : <b>150×100mm</b> (il n'a besoin que de 3 capteurs + 1 LED)</li>
+          <li>Suspendu à <b>20mm</b> au-dessus de F2 par les entretoises M3×20mm</li>
+          <li>Hauteur totale du robot ~92mm (sous la limite des murs de labyrinthe ~50mm... les capteurs sont à la bonne hauteur)</li>
+        </ul>
+        <h4>Positionnement des ToF</h4>
+        <ul>
+          <li>Chaque VL53L0X est au <b>centre exact</b> de son bord : Front (milieu du bord avant), Left (milieu du bord gauche), Right (milieu du bord droit)</li>
+          <li>Centrer les capteurs = lectures symétriques = le robot sait exactement sa distance aux murs de chaque côté</li>
+          <li>Les clips 3D maintiennent les capteurs sans vis — juste un clip-in</li>
+          <li>Le cône de détection fait <b>25°</b> — aucun câble ne doit passer devant !</li>
+        </ul>
+        <h4>La LED</h4>
+        <ul>
+          <li>Au centre du bord arrière</li>
+          <li>Connectée à GPIO2 avec une résistance 220Ω en série</li>
+          <li>Utile pour debug : allumée = robot en exploration, clignotante = erreur, éteinte = en attente</li>
+        </ul>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="9"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-build">Build</span> Assembler Floor 1 : moteurs + puissance</div>
+      <div class="step-desc">Visser les 4 moteurs (M3×8 + Loctite) → L298N centre-avant (rondelles nylon !) → batterie (Velcro) → BMS (foam) → LM2596 (foam) → interrupteur → 4 entretoises M3×30mm.</div>
+      <div class="step-warn">⚠ Retirer les jumpers ENA/ENB sur le L298N avant montage !</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Ordre de montage (important !)</h4>
+        <ul>
+          <li><b>1. Moteurs en premier</b> : vis M3×8 + une goutte de Loctite bleu sur chaque vis. Laisse sécher 10 min avant de manipuler.</li>
+          <li><b>2. L298N</b> : centre-avant. Utilise des rondelles nylon entre le L298N et le PLA — le radiateur du L298N peut chauffer et déformer le plastique.</li>
+          <li><b>3. Batterie</b> : centre-arrière sur Velcro. Le poids de la batterie au centre aide la stabilité.</li>
+          <li><b>4. BMS</b> : arrière-gauche sur foam tape. Connecte les 3 fils d'équilibrage + les fils B+/B- de la batterie.</li>
+          <li><b>5. LM2596</b> : arrière-droit sur foam tape. NE PAS le connecter à l'ESP32 avant d'avoir réglé la tension !</li>
+          <li><b>6. Interrupteur</b> : bord arrière. En série sur le fil positif (entre BMS P+ et le reste du circuit).</li>
+          <li><b>7. Entretoises</b> : 4× M3×30mm dans les trous dédiés, serrées à la main (pas trop fort sur le PLA).</li>
+        </ul>
+        <div class="detail-warn">⚠ Les jumpers ENA/ENB du L298N : ce sont 2 petits cavaliers jaunes/noirs qui connectent les pins ENABLE aux 5V. Il FAUT les retirer car on contrôle la vitesse par PWM depuis l'ESP32 (GPIO14 = ENA, GPIO32 = ENB). Si tu les laisses, les moteurs tournent toujours à fond.</div>
+        <div class="detail-tip">💡 Connecte les fils moteur M1+M3 (gauche) en parallèle sur OUT1/OUT2, et M2+M4 (droite) en parallèle sur OUT3/OUT4. Si un côté tourne à l'envers, inverse les 2 fils de ce côté sur les bornes du L298N.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="10"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-test">Test</span> Tester Floor 1 : tensions</div>
+      <div class="step-desc">Batterie chargée → interrupteur ON → multimètre : 12V sur bornes L298N ? 5.0V en sortie LM2596 ? Si le LM2596 n'est pas à 5.0V, tourne la vis de réglage AVANT de brancher l'ESP32.</div>
+      <div class="step-warn">⚠ Si le LM2596 sort plus de 5.5V, il grille l'ESP32 !</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Procédure de test étape par étape</h4>
+        <ul>
+          <li><b>1.</b> Batterie chargée à fond (chaque cellule ~4.1-4.2V)</li>
+          <li><b>2.</b> Multimètre en mode tension DC (V=)</li>
+          <li><b>3.</b> Interrupteur ON</li>
+          <li><b>4.</b> Mesure aux bornes du L298N (12V / GND) : tu dois lire <b>11.1-12.6V</b></li>
+          <li><b>5.</b> Mesure en sortie du LM2596 (OUT+ / OUT-) : tu dois lire <b>5.0V ±0.1V</b></li>
+        </ul>
+        <h4>Régler le LM2596</h4>
+        <ul>
+          <li>Il y a un petit potentiomètre bleu sur le module</li>
+          <li>Tourne avec un tournevis cruciforme TOUT PETIT (2mm)</li>
+          <li>Sens horaire = tension monte, sens anti-horaire = tension baisse</li>
+          <li>Ajuste LENTEMENT en mesurant en continu avec le multimètre</li>
+          <li>Objectif : <b>5.00V exactement</b></li>
+        </ul>
+        <div class="detail-warn">⚠ CRITIQUE : si tu branches l'ESP32 avec plus de 5.5V sur VIN, la puce grille instantanément. Vérifie DEUX FOIS avant de connecter. Certains LM2596 sortent 12V par défaut !</div>
+        <h4>Si quelque chose ne marche pas</h4>
+        <ul>
+          <li><b>0V partout</b> : interrupteur mal câblé ou batterie déchargée</li>
+          <li><b>12V OK mais pas de 5V</b> : LM2596 mal connecté (vérifie IN+ et IN-)</li>
+          <li><b>Tension instable</b> : mauvais contact sur les fils — resserre les bornes</li>
+        </ul>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="11"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-build">Build</span> Assembler Floor 2 + Floor 3</div>
+      <div class="step-desc">Floor 2 sur entretoises → ESP32 + perfboard + MPU9250 → entretoises M3×20mm → Floor 3 avec ToF clipsés au centre de chaque bord.</div>
+      <div class="files"><a class="file-link" href="chassis/chassis_profile_v3.html"><span class="icon">📐</span> profil latéral</a></div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Montage Floor 2</h4>
+        <ul>
+          <li><b>1.</b> Pose Floor 2 sur les 4 entretoises M3×30mm de Floor 1</li>
+          <li><b>2.</b> Fixe avec des écrous M3 nylon (serrage à la main, pas trop fort)</li>
+          <li><b>3.</b> Monte l'ESP32 côté avant — le port USB doit être accessible par le bord pour programmer sans démonter</li>
+          <li><b>4.</b> Fixe le perfboard au centre (foam tape ou vis M2 si tu as des trous prévus)</li>
+          <li><b>5.</b> Le MPU9250 est déjà soudé au centre du perfboard (étape 16)</li>
+        </ul>
+        <h4>Montage Floor 3</h4>
+        <ul>
+          <li><b>6.</b> Visse 4 entretoises M3×20mm sur Floor 2 (trous "haut")</li>
+          <li><b>7.</b> Passe les 15 câbles ToF + câble LED par la fente avant de poser F3</li>
+          <li><b>8.</b> Pose Floor 3 et fixe avec écrous M3</li>
+          <li><b>9.</b> Clipse les 3 VL53L0X dans leurs clips au centre de chaque bord</li>
+          <li><b>10.</b> Place la LED dans son trou au bord arrière</li>
+        </ul>
+        <div class="detail-tip">💡 Consulte le diagramme profil latéral pour voir la vue de côté de l'assemblage complet. La hauteur totale doit être ~92mm.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="12"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-build">Build</span> Monter les 4 roues Ø65mm</div>
+      <div class="step-desc">Enfiler sur les arbres moteur. Vérifier qu'elles tournent librement sans frotter le châssis.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Montage des roues</h4>
+        <ul>
+          <li>L'arbre moteur fait 6mm de diamètre avec un méplat (un côté est plat)</li>
+          <li>Les roues ont un trou hexagonal ou avec méplat qui s'emboîte sur l'arbre</li>
+          <li>Pousse fermement — elles doivent être bien ajustées (pas de jeu)</li>
+          <li>Si elles glissent : une goutte de colle cyanoacrylate (super glue) sur l'arbre</li>
+        </ul>
+        <h4>Vérifications</h4>
+        <ul>
+          <li><b>Rotation libre</b> : tourne chaque roue à la main — elle doit tourner sans résistance excessive</li>
+          <li><b>Pas de frottement</b> : les roues ne doivent pas toucher le châssis (Floor 1) en tournant</li>
+          <li><b>Alignement</b> : les 4 roues doivent toucher le sol en même temps quand tu poses le robot. Si le robot "boite", un moteur est peut-être mal aligné.</li>
+          <li><b>Adhérence</b> : pose le robot sur la surface prévue (bois/MDF). Les roues ne doivent pas patiner quand tu pousses le robot latéralement.</li>
+        </ul>
+        <div class="detail-tip">💡 Si le robot n'est pas parfaitement plat (une roue en l'air), tu peux ajouter une fine rondelle entre le moteur et l'encoche pour ajuster la hauteur.</div>
+      </div></div>
+    </div></div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--                PHASE 3: PERFBOARD                       -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="phase" id="phase3">
+  <div class="phase-header" onclick="togglePhase(3)">
+    <div class="phase-num">3</div>
+    <h3>Souder le perfboard</h3>
+    <span class="phase-count" id="pc3">0/6</span>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="phase-body" id="pb3">
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="13"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-solder">Soudure</span> Souder les 4 rails de distribution</div>
+      <div class="step-desc">Fil de cuivre nu : R1 = 3.3V (toute la longueur), R2 gauche = 12V (cols 1-9), R2 droite = 5V (cols 11-18), R12 = GND (toute la longueur). LAISSER col 10 vide !</div>
+      <div class="files">
+        <a class="file-link" href="perfboard_v3.html"><span class="icon">📋</span> perfboard_v3</a>
+        <a class="file-link" href="perfboard_interactive_v3.html"><span class="icon">🖱️</span> perfboard interactif</a>
+      </div>
+      <div class="step-warn">⚠ Le séparateur colonne 10 est CRITIQUE — 12V connecté au 5V = ESP32 mort</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Layout des 4 rails</h4>
+        <ul>
+          <li><b>Rangée 1 (R1) — 3.3V</b> : fil de cuivre nu soudé sur toute la longueur (cols 1-18). C'est la sortie 3.3V du régulateur interne de l'ESP32.</li>
+          <li><b>Rangée 2 gauche (R2, cols 1-9) — 12V</b> : entrée directe de la batterie 3S via le BMS. Alimente le L298N.</li>
+          <li><b>Rangée 2 droite (R2, cols 11-18) — 5V</b> : sortie du LM2596. Alimente l'ESP32 VIN et les encodeurs.</li>
+          <li><b>Rangée 12 (R12) — GND</b> : masse commune, toute la longueur. TOUT se rejoint ici.</li>
+        </ul>
+        <h4>Pourquoi la colonne 10 est vide ?</h4>
+        <ul>
+          <li>C'est le <b>séparateur physique</b> entre le 12V et le 5V sur le rail R2</li>
+          <li>Si tu poses de la soudure sur col 10 par accident, tu connectes 12V au 5V → l'ESP32 reçoit 12V et meurt instantanément</li>
+          <li>Vérifie visuellement au multimètre (mode continuité) qu'il n'y a PAS de contact entre col 9 et col 11 du rail R2</li>
+        </ul>
+        <h4>Technique de soudure des rails</h4>
+        <ul>
+          <li>Coupe un fil de cuivre nu de la bonne longueur</li>
+          <li>Plie les extrémités à 90° pour le maintenir en place dans les trous</li>
+          <li>Soude chaque pastille individuellement — le fil doit être bien en contact avec chaque pad</li>
+          <li>Vérifie la continuité après chaque rail avec le multimètre (bip entre col 1 et col 18)</li>
+        </ul>
+        <div class="detail-warn">⚠ Si c'est ta première soudure, commence par le rail GND (R12) — c'est le plus long et le moins critique en cas d'erreur. Entraîne-toi dessus.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="14"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-solder">Soudure</span> Souder les 2 résistances pull-up 4.7kΩ</div>
+      <div class="step-desc">R1 (SDA) sur R4 cols 3-5, R2 (SCL) sur R4 cols 6-8. Chaque résistance connecte le rail 3.3V au signal I2C. Pas de polarité.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Pourquoi des pull-up I2C ?</h4>
+        <ul>
+          <li>Le bus I2C fonctionne en "open-drain" : les appareils tirent la ligne vers le bas (0V) pour envoyer un '0', et la relâchent pour envoyer un '1'</li>
+          <li>Sans résistance pull-up, quand la ligne est relâchée, elle "flotte" — ni 0V ni 3.3V → le signal est illisible</li>
+          <li>Les résistances 4.7kΩ tirent les lignes SDA et SCL vers 3.3V quand personne ne parle → signal propre</li>
+          <li>On met UNE paire pour tout le bus : les 3 ToF + le MPU9250 partagent les mêmes pull-ups</li>
+        </ul>
+        <h4>Valeur 4.7kΩ — pourquoi ?</h4>
+        <ul>
+          <li>Trop faible (1kΩ) : consomme trop de courant et les capteurs peinent à tirer vers le bas</li>
+          <li>Trop élevée (10kΩ) : le signal monte trop lentement, erreurs de communication à haute fréquence</li>
+          <li>4.7kΩ : valeur standard recommandée pour I2C à 100-400kHz avec 4 appareils sur le bus</li>
+        </ul>
+        <div class="detail-tip">💡 Les résistances n'ont PAS de polarité — tu peux les souder dans n'importe quel sens. Identifie-les par les bandes de couleur : Jaune-Violet-Rouge = 4.7kΩ.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="15"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-solder">Soudure</span> Souder les condensateurs</div>
+      <div class="step-desc">C1 (100µF) sur R6-R9 cols 1-2 : + vers 12V, − vers GND. C2 (100nF) sur R6-R7 cols 12-13 : 5V↔GND. C3 (100nF) sur R6-R7 cols 5-6 : 3.3V↔GND.</div>
+      <div class="step-warn">⚠ C1 a une POLARITÉ — bande marquée = côté négatif. Si inversé, il peut exploser !</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Rôle de chaque condensateur</h4>
+        <ul>
+          <li><b>C1 (100µF électrolytique)</b> : sur le rail 12V. Absorbe les pics de courant quand les moteurs démarrent/freinent. Sans lui, la tension chute brièvement et l'ESP32 peut redémarrer.</li>
+          <li><b>C2 (100nF céramique)</b> : sur le rail 5V. Filtrage haute fréquence — élimine le bruit du LM2596 (convertisseur à découpage).</li>
+          <li><b>C3 (100nF céramique)</b> : sur le rail 3.3V. Protège les capteurs I2C du bruit électrique des moteurs.</li>
+        </ul>
+        <h4>Polarité — ATTENTION</h4>
+        <ul>
+          <li><b>C1 (100µF)</b> : cylindre métallique avec une <b>bande blanche</b> sur un côté. La bande = côté NÉGATIF (−). Le côté sans bande = POSITIF (+). Le + va vers le rail 12V, le − vers GND.</li>
+          <li><b>C2, C3 (100nF)</b> : petits condensateurs céramiques (jaune/marron, plats). PAS de polarité — tu peux les souder dans n'importe quel sens.</li>
+        </ul>
+        <div class="detail-warn">⚠ Un condensateur électrolytique inversé peut EXPLOSER (petit pop + odeur). Si tu as un doute, vérifie avec la datasheet ou cherche la marque "−" sur le boîtier. En cas de doute, ne branche pas l'alimentation avant d'avoir vérifié au multimètre.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="16"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-solder">Soudure</span> Souder le MPU9250 sur le perfboard</div>
+      <div class="step-desc">Au centre exact du perfboard. Broches : VCC→3.3V, GND→GND, SDA→GPIO21 (bus I2C commun), SCL→GPIO22 (bus I2C commun). Adresse 0x68.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Pourquoi au centre ?</h4>
+        <ul>
+          <li>Le MPU9250 mesure les accélérations et rotations. S'il est excentré, les virages créent des accélérations centrifuges parasites qui faussent les mesures.</li>
+          <li>Au centre du perfboard ≈ au centre de rotation du robot (quand le robot tourne sur lui-même).</li>
+        </ul>
+        <h4>Connexions du module GY-91</h4>
+        <ul>
+          <li><code>VCC</code> → rail 3.3V (le module a son propre régulateur si tu le branches en 5V, mais 3.3V direct est plus propre)</li>
+          <li><code>GND</code> → rail GND</li>
+          <li><code>SDA</code> → GPIO21 de l'ESP32 (même bus I2C que les ToF)</li>
+          <li><code>SCL</code> → GPIO22 de l'ESP32 (même bus I2C que les ToF)</li>
+          <li><code>AD0</code> → GND (fixe l'adresse I2C à <code>0x68</code>). Si AD0 = 3.3V, l'adresse devient 0x69.</li>
+        </ul>
+        <h4>Vérification après soudure</h4>
+        <ul>
+          <li>Vérifie la continuité VCC↔rail 3.3V et GND↔rail GND</li>
+          <li>Vérifie qu'il n'y a PAS de court-circuit entre VCC et GND (résistance > 1kΩ)</li>
+          <li>Le module ne chauffe pas quand alimenté (sinon → court-circuit !)</li>
+        </ul>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="17"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-test">Test</span> Tester le perfboard au multimètre</div>
+      <div class="step-desc">Mode continuité : ✅ 3.3V bout à bout, ✅ GND bout à bout, ✅ 12V cols 1-9, ✅ 5V cols 11-18. ❌ PAS de contact entre 12V et 5V, ❌ PAS de contact entre 3.3V et GND.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Checklist de test (mode continuité = bip)</h4>
+        <ul>
+          <li>✅ <b>Rail 3.3V</b> : touche col 1 et col 18 de R1 → doit bipper (circuit continu)</li>
+          <li>✅ <b>Rail GND</b> : touche col 1 et col 18 de R12 → doit bipper</li>
+          <li>✅ <b>Rail 12V</b> : touche col 1 et col 9 de R2 → doit bipper</li>
+          <li>✅ <b>Rail 5V</b> : touche col 11 et col 18 de R2 → doit bipper</li>
+          <li>❌ <b>12V vs 5V</b> : touche col 9 et col 11 de R2 → NE DOIT PAS bipper</li>
+          <li>❌ <b>3.3V vs GND</b> : touche R1 et R12 → ne doit pas bipper (sauf si les résistances/condensateurs créent une résistance faible — dans ce cas, vérifie en mode résistance : doit être > 1kΩ)</li>
+          <li>❌ <b>12V vs GND</b> : ne doit pas bipper</li>
+          <li>❌ <b>5V vs GND</b> : ne doit pas bipper</li>
+        </ul>
+        <h4>Problèmes courants</h4>
+        <ul>
+          <li><b>Bip inattendu entre rails</b> : pont de soudure (trop de soudure a débordé entre 2 pastilles adjacentes). Solution : dessouder avec une tresse à dessouder ou une pompe.</li>
+          <li><b>Pas de bip sur un rail</b> : soudure froide (le fil n'est pas bien connecté à une pastille). Solution : rechauffe la jointure et ajoute un peu de soudure.</li>
+        </ul>
+        <div class="detail-tip">💡 Ce test prend 5 minutes mais peut te sauver des heures de debug. Fais-le AVANT de connecter quoi que ce soit au perfboard.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="18"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-test">Test</span> Monter le perfboard et tester les tensions réelles</div>
+      <div class="step-desc">Connecte le perfboard à l'alimentation. Multimètre : 3.3V ≈ 3.3V ? 5V ≈ 5.0V ? 12V ≈ 11.1V ? GND = 0V partout ?</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Test sous tension — premier allumage</h4>
+        <ul>
+          <li><b>1.</b> Connecte les fils d'alimentation du perfboard : 12V IN, 5V IN, GND</li>
+          <li><b>2.</b> NE connecte PAS encore l'ESP32 ni les capteurs</li>
+          <li><b>3.</b> Allume l'interrupteur</li>
+          <li><b>4.</b> Mesure immédiatement chaque rail avec le multimètre</li>
+        </ul>
+        <h4>Valeurs attendues</h4>
+        <ul>
+          <li><b>Rail 12V</b> : 11.1-12.6V (dépend de la charge de la batterie)</li>
+          <li><b>Rail 5V</b> : 4.9-5.1V (ajusté par le LM2596)</li>
+          <li><b>Rail 3.3V</b> : 0V pour l'instant (le 3.3V vient du régulateur de l'ESP32, qui n'est pas encore branché)</li>
+          <li><b>Rail GND</b> : 0V partout (c'est la référence)</li>
+        </ul>
+        <h4>Après avoir branché l'ESP32</h4>
+        <ul>
+          <li>L'ESP32 reçoit le 5V sur VIN et génère du 3.3V sur sa pin 3V3</li>
+          <li>Ce 3.3V alimente le rail 3.3V du perfboard via un fil</li>
+          <li>Après branchement de l'ESP32 : le rail 3.3V doit lire ~3.3V</li>
+        </ul>
+        <div class="detail-tip">💡 Si tu vois des tensions incorrectes, ÉTEINS TOUT immédiatement. Vérifie les connexions avant de réessayer. Un court-circuit peut griller des composants en quelques secondes.</div>
+      </div></div>
+    </div></div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--                PHASE 4: CÂBLAGE                         -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="phase" id="phase4">
+  <div class="phase-header" onclick="togglePhase(4)">
+    <div class="phase-num">4</div>
+    <h3>Câbler tous les composants</h3>
+    <span class="phase-count" id="pc4">0/6</span>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="phase-body" id="pb4">
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="19"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-build">Câble</span> Câbler l'alimentation</div>
+      <div class="step-desc">Batterie → BMS → interrupteur → perfboard rail 12V. LM2596 IN← 12V, LM2596 OUT→ perfboard rail 5V. ESP32 VIN ← 5V, ESP32 GND ← GND.</div>
+      <div class="files">
+        <a class="file-link" href="wiring_v3.html"><span class="icon">📋</span> wiring_v3</a>
+        <a class="file-link" href="wiring_interactive_v3.html"><span class="icon">🖱️</span> wiring interactif</a>
+      </div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Schéma de la chaîne d'alimentation</h4>
+        <ul>
+          <li><b>Batterie 3S</b> (3×18650) → <b>BMS 3S</b> (protection) → <b>Interrupteur</b> (ON/OFF) → <b>Rail 12V</b> du perfboard</li>
+          <li>Du rail 12V → <b>LM2596 IN+/IN−</b> → LM2596 convertit → <b>LM2596 OUT+/OUT−</b> → <b>Rail 5V</b> du perfboard</li>
+          <li>Du rail 5V → <b>ESP32 VIN</b> + <b>ESP32 GND</b></li>
+          <li>L'ESP32 génère le 3.3V interne → fil de <b>ESP32 3V3</b> → <b>Rail 3.3V</b> du perfboard</li>
+        </ul>
+        <h4>Fils recommandés</h4>
+        <ul>
+          <li><b>Batterie → BMS → interrupteur → 12V</b> : fil 22AWG rouge (courant ~2A max)</li>
+          <li><b>GND</b> : fil 22AWG noir</li>
+          <li><b>5V et 3.3V</b> : jumper wires suffisent (courant <500mA)</li>
+        </ul>
+        <div class="detail-warn">⚠ Rappel : règle le LM2596 à EXACTEMENT 5.0V AVANT de connecter l'ESP32. Mesure avec le multimètre à chaque étape.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="20"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-build">Câble</span> Câbler les moteurs → L298N</div>
+      <div class="step-desc">M1+M3 (gauche) en parallèle → OUT1/OUT2. M2+M4 (droite) en parallèle → OUT3/OUT4. L298N 12V ← rail 12V, L298N GND ← GND. ENA→GPIO14, ENB→GPIO32, IN1→GPIO26, IN2→GPIO27, IN3→GPIO25, IN4→GPIO33.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Pourquoi en parallèle ?</h4>
+        <ul>
+          <li>On a 4 moteurs mais seulement 2 canaux sur le L298N</li>
+          <li>Les 2 moteurs gauche (M1 avant + M3 arrière) sont câblés en parallèle sur OUT1/OUT2</li>
+          <li>Les 2 moteurs droite (M2 avant + M4 arrière) sont câblés en parallèle sur OUT3/OUT4</li>
+          <li>En parallèle = même tension, courant doublé. Le L298N supporte 2A par canal, et chaque moteur tire ~300mA → total ~600mA, largement OK.</li>
+        </ul>
+        <h4>Table des pins GPIO → L298N</h4>
+        <ul>
+          <li><code>GPIO14</code> → <b>ENA</b> (PWM vitesse gauche, 0-255)</li>
+          <li><code>GPIO32</code> → <b>ENB</b> (PWM vitesse droite, 0-255)</li>
+          <li><code>GPIO26</code> → <b>IN1</b> (direction gauche +)</li>
+          <li><code>GPIO27</code> → <b>IN2</b> (direction gauche −)</li>
+          <li><code>GPIO25</code> → <b>IN3</b> (direction droite +)</li>
+          <li><code>GPIO33</code> → <b>IN4</b> (direction droite −)</li>
+        </ul>
+        <h4>Comment savoir si un côté tourne à l'envers ?</h4>
+        <ul>
+          <li>Flashe un simple test qui fait tourner les 2 côtés "en avant"</li>
+          <li>Si un côté tourne à l'envers → inverse les 2 fils moteur de ce côté sur les bornes du L298N (par ex. échange OUT1 et OUT2)</li>
+          <li>Alternative logicielle : inverse IN1/IN2 dans <code>config.h</code></li>
+        </ul>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="21"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-build">Câble</span> Câbler les encodeurs → ESP32</div>
+      <div class="step-desc">Chaque encodeur : VCC→5V, GND→GND, signal A→GPIO. M1=GPIO34, M3=GPIO35, M2=GPIO36, M4=GPIO39. Ce sont des pins input-only (pas de pull-up interne, mais les encodeurs ont les leurs).</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Les 6 fils de chaque moteur JGB37-520</h4>
+        <ul>
+          <li><b>2 fils moteur</b> (rouge/noir ou sans couleur) → vont au L298N (étape précédente)</li>
+          <li><b>4 fils encodeur</b> : VCC (rouge), GND (noir), Signal A (jaune/vert), Signal B (blanc/bleu)</li>
+          <li>On utilise SEULEMENT le Signal A — pas besoin du Signal B pour notre application (on compte juste les impulsions, pas le sens de rotation)</li>
+        </ul>
+        <h4>Pourquoi GPIO34, 35, 36, 39 ?</h4>
+        <ul>
+          <li>Ces 4 pins sont "input-only" sur l'ESP32 — elles ne peuvent pas servir comme sorties</li>
+          <li>Parfait pour les encodeurs : on ne fait que LIRE les impulsions</li>
+          <li>Ces pins n'ont PAS de résistance pull-up interne, mais les encodeurs Hall ont leurs propres pull-ups → pas de problème</li>
+          <li>Le code utilise des interruptions (<code>attachInterrupt</code>) sur ces pins pour compter chaque impulsion</li>
+        </ul>
+        <h4>Alimentation des encodeurs</h4>
+        <ul>
+          <li>VCC encodeur → <b>5V</b> (pas 3.3V ! Les encodeurs Hall du JGB37-520 fonctionnent en 5V)</li>
+          <li>GND encodeur → GND commun</li>
+          <li>Le signal de sortie est en 5V, mais l'ESP32 tolère 3.6V max... en pratique, ça marche car le signal Hall est souvent autour de 3.3V. Si problème : ajoute un diviseur de tension.</li>
+        </ul>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="22"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-build">Câble</span> Câbler les 3 capteurs ToF</div>
+      <div class="step-desc">Chaque ToF a 5 fils : VCC→3.3V, GND→GND, SDA→GPIO21, SCL→GPIO22, XSHUT→unique. Front XSHUT=GPIO15, Left XSHUT=GPIO4, Right XSHUT=GPIO5.</div>
+      <div class="step-warn">⚠ Les ToF sont sur Floor 3 — passe les câbles par les fentes vers Floor 2</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Pourquoi 5 fils par ToF ?</h4>
+        <ul>
+          <li><b>VCC</b> → 3.3V (les VL53L0X fonctionnent en 2.8-3.3V)</li>
+          <li><b>GND</b> → masse commune</li>
+          <li><b>SDA</b> → GPIO21 (bus I2C partagé avec les 2 autres ToF et le MPU9250)</li>
+          <li><b>SCL</b> → GPIO22 (bus I2C partagé)</li>
+          <li><b>XSHUT</b> → pin unique par capteur (permet de les allumer un par un pour changer leur adresse I2C)</li>
+        </ul>
+        <h4>Le mécanisme XSHUT</h4>
+        <ul>
+          <li>Par défaut, tous les VL53L0X ont l'adresse I2C <code>0x29</code> → conflit si on les branche tous en même temps</li>
+          <li>Au démarrage, le code met tous les XSHUT à LOW (tous éteints)</li>
+          <li>Puis il allume le capteur Front (XSHUT HIGH), lui change l'adresse à <code>0x30</code></li>
+          <li>Puis allume Left, adresse → <code>0x31</code></li>
+          <li>Puis allume Right, adresse → <code>0x32</code></li>
+          <li>Maintenant les 3 capteurs ont des adresses différentes et fonctionnent sur le même bus</li>
+        </ul>
+        <h4>Table XSHUT</h4>
+        <ul>
+          <li><b>Front</b> : XSHUT = <code>GPIO15</code>, adresse finale = <code>0x30</code></li>
+          <li><b>Left</b> : XSHUT = <code>GPIO4</code>, adresse finale = <code>0x31</code></li>
+          <li><b>Right</b> : XSHUT = <code>GPIO5</code>, adresse finale = <code>0x32</code></li>
+        </ul>
+        <div class="detail-tip">💡 15 fils au total (5×3) doivent passer de Floor 3 à Floor 2. Utilise des câbles de couleurs différentes et étiquette-les. Sinon, le debug sera un cauchemar.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="23"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-build">Câble</span> Câbler la LED + organiser</div>
+      <div class="step-desc">LED sur Floor 3 → GPIO2 (+ résistance 220Ω en série). Organise tous les câbles avec des serre-câbles. Vérifie qu'aucun câble n'obstrue les ToF (cône de 25°).</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Câblage de la LED</h4>
+        <ul>
+          <li><b>GPIO2</b> → résistance 220Ω → anode (+, patte longue) de la LED → cathode (−, patte courte) → GND</li>
+          <li>La résistance 220Ω limite le courant à ~10mA (suffisant pour être visible, sans griller la LED ni surcharger le GPIO)</li>
+          <li>GPIO2 est aussi la LED interne de l'ESP32 — quand tu allumes GPIO2, la LED du robot ET la LED de l'ESP32 s'allument en même temps</li>
+        </ul>
+        <h4>Organisation des câbles</h4>
+        <ul>
+          <li>Regroupe les câbles par fonction : alimentation (rouge/noir), I2C (jaune/blanc), encodeurs, etc.</li>
+          <li>Attache avec des serre-câbles tous les 3-4cm</li>
+          <li>Route les câbles le long des bords du châssis, pas au centre</li>
+          <li><b>Zone interdite</b> : devant chaque capteur ToF, un cône de 25° doit être dégagé. Aucun câble ne doit passer dans ce cône, sinon le capteur lit le câble au lieu du mur !</li>
+        </ul>
+        <div class="detail-tip">💡 Prends une photo de ton câblage avant de fermer le robot. Si un câble se débranche plus tard, tu sauras où il allait.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="24"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-test">Test</span> Vérification complète du câblage</div>
+      <div class="step-desc">Multimètre : continuité de chaque fil, pas de court-circuit. Allume le robot et vérifie que l'ESP32 s'allume, le LED de l'ESP32 clignote.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Test AVANT d'allumer (robot éteint)</h4>
+        <ul>
+          <li>Mode continuité sur chaque fil : touche les 2 extrémités → doit bipper</li>
+          <li>Vérifie qu'aucun fil n'est en court-circuit avec un voisin</li>
+          <li>Vérifie que VCC (n'importe quel rail) n'est PAS en court avec GND</li>
+          <li>Secoue doucement le robot : aucun fil ne doit se débrancher</li>
+        </ul>
+        <h4>Premier allumage complet</h4>
+        <ul>
+          <li><b>1.</b> Interrupteur ON</li>
+          <li><b>2.</b> La LED du LM2596 s'allume (vert/rouge selon modèle)</li>
+          <li><b>3.</b> La LED bleue de l'ESP32 clignote brièvement (boot)</li>
+          <li><b>4.</b> Si rien ne se passe : vérifie l'interrupteur, puis le 5V, puis le câble VIN/GND de l'ESP32</li>
+        </ul>
+        <h4>Signes de problème</h4>
+        <ul>
+          <li><b>Odeur de brûlé</b> : ÉTEINS IMMÉDIATEMENT. Court-circuit quelque part.</li>
+          <li><b>Un composant chauffe</b> : court-circuit ou mauvais branchement. Les composants doivent rester tièdes au toucher, jamais chauds.</li>
+          <li><b>ESP32 redémarre en boucle</b> : pas assez de courant (LM2596 mal réglé) ou court-circuit sur un GPIO.</li>
+        </ul>
+        <div class="detail-tip">💡 Si tout est OK à cette étape, félicitations — le hardware est prêt ! Le reste c'est du logiciel.</div>
+      </div></div>
+    </div></div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--              PHASE 5: LOGICIEL                          -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="phase" id="phase5">
+  <div class="phase-header" onclick="togglePhase(5)">
+    <div class="phase-num">5</div>
+    <h3>Installer et flasher le code</h3>
+    <span class="phase-count" id="pc5">0/6</span>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="phase-body" id="pb5">
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="25"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-code">Code</span> Installer Arduino IDE + librairies</div>
+      <div class="step-desc">Arduino IDE 2.x → Ajouter le board ESP32 (Espressif) dans le Board Manager. Installer les librairies : Adafruit_VL53L0X, Wire.h (incluse). Sélectionner "ESP32 Dev Module".</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Installation étape par étape</h4>
+        <ul>
+          <li><b>1.</b> Télécharge Arduino IDE 2.x depuis <code>arduino.cc/en/software</code></li>
+          <li><b>2.</b> File → Preferences → "Additional boards manager URLs" → ajoute : <code>https://dl.espressif.com/dl/package_esp32_index.json</code></li>
+          <li><b>3.</b> Tools → Board → Boards Manager → cherche "esp32" → installe "ESP32 by Espressif Systems" (version 2.x)</li>
+          <li><b>4.</b> Tools → Board → sélectionne <b>"ESP32 Dev Module"</b></li>
+          <li><b>5.</b> Tools → Port → sélectionne le port COM de ton ESP32 (branche-le en USB pour le voir apparaître)</li>
+        </ul>
+        <h4>Librairies à installer</h4>
+        <ul>
+          <li>Sketch → Include Library → Manage Libraries → cherche et installe :
+            <ul>
+              <li><b>Adafruit_VL53L0X</b> (par Adafruit) — gestion des capteurs ToF</li>
+              <li><b>Wire</b> — déjà incluse dans l'ESP32 core, pas besoin d'installer</li>
+              <li><b>MPU9250_WE</b> (par Wolfgang Ewald) — pour le MPU9250 (étape 30)</li>
+            </ul>
+          </li>
+        </ul>
+        <h4>Test rapide</h4>
+        <ul>
+          <li>File → Examples → WiFi → WiFiScan → Upload → Serial Monitor à 115200 → tu dois voir les réseaux WiFi autour de toi</li>
+          <li>Si ça marche = l'ESP32 est bien reconnu et tu peux flasher du code</li>
+        </ul>
+        <div class="detail-tip">💡 Si le port COM n'apparaît pas : installe le driver CP2102 ou CH340 (selon la puce USB de ton ESP32). Cherche "CP2102 driver" ou "CH340 driver" sur Google.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="26"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-code">Code</span> Copier les 6 fichiers du code v3</div>
+      <div class="step-desc">Dans un dossier "maze_robot_v3", copie : maze_robot_v3.ino, config.h, motors.h, sensors.h, flood_fill.h, movement.h. Ouvre le .ino dans Arduino IDE.</div>
+      <div class="files">
+        <a class="file-link" href="code_v3/maze_robot_v3.ino"><span class="icon">💻</span> maze_robot_v3.ino</a>
+        <a class="file-link" href="code_v3/config.h"><span class="icon">⚙️</span> config.h</a>
+        <a class="file-link" href="code_v3/motors.h"><span class="icon">⚙️</span> motors.h</a>
+        <a class="file-link" href="code_v3/sensors.h"><span class="icon">⚙️</span> sensors.h</a>
+        <a class="file-link" href="code_v3/flood_fill.h"><span class="icon">⚙️</span> flood_fill.h</a>
+        <a class="file-link" href="code_v3/movement.h"><span class="icon">⚙️</span> movement.h</a>
+      </div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Structure du projet</h4>
+        <ul>
+          <li>Crée un dossier <code>maze_robot_v3/</code> sur ton PC</li>
+          <li>TOUS les fichiers doivent être dans le MÊME dossier (Arduino IDE l'exige)</li>
+          <li>Le dossier DOIT avoir le même nom que le fichier .ino (<code>maze_robot_v3</code>)</li>
+        </ul>
+        <h4>Rôle de chaque fichier</h4>
+        <ul>
+          <li><b>maze_robot_v3.ino</b> : fichier principal — machine à états (EXPLORE → RETURN → DONE), setup(), loop()</li>
+          <li><b>config.h</b> : toutes les constantes : pins GPIO, vitesses, taille des cellules, seuils. C'est LE fichier à modifier pour calibrer.</li>
+          <li><b>motors.h</b> : contrôle des moteurs, PID, ISR des encodeurs. Fonctions : <code>driveForward()</code>, <code>turnLeft()</code>, <code>turnRight()</code></li>
+          <li><b>sensors.h</b> : initialisation et lecture des 3 VL53L0X, séquençage XSHUT, retry en cas d'erreur</li>
+          <li><b>flood_fill.h</b> : algorithme BFS, carte des murs, calcul du chemin optimal, gestion des impasses</li>
+          <li><b>movement.h</b> : commandes de haut niveau — avancer d'une cellule, tourner de 90°, correction de trajectoire</li>
+        </ul>
+        <div class="detail-tip">💡 Ouvre d'abord <code>config.h</code> et lis les commentaires — tu comprendras comment tout est connecté. Ne modifie rien tant que tu n'as pas calibré (Phase 6).</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="27"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-code">Code</span> Flasher un sketch de test I2C</div>
+      <div class="step-desc">Avant le code final, flashe un simple I2C scanner. Tu dois voir : 0x30 (ToF F), 0x31 (ToF L), 0x32 (ToF R), 0x68 (MPU9250). Si un appareil manque, vérifie son câble.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Le sketch I2C Scanner</h4>
+        <ul>
+          <li>Cherche "I2C Scanner Arduino" sur Google — c'est un sketch standard de ~30 lignes</li>
+          <li>Il parcourt toutes les adresses I2C de 0x01 à 0x7F et affiche celles qui répondent</li>
+          <li>C'est le MEILLEUR outil de debug pour vérifier que tous tes capteurs sont bien câblés</li>
+        </ul>
+        <h4>Ce que tu dois voir dans le Serial Monitor</h4>
+        <ul>
+          <li><code>0x29</code> → un VL53L0X (adresse par défaut — normal si tu n'as pas encore changé les adresses)</li>
+          <li>OU si le code d'init ToF a déjà tourné : <code>0x30</code>, <code>0x31</code>, <code>0x32</code></li>
+          <li><code>0x68</code> → MPU9250</li>
+          <li>Tu dois voir <b>4 adresses</b> au total (3 ToF + 1 MPU9250)</li>
+        </ul>
+        <h4>Si un capteur manque</h4>
+        <ul>
+          <li>Vérifie le câble SDA (GPIO21) et SCL (GPIO22) du capteur absent</li>
+          <li>Vérifie VCC et GND</li>
+          <li>Pour les ToF : vérifie le câble XSHUT — si XSHUT est à LOW (déconnecté/flottant), le capteur est éteint</li>
+          <li>Essaie de connecter le capteur seul (déconnecte les autres) pour isoler le problème</li>
+        </ul>
+        <div class="detail-warn">⚠ Si tu vois 0 appareil : les pull-up I2C ne fonctionnent pas, ou SDA/SCL sont inversés, ou le câblage est mauvais. Reviens à l'étape 17 (test perfboard).</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="28"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-code">Code</span> Flasher le code v3 complet</div>
+      <div class="step-desc">Compile et upload maze_robot_v3.ino. Ouvre le Serial Monitor (115200 baud). Tu dois voir les messages d'initialisation : ToF OK, encodeurs prêts, flood fill initialisé.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Procédure de flash</h4>
+        <ul>
+          <li><b>1.</b> Ouvre <code>maze_robot_v3.ino</code> dans Arduino IDE</li>
+          <li><b>2.</b> Vérifie : Board = "ESP32 Dev Module", Port = ton port COM</li>
+          <li><b>3.</b> Clique "Verify" (✓) — doit compiler sans erreur</li>
+          <li><b>4.</b> Clique "Upload" (→) — attend le transfert</li>
+          <li><b>5.</b> Ouvre le Serial Monitor (loupe en haut à droite), régle sur <b>115200 baud</b></li>
+          <li><b>6.</b> Appuie sur le bouton RESET de l'ESP32 (ou débranche/rebranche)</li>
+        </ul>
+        <h4>Messages attendus au boot</h4>
+        <ul>
+          <li><code>[INIT] Configuring ToF sensors...</code></li>
+          <li><code>[INIT] ToF Front OK at 0x30</code></li>
+          <li><code>[INIT] ToF Left OK at 0x31</code></li>
+          <li><code>[INIT] ToF Right OK at 0x32</code></li>
+          <li><code>[INIT] Encoders ready</code></li>
+          <li><code>[INIT] Flood fill grid initialized (16x16)</code></li>
+          <li><code>[READY] Waiting for start...</code></li>
+        </ul>
+        <h4>Erreurs courantes</h4>
+        <ul>
+          <li><b>"Failed to connect to ESP32"</b> : tiens le bouton BOOT enfoncé pendant l'upload</li>
+          <li><b>"Compilation error: sensors.h not found"</b> : tous les fichiers .h doivent être dans le même dossier que le .ino</li>
+          <li><b>"ToF init failed"</b> : problème I2C — reviens à l'étape 27</li>
+        </ul>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="29"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-code">Code</span> Comprendre l'algorithme Flood Fill</div>
+      <div class="step-desc">Avant de calibrer, comprends comment le robot navigue. Le Flood Fill est un BFS depuis le centre : chaque cellule a une valeur = distance au but. Le robot suit toujours la cellule voisine de valeur la plus basse.</div>
+      <div class="files"><a class="file-link" href="flood_fill_explainer_v3.html"><span class="icon">🧠</span> flood fill interactif</a></div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Flood Fill en 4 phrases</h4>
+        <ul>
+          <li><b>1.</b> Le labyrinthe est une grille (16×16 cellules typiquement). Le but est au centre (cellules 7,7 / 7,8 / 8,7 / 8,8).</li>
+          <li><b>2.</b> On remplit la grille avec des "distances" : le centre = 0, ses voisins = 1, les voisins des voisins = 2, etc. C'est un BFS (Breadth-First Search).</li>
+          <li><b>3.</b> Le robot est dans une cellule. Il regarde ses voisins accessibles (pas de mur entre eux) et choisit celui avec la PLUS PETITE valeur.</li>
+          <li><b>4.</b> À chaque mouvement, le robot découvre de nouveaux murs → il met à jour la carte → il recalcule le flood fill → il choisit la prochaine cellule.</li>
+        </ul>
+        <h4>Deux phases du robot</h4>
+        <ul>
+          <li><b>EXPLORE</b> : le robot explore le labyrinthe, cartographie les murs, et se dirige vers le centre. Vitesse lente (SPEED_EXPLORE = 160).</li>
+          <li><b>RETURN</b> : une fois au centre, le robot connaît la carte. Il revient au départ en suivant le chemin optimal, à vitesse rapide (SPEED_RETURN = 220).</li>
+        </ul>
+        <h4>Gestion des impasses (deadlock)</h4>
+        <ul>
+          <li>Si le robot est entouré de cellules avec des valeurs ≥ sa propre valeur, il est dans une impasse</li>
+          <li>Le code détecte ça et force un demi-tour (180°)</li>
+          <li>Le flood fill est recalculé avec les nouveaux murs → le robot trouve un autre chemin</li>
+        </ul>
+        <div class="detail-tip">💡 Ouvre le simulateur interactif (flood_fill_explainer_v3.html) et joue avec : place des murs, observe comment les valeurs changent, et comment le "robot" virtuel choisit son chemin. C'est la meilleure façon de comprendre.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="30"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-code">Code</span> Ajouter le code MPU9250 (à faire)</div>
+      <div class="step-desc">Le code v3 actuel n'inclut pas encore le MPU9250. Il faut ajouter la lecture du gyroscope pour corriger le cap. Librairie recommandée : MPU9250_WE ou SparkFun_MPU-9250-DMP.</div>
+      <div class="step-warn">⚠ TODO : intégrer la correction de cap MPU9250 dans movement.h</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Pourquoi le gyroscope est important ?</h4>
+        <ul>
+          <li>Les encodeurs comptent les tours de roue → ils mesurent la distance</li>
+          <li>Mais quand le robot tourne de 90°, les encodeurs ne sont pas très précis (le sol peut être glissant, les roues patinent légèrement)</li>
+          <li>Le gyroscope mesure la vitesse angulaire → il sait EXACTEMENT combien de degrés le robot a tourné</li>
+          <li>En combinant encodeurs + gyroscope, les virages sont beaucoup plus précis</li>
+        </ul>
+        <h4>Ce qu'il faut modifier dans le code</h4>
+        <ul>
+          <li><b>config.h</b> : ajouter les constantes MPU9250 (adresse I2C, offsets de calibration)</li>
+          <li><b>sensors.h</b> : ajouter l'initialisation du MPU9250 et la lecture gyro/magnéto</li>
+          <li><b>movement.h</b> : dans <code>turnLeft()</code> et <code>turnRight()</code>, utiliser le gyroscope pour vérifier que le virage fait exactement 90°</li>
+          <li><b>Logique</b> : au lieu de tourner "tant que les encodeurs n'ont pas compté 277 pulses", tourner "tant que le gyroscope n'a pas mesuré 90°"</li>
+        </ul>
+        <h4>Librairie recommandée</h4>
+        <ul>
+          <li><b>MPU9250_WE</b> par Wolfgang Ewald — simple, bien documentée, fonctionne avec l'ESP32</li>
+          <li>Installation : Arduino IDE → Library Manager → "MPU9250_WE" → Install</li>
+          <li>Exemples inclus : MPU9250_acceleration, MPU9250_gyroscope, MPU9250_magnetometer</li>
+        </ul>
+        <div class="detail-tip">💡 Commence par un sketch séparé qui lit le gyroscope et affiche les angles en temps réel dans le Serial Monitor. Quand ça marche, intègre-le dans movement.h.</div>
+      </div></div>
+    </div></div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--              PHASE 6: CALIBRATION                       -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="phase" id="phase6">
+  <div class="phase-header" onclick="togglePhase(6)">
+    <div class="phase-num">6</div>
+    <h3>Calibrer le robot</h3>
+    <span class="phase-count" id="pc6">0/6</span>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="phase-body" id="pb6">
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="31"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-test">Calibration</span> Calibrer PULSES_PER_MM</div>
+      <div class="step-desc">Fait avancer le robot sur exactement 1000mm (1 mètre). Compte les pulses encodeur. La valeur correcte = pulses_comptés / 1000. config.h dit 2.94 mais calibre sur ton robot réel.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Méthode de calibration</h4>
+        <ul>
+          <li><b>1.</b> Marque un point de départ sur le sol (ruban adhésif)</li>
+          <li><b>2.</b> Marque un point à exactement <b>1000mm</b> (1 mètre) — mesure avec un mètre ruban</li>
+          <li><b>3.</b> Écris un petit sketch qui fait avancer le robot tout droit et affiche le compteur d'encodeur dans le Serial Monitor</li>
+          <li><b>4.</b> Place le robot au départ, lance-le, arrête-le quand il atteint la marque des 1000mm</li>
+          <li><b>5.</b> Note le nombre de pulses affiché. Fais-le 3 fois et prends la moyenne.</li>
+          <li><b>6.</b> <code>PULSES_PER_MM = moyenne_pulses / 1000</code></li>
+        </ul>
+        <h4>Calcul théorique vs réel</h4>
+        <ul>
+          <li>Théorie : roue Ø65mm → périmètre = π × 65 = 204.2mm → 330 pulses/tour → 330/204.2 = <b>1.62 pulses/mm</b></li>
+          <li>Mais <code>config.h</code> dit 2.94 — la différence vient du ratio exact du réducteur et de la taille réelle de la roue (les roues chinoises ne font pas exactement 65mm)</li>
+          <li>C'est pour ça qu'il FAUT mesurer sur le robot réel, pas se fier au calcul théorique</li>
+        </ul>
+        <div class="detail-tip">💡 Fais le test sur la même surface que le labyrinthe (bois/MDF). Sur du carrelage, les roues glissent plus → valeur différente.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="32"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-test">Calibration</span> Calibrer TURN_PULSES_90</div>
+      <div class="step-desc">Fait tourner le robot 4× à droite (devrait faire un tour complet de 360°). Si ça fait plus/moins que 360°, ajuste : new = old × 360 / actual_degrees. config.h dit 277.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Méthode de calibration des virages</h4>
+        <ul>
+          <li><b>1.</b> Place le robot sur une surface plane, marque la direction avec du ruban adhésif</li>
+          <li><b>2.</b> Écris un sketch qui fait 4 rotations de 90° à droite (avec la valeur actuelle de TURN_PULSES_90 = 277)</li>
+          <li><b>3.</b> Si après 4 virages le robot regarde dans la même direction qu'au départ → 277 est bon !</li>
+          <li><b>4.</b> S'il a fait PLUS que 360° (il pointe au-delà) : diminue la valeur</li>
+          <li><b>5.</b> S'il a fait MOINS que 360° : augmente la valeur</li>
+        </ul>
+        <h4>Formule d'ajustement</h4>
+        <ul>
+          <li>Mesure l'angle réel fait après 4 virages (avec un rapporteur ou une appli téléphone)</li>
+          <li><code>new_value = old_value × 360 / measured_angle</code></li>
+          <li>Exemple : 4 virages = 350° au lieu de 360° → <code>new = 277 × 360/350 = 285</code></li>
+        </ul>
+        <div class="detail-tip">💡 Fais aussi le test avec des virages à gauche — la valeur devrait être la même. Si elle est différente, les roues ou les moteurs d'un côté ne sont pas symétriques.</div>
+        <div class="detail-tip">💡 Quand le MPU9250 sera intégré (étape 30), les virages utiliseront le gyroscope au lieu des encodeurs — cette calibration deviendra moins critique.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="33"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-test">Calibration</span> Calibrer les capteurs ToF</div>
+      <div class="step-desc">Place un mur à 100mm, 200mm, 500mm devant chaque capteur. Vérifie que les lectures Serial correspondent. Ajuste WALL_THRESHOLD_MM si nécessaire (défaut 100mm).</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Procédure de test</h4>
+        <ul>
+          <li><b>1.</b> Écris un sketch qui affiche les 3 distances ToF dans le Serial Monitor (toutes les 200ms)</li>
+          <li><b>2.</b> Place un livre/carton plat devant le capteur Front</li>
+          <li><b>3.</b> Mesure la distance avec un mètre ruban : 100mm, 200mm, 300mm, 500mm</li>
+          <li><b>4.</b> Compare avec la lecture du capteur — l'erreur doit être < 10mm</li>
+          <li><b>5.</b> Répète pour les capteurs Left et Right</li>
+        </ul>
+        <h4>WALL_THRESHOLD_MM</h4>
+        <ul>
+          <li>C'est la distance en dessous de laquelle le robot considère qu'il y a un mur</li>
+          <li>Valeur par défaut : <code>100mm</code></li>
+          <li>Si ton labyrinthe a des cellules de 180mm : le mur le plus proche est à ~90mm du centre de la cellule (180/2)</li>
+          <li>Mets le seuil à mi-chemin entre "mur" et "pas de mur" : ~120-150mm est souvent bon</li>
+        </ul>
+        <h4>Problèmes courants</h4>
+        <ul>
+          <li><b>Lecture 0mm en permanence</b> : capteur pas initialisé (revois l'étape 27)</li>
+          <li><b>Lectures très variables (±50mm)</b> : surface réfléchissante ou câble parasite dans le cône de détection</li>
+          <li><b>Erreur systématique</b> (toujours +30mm par ex.) : le capteur mesure depuis la puce, pas depuis le bord du PCB → normal, tiens-en compte dans le seuil</li>
+        </ul>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="34"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-test">Calibration</span> Calibrer le PID pour lignes droites</div>
+      <div class="step-desc">Place le robot dans un long couloir. Lance-le en ligne droite. S'il dévie : augmente KP (défaut 2.5). S'il oscille : augmente KD (défaut 0.8). S'il dérive lentement : ajoute un peu de KI.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>C'est quoi un PID ?</h4>
+        <ul>
+          <li><b>P</b> (Proportionnel) : corrige l'erreur actuelle. Si le robot dévie à droite de 10mm → il tourne à gauche proportionnellement. KP = intensité de la correction.</li>
+          <li><b>I</b> (Intégral) : corrige l'erreur accumulée. Si le robot dérive lentement dans un sens → l'erreur s'accumule → la correction augmente. KI = vitesse de correction de la dérive.</li>
+          <li><b>D</b> (Dérivé) : freine la correction. Empêche le robot de sur-corriger et d'osciller. KD = amortissement.</li>
+        </ul>
+        <h4>Méthode de réglage (Ziegler-Nichols simplifiée)</h4>
+        <ul>
+          <li><b>1.</b> Mets KI=0, KD=0. Commence avec KP=1.0</li>
+          <li><b>2.</b> Lance le robot en ligne droite sur 2 mètres</li>
+          <li><b>3.</b> S'il dévie sans corriger → augmente KP (essaie 2.0, 3.0, etc.)</li>
+          <li><b>4.</b> S'il oscille (zigzag gauche-droite) → KP est trop fort, réduis-le</li>
+          <li><b>5.</b> Quand KP est bon (corrige sans trop osciller), ajoute KD=0.5</li>
+          <li><b>6.</b> Augmente KD jusqu'à ce que les oscillations disparaissent</li>
+          <li><b>7.</b> Si le robot dérive lentement d'un côté, ajoute un petit KI (0.01-0.1)</li>
+        </ul>
+        <div class="detail-tip">💡 Le PID dans notre code compare les encodeurs gauche et droit. Si un côté a compté plus de pulses que l'autre → le robot a dévié → le PID ajuste les vitesses moteur pour compenser.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="35"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-test">Calibration</span> Calibrer le MPU9250</div>
+      <div class="step-desc">Place le robot sur surface plane. Lance la calibration gyro (pose immobile 3s). Pour le magnétomètre : tourne le robot lentement sur 360° pour calibrer le compas. Stocke les offsets.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Calibration du gyroscope</h4>
+        <ul>
+          <li>Le gyroscope a un "drift" (dérive) — même immobile, il lit un petit angle qui n'est pas zéro</li>
+          <li>La calibration mesure ce drift pendant 3 secondes (robot immobile) et le soustrait des lectures futures</li>
+          <li>Procédure : pose le robot sur une surface PARFAITEMENT plane, ne le touche pas, lance la calibration</li>
+          <li>Les offsets sont stockés en mémoire (config.h ou EEPROM)</li>
+        </ul>
+        <h4>Calibration du magnétomètre</h4>
+        <ul>
+          <li>Le magnétomètre est perturbé par les moteurs, les fils, et les objets métalliques autour</li>
+          <li>La calibration "hard iron" corrige ce biais</li>
+          <li>Procédure : lance le mode calibration, puis tourne le robot LENTEMENT sur 360° (complet) dans les 2 sens</li>
+          <li>Le code enregistre les valeurs min/max du champ magnétique et calcule les offsets</li>
+        </ul>
+        <h4>Vérification</h4>
+        <ul>
+          <li>Après calibration, le gyroscope doit lire ~0°/s quand le robot est immobile</li>
+          <li>Le magnétomètre doit donner un cap stable (ex: 45° = nord-est) quand le robot est immobile</li>
+          <li>Tourne le robot de 90° → le cap doit changer de ~90° (ex: 45° → 135°)</li>
+        </ul>
+        <div class="detail-warn">⚠ Recalibre le magnétomètre si tu changes quoi que ce soit sur le robot (ajout/retrait de composants, réarrangement des câbles). Le champ magnétique local change.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="36"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-test">Calibration</span> Ajuster CELL_SIZE_MM</div>
+      <div class="step-desc">Mesure la taille réelle d'une cellule de ton labyrinthe (généralement 180mm pour RoboCup Junior). Mets la valeur exacte dans config.h.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Qu'est-ce que CELL_SIZE_MM ?</h4>
+        <ul>
+          <li>Le labyrinthe RoboCup est divisé en cellules carrées</li>
+          <li>Chaque cellule fait <b>180mm × 180mm</b> (standard RoboCup Junior)</li>
+          <li>Quand le robot "avance d'une cellule", il doit parcourir exactement cette distance</li>
+          <li>Si CELL_SIZE_MM est trop grand : le robot dépasse la cellule → se retrouve dans la suivante → la carte est fausse</li>
+          <li>Si trop petit : le robot s'arrête trop tôt → il croit être dans une cellule alors qu'il est entre deux</li>
+        </ul>
+        <h4>Comment mesurer</h4>
+        <ul>
+          <li>Si tu as accès à un vrai labyrinthe RoboCup : mesure la distance entre 2 murs parallèles adjacents (distance intérieure)</li>
+          <li>Si tu construis ton propre labyrinthe en carton : choisis 180mm et construis en conséquence</li>
+          <li>Mets la valeur exacte dans <code>config.h</code> : <code>#define CELL_SIZE_MM 180</code></li>
+        </ul>
+        <h4>Impact sur le code</h4>
+        <ul>
+          <li>Le nombre de pulses pour avancer d'une cellule = <code>CELL_SIZE_MM × PULSES_PER_MM</code></li>
+          <li>Avec les valeurs par défaut : 180 × 2.94 = 529 pulses par cellule</li>
+          <li>C'est pour ça que la calibration de PULSES_PER_MM (étape 31) doit être faite AVANT</li>
+        </ul>
+      </div></div>
+    </div></div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--              PHASE 7: TESTS FINAUX                      -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="phase" id="phase7">
+  <div class="phase-header" onclick="togglePhase(7)">
+    <div class="phase-num">7</div>
+    <h3>Tests finaux et tournoi</h3>
+    <span class="phase-count" id="pc7">0/5</span>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="phase-body" id="pb7">
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="37"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-test">Test</span> Test dans un mini-labyrinthe</div>
+      <div class="step-desc">Construis un petit labyrinthe 4×4 avec du carton. Le robot doit : détecter les murs, avancer d'une cellule, tourner correctement, et ne pas se coincer.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Construire un mini-labyrinthe de test</h4>
+        <ul>
+          <li><b>Matériau</b> : carton épais (boîtes de pizza, carton d'emballage) ou MDF 3mm</li>
+          <li><b>Dimensions</b> : 4×4 cellules = 720mm × 720mm (si cellules de 180mm)</li>
+          <li><b>Hauteur des murs</b> : 50mm minimum (standard RoboCup)</li>
+          <li><b>Épaisseur des murs</b> : ~12mm (collé sur le sol ou maintenu avec du ruban)</li>
+          <li><b>Sol</b> : surface lisse et plate (table, panneau MDF)</li>
+        </ul>
+        <h4>Premier test — par étapes</h4>
+        <ul>
+          <li><b>Test 1 — Ligne droite</b> : un couloir de 4 cellules sans virage. Le robot doit avancer de 4 cellules sans toucher les murs.</li>
+          <li><b>Test 2 — Un virage</b> : un couloir avec un virage à droite. Le robot doit détecter le mur, tourner, et continuer.</li>
+          <li><b>Test 3 — Impasse</b> : un cul-de-sac. Le robot doit faire demi-tour.</li>
+          <li><b>Test 4 — Labyrinthe complet</b> : le labyrinthe 4×4 avec le centre à atteindre.</li>
+        </ul>
+        <h4>Quoi surveiller</h4>
+        <ul>
+          <li>Le robot se centre bien dans chaque cellule ?</li>
+          <li>Les virages sont bien à 90° (pas 85° ou 95°) ?</li>
+          <li>Il détecte les murs des 3 côtés correctement ?</li>
+          <li>Il ne se coince pas dans les coins ?</li>
+        </ul>
+        <div class="detail-tip">💡 Filme chaque test avec ton téléphone. En rejouant au ralenti, tu verras exactement où le robot dévie ou se trompe. C'est beaucoup plus utile que le Serial Monitor pour le debug mécanique.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="38"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-test">Test</span> Test de l'exploration complète</div>
+      <div class="step-desc">Dans le mini-labyrinthe : le robot doit explorer toutes les cellules accessibles, mapper les murs, calculer le chemin optimal vers le centre, et revenir au départ.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Ce que le robot doit faire</h4>
+        <ul>
+          <li><b>Phase EXPLORE</b> : le robot part du coin (0,0), explore méthodiquement le labyrinthe en utilisant Flood Fill, et se dirige vers le centre (cellules 1,1 / 1,2 / 2,1 / 2,2 dans un 4×4)</li>
+          <li>À chaque cellule, il lit les 3 capteurs ToF, met à jour la carte des murs, recalcule le Flood Fill, et avance vers la cellule avec la valeur la plus basse</li>
+          <li><b>Phase RETURN</b> : une fois au centre, le robot connaît le chemin optimal. Il revient au départ en suivant ce chemin à vitesse rapide.</li>
+        </ul>
+        <h4>Vérification via Serial Monitor</h4>
+        <ul>
+          <li>Le code affiche la carte du labyrinthe dans le Serial Monitor</li>
+          <li>Vérifie que les murs détectés correspondent à la réalité</li>
+          <li>Vérifie que les valeurs Flood Fill sont cohérentes (le centre = 0, les cellules éloignées = valeurs plus grandes)</li>
+          <li>Si le robot se trompe de mur : problème de seuil ToF (étape 33) ou capteur mal orienté</li>
+        </ul>
+        <h4>Problèmes courants</h4>
+        <ul>
+          <li><b>Le robot tourne en boucle</b> : un mur n'est pas détecté → le Flood Fill envoie le robot dans une boucle. Baisse WALL_THRESHOLD_MM.</li>
+          <li><b>Le robot détecte des murs fantômes</b> : un câble est dans le cône ToF, ou le seuil est trop haut.</li>
+          <li><b>Le robot se décale progressivement</b> : PULSES_PER_MM ou CELL_SIZE_MM n'est pas bien calibré.</li>
+        </ul>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="39"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-test">Test</span> Test du speed run</div>
+      <div class="step-desc">Après l'exploration, le robot doit suivre le chemin optimal en vitesse rapide (SPEED_RETURN = 220). Chronomètre le temps. L'objectif au tournoi = le run le plus rapide.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Le speed run — comment ça marche</h4>
+        <ul>
+          <li>Pendant l'exploration, le robot a cartographié tout le labyrinthe</li>
+          <li>Il connaît maintenant le chemin le plus court du départ au centre</li>
+          <li>Le speed run = suivre ce chemin à vitesse maximale, sans explorer</li>
+          <li><code>SPEED_RETURN = 220</code> (sur 255 max) — c'est rapide mais stable</li>
+        </ul>
+        <h4>Optimisations possibles</h4>
+        <ul>
+          <li><b>Augmenter SPEED_RETURN</b> : teste 230, 240, 250. Plus c'est rapide, plus le PID doit être bien calibré.</li>
+          <li><b>Réduire le temps de virage</b> : un virage rapide gagne du temps mais risque de faire patiner les roues</li>
+          <li><b>Smooth turns</b> : au lieu de s'arrêter → tourner → repartir, le robot peut tourner en roulant (arc de cercle). Plus complexe mais beaucoup plus rapide.</li>
+        </ul>
+        <h4>Scoring RoboCup</h4>
+        <ul>
+          <li>Au tournoi, tu as plusieurs essais (runs) dans un temps limité</li>
+          <li>Le premier run = exploration (lent, ~2-3 min pour un labyrinthe 16×16)</li>
+          <li>Les runs suivants = speed runs (rapide, ~20-40 secondes si bien calibré)</li>
+          <li>Le meilleur temps est gardé → optimise le speed run !</li>
+        </ul>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="40"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-test">Test</span> Test batterie : autonomie</div>
+      <div class="step-desc">Charge les 3 cellules à fond. Lance le robot en exploration continue. Note combien de temps il tient. Tu as besoin d'au moins 10 minutes pour un match RoboCup.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Estimation théorique</h4>
+        <ul>
+          <li>3× 18650 3400mAh en série = 3400mAh à 11.1V</li>
+          <li>Consommation totale : 4 moteurs (~300mA) + ESP32 (~150mA) + capteurs (~50mA) = ~500mA en moyenne</li>
+          <li>Autonomie théorique : 3400 / 500 = <b>~6.8 heures</b></li>
+          <li>En pratique : les pics de courant (démarrages moteur), les pertes dans le LM2596, et la décharge non-linéaire réduisent à <b>~3-4 heures</b></li>
+          <li>C'est LARGEMENT assez pour un tournoi (10-15 min de runs au total)</li>
+        </ul>
+        <h4>Quand s'inquiéter</h4>
+        <ul>
+          <li>Si l'autonomie est < 30 min : vérifie qu'il n'y a pas de court-circuit ou de composant qui chauffe</li>
+          <li>Si l'ESP32 redémarre en boucle vers la fin : la tension batterie est trop basse pour le LM2596 → charge les batteries</li>
+          <li>Si les moteurs ralentissent progressivement : normal, la tension batterie baisse. Le BMS coupera la sortie à ~9.9V (3.3V/cellule) pour protéger les batteries.</li>
+        </ul>
+        <div class="detail-tip">💡 Au tournoi, charge les batteries entre chaque match. Même si l'autonomie est énorme, des batteries pleines = tensions stables = meilleure performance.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="41"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-test">Test</span> Checklist avant tournoi</div>
+      <div class="step-desc">✅ Batteries chargées à 100%. ✅ Code flashé (pas en mode debug). ✅ Vis serrées + Loctite. ✅ Câbles organisés et fixés. ✅ Roues propres. ✅ Multimètre et tournevis dans le sac. ✅ Câble USB de secours.</div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Checklist mécanique</h4>
+        <ul>
+          <li>☐ Toutes les vis serrées (vérifie avec un tournevis, pas à la main)</li>
+          <li>☐ Loctite bleu sur les vis moteur (vérifie qu'elles n'ont pas bougé)</li>
+          <li>☐ Roues bien fixées, pas de jeu sur les arbres moteur</li>
+          <li>☐ Câbles bien rangés et attachés (serre-câbles)</li>
+          <li>☐ Aucun câble dans le cône des capteurs ToF</li>
+          <li>☐ Entretoises bien serrées, aucun étage qui bouge</li>
+        </ul>
+        <h4>Checklist électrique</h4>
+        <ul>
+          <li>☐ 3 batteries chargées à fond (4.2V chacune, 12.6V total)</li>
+          <li>☐ LM2596 toujours réglé à 5.0V (peut dériver avec la chaleur)</li>
+          <li>☐ Tous les capteurs répondent (I2C scan : 4 appareils)</li>
+          <li>☐ LED fonctionne</li>
+          <li>☐ Moteurs tournent dans le bon sens</li>
+        </ul>
+        <h4>Checklist logicielle</h4>
+        <ul>
+          <li>☐ Code FINAL flashé (pas un sketch de test !)</li>
+          <li>☐ Mode debug désactivé (sinon le robot est plus lent à cause des prints Serial)</li>
+          <li>☐ Valeurs calibrées (PULSES_PER_MM, TURN_PULSES_90, CELL_SIZE_MM, PID, seuils ToF)</li>
+          <li>☐ Un dernier test complet (exploration + speed run) la veille du tournoi</li>
+        </ul>
+        <h4>Dans le sac pour le tournoi</h4>
+        <ul>
+          <li>☐ Le robot (évidemment)</li>
+          <li>☐ Câble micro-USB (pour reprogrammer sur place)</li>
+          <li>☐ PC portable avec Arduino IDE + le code</li>
+          <li>☐ Chargeur de batteries 18650</li>
+          <li>☐ Multimètre</li>
+          <li>☐ Petit tournevis cruciforme + plat</li>
+          <li>☐ Serre-câbles de rechange</li>
+          <li>☐ Foam tape de rechange</li>
+          <li>☐ Batterie externe (pour charger le PC)</li>
+        </ul>
+        <div class="detail-tip">💡 Arrive tôt au tournoi pour faire un test sur le labyrinthe officiel. La surface et l'éclairage peuvent être différents de chez toi → recalibre les ToF si nécessaire. Bonne chance RoboLymix ! 🏆</div>
+      </div></div>
+    </div></div>
+
+  </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  RoboLymix · INSAT — 42 étapes du zéro au tournoi RoboCup Tunisie 🏆
+</div>
+
+</div>
+
+<script>
+// ═══ PROGRESS TRACKING ═══
+const checks = document.querySelectorAll('input[type="checkbox"]');
+const total = checks.length;
+const STORAGE_KEY = 'robot_roadmap_v3';
+
+function update() {
+  const done = [...checks].filter(c => c.checked).length;
+  document.getElementById('counter').textContent = done + ' / ' + total;
+  document.getElementById('pct').textContent = Math.round(done/total*100) + '%';
+  document.getElementById('bar').style.width = (done/total*100) + '%';
+
+  checks.forEach(c => {
+    c.closest('.step').classList.toggle('done', c.checked);
+  });
+
+  // Update phase counts
+  for (let p = 1; p <= 7; p++) {
+    const body = document.getElementById('pb' + p);
+    if (!body) continue;
+    const pChecks = body.querySelectorAll('input[type="checkbox"]');
+    const pDone = [...pChecks].filter(c => c.checked).length;
+    const el = document.getElementById('pc' + p);
+    if (el) el.textContent = pDone + '/' + pChecks.length;
+  }
+
+  // Save
+  const state = [...checks].map(c => c.checked ? '1' : '0').join('');
+  try { localStorage.setItem(STORAGE_KEY, state); } catch(e) {}
+}
+
+// Restore
+try {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved && saved.length === total) {
+    checks.forEach((c, i) => { c.checked = saved[i] === '1'; });
+  }
+} catch(e) {}
+checks.forEach(c => c.addEventListener('change', update));
+update();
+
+// ═══ EXPANDABLE STEP DETAILS ═══
+document.querySelectorAll('.step-content').forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    var t = e.target;
+    // ignore taps on checkbox or links
+    if (t.tagName === 'INPUT') return;
+    if (t.tagName === 'A') return;
+    if (t.tagName === 'SPAN' && t.closest && t.closest('a')) return;
+
+    var detail = el.querySelector('.step-detail');
+    if (!detail) return;
+    var isOpen = detail.classList.toggle('open');
+    var hint = el.querySelector('.expand-hint');
+    if (hint) hint.textContent = isOpen ? '▾ Fermer les détails' : '▸ Voir les détails';
+  });
+});
+
+// ═══ COLLAPSIBLE PHASES ═══
+function togglePhase(n) {
+  const body = document.getElementById('pb' + n);
+  const header = body.previousElementSibling;
+  body.classList.toggle('collapsed');
+  header.classList.toggle('collapsed');
+}
+</script>
+</body>
+</html>
