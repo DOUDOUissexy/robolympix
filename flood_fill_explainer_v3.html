@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algorithme Flood Fill — Explication Interactive</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #1a1a1a; color: #d4d0c8; padding: 20px; line-height: 1.7; }
+.container { max-width: 950px; margin: 0 auto; }
+h1 { font-size: 1.8rem; color: #f5f0e6; }
+.sub { color: #8a8578; font-size: 0.95rem; margin-bottom: 24px; }
+h2 { font-size: 1.25rem; color: #f5f0e6; margin: 32px 0 14px; padding-bottom: 8px; border-bottom: 2px solid #333; }
+p { margin-bottom: 14px; font-size: 0.95rem; color: #d4d0c8; }
+
+.analogy { background: #222; border: 1px solid #e8a435; border-radius: 10px; padding: 20px 24px; margin: 20px 0; }
+.analogy h3 { color: #e8a435; font-size: 1rem; margin-bottom: 8px; }
+.analogy p { color: #8a8578; }
+
+.step-box { background: #222; border: 1px solid #333; border-radius: 10px; padding: 20px 24px; margin: 16px 0; }
+.step-box h3 { color: #e8a435; font-size: 1rem; margin-bottom: 10px; }
+.step-box p { font-size: 0.92rem; color: #d4d0c8; }
+
+.key-point { background: #222; border: 1px solid #e8a435; border-radius: 8px; padding: 14px 18px; margin: 12px 0; }
+.key-point strong { color: #e8a435; }
+
+.comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+.comp-card { background: #222; border: 1px solid #333; border-radius: 10px; padding: 16px 20px; }
+.comp-card h4 { font-size: 0.95rem; margin-bottom: 8px; }
+.comp-card.good h4 { color: #e8a435; }
+.comp-card.bad h4 { color: #d47272; }
+.comp-card ul { margin-left: 16px; font-size: 0.88rem; color: #8a8578; }
+.comp-card li { margin: 5px 0; }
+
+/* Interactive grid */
+.interactive-wrap { background: #222; border: 1px solid #333; border-radius: 12px; padding: 24px; margin: 20px 0; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.controls { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+.btn { padding: 10px 20px; border: 2px solid #333; border-radius: 8px; background: #2a2a2a; color: #d4d0c8; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn:hover { background: #333; border-color: #444; }
+.btn.active { background: #e8a435; color: #1a1a1a; border-color: #e8a435; }
+.btn-primary { background: #e8a435; color: #1a1a1a; border-color: #e8a435; }
+.btn-primary:hover { background: #d89420; }
+.btn-danger { background: #d47272; color: #1a1a1a; border-color: #d47272; }
+.btn-danger:hover { background: #c55f5f; }
+.status-bar { background: #222; border: 1px solid #e8a435; border-radius: 8px; padding: 10px 16px; margin: 12px 0; font-size: 0.9rem; color: #8a8578; min-height: 42px; }
+.speed-control { display: flex; align-items: center; gap: 10px; justify-content: center; margin: 10px 0; font-size: 0.85rem; color: #8a8578; }
+.speed-control input { width: 120px; background: #262626; color: #d4d0c8; border: 1px solid #333; border-radius: 4px; padding: 4px 8px; }
+.grid-caption { font-size: 0.85rem; color: #8a8578; margin-top: 10px; }
+
+.code-structure { background: #222; border: 1px solid #333; border-radius: 10px; padding: 20px 24px; margin: 16px 0; }
+.code-file { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid #2a2a2a; align-items: flex-start; }
+.code-file:last-child { border-bottom: none; }
+.file-name { font-family: monospace; font-weight: 700; color: #e8a435; background: #262626; padding: 3px 8px; border-radius: 4px; font-size: 0.88rem; white-space: nowrap; }
+.file-desc { font-size: 0.88rem; color: #8a8578; }
+
+@media (max-width: 600px) { .comparison { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Flood Fill — Comment ça marche ?</h1>
+<p class="sub">Algorithme de résolution de labyrinthe — expliqué visuellement et interactivement</p>
+
+<!-- ═══ ANALOGIE ═══ -->
+<div class="analogy">
+  <h3>L'analogie de l'eau</h3>
+  <p>Imagine que le labyrinthe est une <b>piscine vide</b> avec des murs. Le <b>but</b> (centre du labyrinthe) est un <b>robinet</b>.</p>
+  <p>Tu ouvres le robinet — l'eau commence à couler et <b>inonde</b> toute la piscine. L'eau atteint d'abord les cases juste à côté du but, puis celles un peu plus loin, puis encore plus loin...</p>
+  <p>Chaque case reçoit un <b>numéro</b> : combien de pas elle est loin du but. Le robot suit toujours le numéro le plus bas. C'est <b>mathématiquement garanti</b> d'être le chemin le plus court.</p>
+</div>
+
+<!-- ═══ INTERACTIVE FLOOD FILL ═══ -->
+<h2>Simulation Interactive — Essaie toi-même !</h2>
+<p>Clique sur les bords des cellules pour ajouter/retirer des murs, puis lance le flood fill pour voir comment l'algorithme calcule les distances.</p>
+
+<div class="interactive-wrap">
+  <div class="controls">
+    <button class="btn btn-primary" onclick="runFloodFill()">▶ Lancer le Flood Fill</button>
+    <button class="btn" onclick="stepFloodFill()">⏩ Pas à pas</button>
+    <button class="btn" onclick="showPath()">🏃 Montrer le chemin</button>
+    <button class="btn btn-danger" onclick="resetGrid()">🔄 Réinitialiser</button>
+  </div>
+  <div class="controls">
+    <button class="btn" id="btnWall" onclick="setMode('wall')" style="border-color:#e8a435;color:#e8a435">🧱 Mode Mur</button>
+    <button class="btn" id="btnRobot" onclick="setMode('robot')">🤖 Placer Robot</button>
+    <button class="btn" id="btnGoal" onclick="setMode('goal')">🎯 Placer But</button>
+  </div>
+  <div class="speed-control">
+    <label>Vitesse animation :</label>
+    <input type="range" id="speedSlider" min="50" max="500" value="200">
+    <span id="speedLabel">200ms</span>
+  </div>
+
+  <canvas id="mazeCanvas" width="480" height="480" style="border:2px solid #333;border-radius:8px;cursor:pointer;max-width:100%;"></canvas>
+
+  <div class="status-bar" id="statusBar">Clique sur les bords des cellules pour placer des murs, puis clique "Lancer le Flood Fill"</div>
+  <div class="grid-caption">Grille 8×8 • Clique sur les bords des cellules pour ajouter des murs • Le but est au centre (vert), le robot en bas-gauche (bleu)</div>
+</div>
+
+<script>
+const canvas = document.getElementById('mazeCanvas');
+const ctx = canvas.getContext('2d');
+const N = 8;
+const CELL = 56;
+const PAD = 16;
+let mode = 'wall';
+
+// Maze state
+let wallsH = []; // horizontal walls: wallsH[r][c] = wall between row r-1 and row r at col c
+let wallsV = []; // vertical walls: wallsV[r][c] = wall between col c-1 and col c at row r
+let flood = [];
+let robotR = 7, robotC = 0;
+let goalR = 3, goalC = 3;
+let path = [];
+let animating = false;
+let bfsQueue = [];
+let bfsVisited = [];
+
+function init() {
+  wallsH = Array.from({length: N+1}, () => Array(N).fill(false));
+  wallsV = Array.from({length: N}, () => Array(N+1).fill(false));
+  flood = Array.from({length: N}, () => Array(N).fill(-1));
+  path = [];
+  // Outer walls
+  for (let c = 0; c < N; c++) { wallsH[0][c] = true; wallsH[N][c] = true; }
+  for (let r = 0; r < N; r++) { wallsV[r][0] = true; wallsV[r][N] = true; }
+  // Some default inner walls for interest
+  wallsV[1][2] = true; wallsV[2][2] = true;
+  wallsH[3][1] = true; wallsH[3][2] = true;
+  wallsV[4][5] = true; wallsV[5][5] = true;
+  wallsH[6][3] = true; wallsH[6][4] = true;
+  wallsV[2][6] = true; wallsH[2][6] = true;
+  wallsV[5][3] = true; wallsH[5][4] = true;
+  draw();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#262626';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw cells with flood values
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N; c++) {
+      const x = PAD + c * CELL, y = PAD + r * CELL;
+      // Cell background based on flood value
+      if (flood[r][c] >= 0) {
+        const maxV = Math.max(...flood.flat().filter(v => v >= 0), 1);
+        const t = flood[r][c] / maxV;
+        const g = Math.round(100 - t * 50);
+        const b = Math.round(140 - t * 60);
+        ctx.fillStyle = `rgba(${Math.round(122+t*40)}, ${g}, ${b}, 0.3)`;
+        ctx.fillRect(x, y, CELL, CELL);
+      }
+      // Cell border
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(x, y, CELL, CELL);
+    }
+  }
+
+  // Draw flood values
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N; c++) {
+      if (flood[r][c] >= 0) {
+        const x = PAD + c * CELL + CELL/2, y = PAD + r * CELL + CELL/2;
+        ctx.font = 'bold 16px monospace';
+        ctx.fillStyle = flood[r][c] === 0 ? '#e8a435' : '#d4d0c8';
+        ctx.globalAlpha = Math.max(0.3, 1 - flood[r][c] * 0.06);
+        ctx.fillText(flood[r][c], x, y);
+        ctx.globalAlpha = 1;
+      }
+    }
+  }
+
+  // Draw path
+  if (path.length > 1) {
+    ctx.strokeStyle = '#d47272';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    for (let i = 0; i < path.length; i++) {
+      const px = PAD + path[i][1] * CELL + CELL/2;
+      const py = PAD + path[i][0] * CELL + CELL/2;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    // Path dots
+    for (const [pr, pc] of path) {
+      ctx.fillStyle = '#d47272';
+      ctx.beginPath();
+      ctx.arc(PAD + pc*CELL + CELL/2, PAD + pr*CELL + CELL/2, 4, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+
+  // Draw walls
+  ctx.strokeStyle = '#d4d0c8';
+  ctx.lineWidth = 3.5;
+  ctx.lineCap = 'round';
+  // Horizontal walls
+  for (let r = 0; r <= N; r++) {
+    for (let c = 0; c < N; c++) {
+      if (wallsH[r][c]) {
+        const x1 = PAD + c * CELL, y1 = PAD + r * CELL;
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 + CELL, y1); ctx.stroke();
+      }
+    }
+  }
+  // Vertical walls
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c <= N; c++) {
+      if (wallsV[r][c]) {
+        const x1 = PAD + c * CELL, y1 = PAD + r * CELL;
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1, y1 + CELL); ctx.stroke();
+      }
+    }
+  }
+
+  // Draw goal
+  const gx = PAD + goalC * CELL + CELL/2, gy = PAD + goalR * CELL + CELL/2;
+  ctx.fillStyle = '#e8a435';
+  ctx.beginPath(); ctx.arc(gx, gy, 12, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#1a1a1a';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('BUT', gx, gy + 1);
+
+  // Draw robot
+  const rx = PAD + robotC * CELL + CELL/2, ry = PAD + robotR * CELL + CELL/2;
+  ctx.fillStyle = '#e8a435';
+  ctx.beginPath(); ctx.arc(rx, ry, 12, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#1a1a1a';
+  ctx.font = '14px sans-serif';
+  ctx.fillText('🤖', rx, ry + 1);
+}
+
+// Click handler for walls/robot/goal
+canvas.addEventListener('click', function(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX - PAD;
+  const my = (e.clientY - rect.top) * scaleY - PAD;
+
+  if (mode === 'robot') {
+    const c = Math.floor(mx / CELL), r = Math.floor(my / CELL);
+    if (r >= 0 && r < N && c >= 0 && c < N) { robotR = r; robotC = c; path = []; flood = Array.from({length:N},()=>Array(N).fill(-1)); draw(); }
+    return;
+  }
+  if (mode === 'goal') {
+    const c = Math.floor(mx / CELL), r = Math.floor(my / CELL);
+    if (r >= 0 && r < N && c >= 0 && c < N) { goalR = r; goalC = c; path = []; flood = Array.from({length:N},()=>Array(N).fill(-1)); draw(); }
+    return;
+  }
+
+  // Wall mode: detect nearest edge
+  const col = mx / CELL, row = my / CELL;
+  const ci = Math.floor(col), ri = Math.floor(row);
+  const fx = col - ci, fy = row - ri;
+
+  const distTop = fy, distBot = 1 - fy, distLeft = fx, distRight = 1 - fx;
+  const minDist = Math.min(distTop, distBot, distLeft, distRight);
+
+  if (minDist > 0.3) return; // too far from edge
+
+  if (minDist === distTop && ri >= 0 && ri <= N && ci >= 0 && ci < N) {
+    if (ri === 0 || ri === N) return; // don't toggle outer walls
+    wallsH[ri][ci] = !wallsH[ri][ci];
+  } else if (minDist === distBot && ri+1 >= 0 && ri+1 <= N && ci >= 0 && ci < N) {
+    if (ri+1 === 0 || ri+1 === N) return;
+    wallsH[ri+1][ci] = !wallsH[ri+1][ci];
+  } else if (minDist === distLeft && ri >= 0 && ri < N && ci >= 0 && ci <= N) {
+    if (ci === 0 || ci === N) return;
+    wallsV[ri][ci] = !wallsV[ri][ci];
+  } else if (minDist === distRight && ri >= 0 && ri < N && ci+1 >= 0 && ci+1 <= N) {
+    if (ci+1 === 0 || ci+1 === N) return;
+    wallsV[ri][ci+1] = !wallsV[ri][ci+1];
+  }
+
+  path = [];
+  flood = Array.from({length: N}, () => Array(N).fill(-1));
+  draw();
+  setStatus('Mur modifié. Clique "Lancer le Flood Fill" pour recalculer.');
+});
+
+function canMove(r, c, dr, dc) {
+  const nr = r + dr, nc = c + dc;
+  if (nr < 0 || nr >= N || nc < 0 || nc >= N) return false;
+  // Check wall between (r,c) and (nr,nc)
+  if (dr === -1) return !wallsH[r][c]; // moving up: check top wall of (r,c)
+  if (dr === 1) return !wallsH[r+1][c]; // moving down: check bottom wall of (r,c)
+  if (dc === -1) return !wallsV[r][c]; // moving left: check left wall of (r,c)
+  if (dc === 1) return !wallsV[r][c+1]; // moving right: check right wall of (r,c)
+  return false;
+}
+
+function computeFlood() {
+  flood = Array.from({length: N}, () => Array(N).fill(-1));
+  flood[goalR][goalC] = 0;
+  const q = [[goalR, goalC]];
+  const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
+  let head = 0;
+  while (head < q.length) {
+    const [r, c] = q[head++];
+    for (const [dr, dc] of dirs) {
+      const nr = r+dr, nc = c+dc;
+      if (nr >= 0 && nr < N && nc >= 0 && nc < N && flood[nr][nc] === -1 && canMove(r, c, dr, dc)) {
+        flood[nr][nc] = flood[r][c] + 1;
+        q.push([nr, nc]);
+      }
+    }
+  }
+}
+
+function runFloodFill() {
+  if (animating) return;
+  animating = true;
+  path = [];
+  flood = Array.from({length: N}, () => Array(N).fill(-1));
+  flood[goalR][goalC] = 0;
+  const q = [[goalR, goalC]];
+  const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
+  let head = 0;
+  const speed = parseInt(document.getElementById('speedSlider').value);
+
+  function step() {
+    if (head >= q.length) {
+      animating = false;
+      setStatus('Flood Fill terminé ! Chaque nombre = distance au but. Clique "Montrer le chemin" pour voir le trajet du robot.');
+      draw();
+      return;
+    }
+    const batch = Math.max(1, Math.floor((q.length - head) / 10));
+    for (let i = 0; i < batch && head < q.length; i++) {
+      const [r, c] = q[head++];
+      for (const [dr, dc] of dirs) {
+        const nr = r+dr, nc = c+dc;
+        if (nr >= 0 && nr < N && nc >= 0 && nc < N && flood[nr][nc] === -1 && canMove(r, c, dr, dc)) {
+          flood[nr][nc] = flood[r][c] + 1;
+          q.push([nr, nc]);
+        }
+      }
+    }
+    setStatus(`BFS en cours... ${head}/${q.length} cellules traitées (valeur max = ${Math.max(...flood.flat().filter(v=>v>=0))})`);
+    draw();
+    setTimeout(step, speed);
+  }
+  setStatus('Démarrage du Flood Fill (BFS depuis le but)...');
+  step();
+}
+
+function stepFloodFill() {
+  if (bfsQueue.length === 0) {
+    // Initialize
+    flood = Array.from({length: N}, () => Array(N).fill(-1));
+    flood[goalR][goalC] = 0;
+    bfsQueue = [[goalR, goalC]];
+    bfsVisited = 0;
+    path = [];
+    setStatus('Pas à pas initialisé. But = 0. Clique à nouveau pour avancer.');
+    draw();
+    return;
+  }
+  const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
+  if (bfsVisited >= bfsQueue.length) {
+    setStatus('BFS terminé ! Toutes les cellules accessibles ont été remplies.');
+    bfsQueue = [];
+    return;
+  }
+  const [r, c] = bfsQueue[bfsVisited++];
+  for (const [dr, dc] of dirs) {
+    const nr = r+dr, nc = c+dc;
+    if (nr >= 0 && nr < N && nc >= 0 && nc < N && flood[nr][nc] === -1 && canMove(r, c, dr, dc)) {
+      flood[nr][nc] = flood[r][c] + 1;
+      bfsQueue.push([nr, nc]);
+    }
+  }
+  setStatus(`Pas ${bfsVisited}: cellule (${r},${c}) = ${flood[r][c]} → propagation vers voisins`);
+  draw();
+  // Highlight current cell
+  const x = PAD + c * CELL, y = PAD + r * CELL;
+  ctx.strokeStyle = '#d47272';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(x+2, y+2, CELL-4, CELL-4);
+}
+
+function showPath() {
+  if (flood[robotR][robotC] === -1) {
+    computeFlood();
+    draw();
+  }
+  if (flood[robotR][robotC] === -1) {
+    setStatus('Le robot ne peut pas atteindre le but ! Il y a trop de murs.');
+    return;
+  }
+  path = [[robotR, robotC]];
+  let r = robotR, c = robotC;
+  const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
+  while (r !== goalR || c !== goalC) {
+    let best = flood[r][c], br = r, bc = c;
+    for (const [dr, dc] of dirs) {
+      const nr = r+dr, nc = c+dc;
+      if (nr >= 0 && nr < N && nc >= 0 && nc < N && canMove(r, c, dr, dc) && flood[nr][nc] >= 0 && flood[nr][nc] < best) {
+        best = flood[nr][nc]; br = nr; bc = nc;
+      }
+    }
+    if (br === r && bc === c) break; // stuck
+    r = br; c = bc;
+    path.push([r, c]);
+  }
+  draw();
+  setStatus(`Chemin trouvé ! ${path.length - 1} pas du robot au but. Le robot suit toujours le voisin avec la valeur la plus basse.`);
+}
+
+function resetGrid() {
+  animating = false;
+  bfsQueue = [];
+  bfsVisited = 0;
+  robotR = 7; robotC = 0;
+  goalR = 3; goalC = 3;
+  init();
+  setStatus('Grille réinitialisée. Place des murs et lance le Flood Fill !');
+}
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('btnWall').classList.toggle('active', m === 'wall');
+  document.getElementById('btnRobot').classList.toggle('active', m === 'robot');
+  document.getElementById('btnGoal').classList.toggle('active', m === 'goal');
+  const labels = {wall: 'Mode Mur : clique sur les bords des cellules', robot: 'Mode Robot : clique sur une cellule pour déplacer le robot', goal: 'Mode But : clique sur une cellule pour déplacer le but'};
+  setStatus(labels[m]);
+}
+
+function setStatus(msg) { document.getElementById('statusBar').textContent = msg; }
+
+document.getElementById('speedSlider').addEventListener('input', function() {
+  document.getElementById('speedLabel').textContent = this.value + 'ms';
+});
+
+init();
+setMode('wall');
+</script>
+
+<!-- ═══ HOW BFS WORKS ═══ -->
+<h2>Comment fonctionne le BFS (Breadth-First Search)</h2>
+
+<div class="step-box">
+  <h3>L'algorithme en 5 étapes simples :</h3>
+  <p><b>1.</b> On met le <b>but</b> dans une file d'attente avec la valeur <b>0</b></p>
+  <p><b>2.</b> On prend la première cellule de la file</p>
+  <p><b>3.</b> Pour chaque voisin accessible (pas de mur entre eux) qui n'a pas encore de valeur :</p>
+  <p style="margin-left:24px">→ On lui donne la valeur du parent + 1</p>
+  <p style="margin-left:24px">→ On l'ajoute à la file d'attente</p>
+  <p><b>4.</b> On répète l'étape 2 jusqu'à ce que la file soit vide</p>
+  <p><b>5.</b> Résultat : chaque cellule contient sa <b>distance exacte</b> au but</p>
+</div>
+
+<div class="key-point">
+  <strong>Pourquoi c'est optimal ?</strong> Le BFS explore les cellules couche par couche (d'abord toutes les cellules à distance 1, puis toutes celles à distance 2, etc.). Donc la première fois qu'une cellule est atteinte, c'est forcément par le chemin le plus court. Le robot suit ensuite le gradient descendant (toujours vers la valeur plus basse) → chemin optimal garanti.
+</div>
+
+<!-- ═══ ROBOT DECISION ═══ -->
+<h2>Comment le robot prend ses décisions</h2>
+
+<div class="step-box">
+  <h3>À chaque case, le robot fait ceci :</h3>
+  <p><b>1. Lire les capteurs ToF</b> — Mesurer les distances avant, gauche, droite pour détecter les murs</p>
+  <p><b>2. Enregistrer les murs</b> — Mettre à jour la carte interne (tableau 2D en mémoire)</p>
+  <p><b>3. Re-calculer le flood</b> — Relancer le BFS depuis le but (les valeurs changent car on connaît plus de murs maintenant)</p>
+  <p><b>4. Regarder les 4 voisins</b> — Nord, Est, Sud, Ouest (seulement ceux sans mur)</p>
+  <p><b>5. Aller vers le plus petit</b> — Le voisin avec la valeur flood la plus basse = direction optimale</p>
+</div>
+
+<!-- ═══ TWO PHASES ═══ -->
+<h2>Les deux phases du tournoi</h2>
+
+<div class="comparison">
+  <div class="comp-card">
+    <h4 style="color:#e8a435;">Phase 1 : Exploration (lente)</h4>
+    <ul>
+      <li>Le robot <b>ne connaît pas</b> le labyrinthe</li>
+      <li>Il avance lentement (<code>SPEED_EXPLORE = 160</code>)</li>
+      <li>À chaque case : lit les murs, met à jour la carte, re-flood</li>
+      <li>Il découvre les murs au fur et à mesure</li>
+      <li>But : atteindre le centre du labyrinthe</li>
+    </ul>
+  </div>
+  <div class="comp-card">
+    <h4 style="color:#e8a435;">Phase 2 : Retour rapide</h4>
+    <ul>
+      <li>Le robot <b>connaît</b> tous les murs découverts</li>
+      <li>Il re-flood depuis le départ (coin bas-gauche)</li>
+      <li>Il fonce à vitesse max (<code>SPEED_RETURN = 220</code>)</li>
+      <li>Pas besoin de lire les capteurs — la carte est connue</li>
+      <li>But : revenir au départ le plus vite possible</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══ VS OTHER ALGORITHMS ═══ -->
+<h2>Flood Fill vs Wall Following</h2>
+
+<div class="comparison">
+  <div class="comp-card bad">
+    <h4>Wall Following (suivi de mur) ❌</h4>
+    <ul>
+      <li>Simple : toujours garder la main droite sur le mur</li>
+      <li><b>Problème :</b> ne fonctionne PAS si le labyrinthe a des îlots</li>
+      <li>Peut tourner en boucle infinie</li>
+      <li>Ne trouve JAMAIS le chemin optimal</li>
+    </ul>
+  </div>
+  <div class="comp-card good">
+    <h4>Flood Fill (notre choix) ✅</h4>
+    <ul>
+      <li>Fonctionne sur <b>tout</b> type de labyrinthe</li>
+      <li>Gère les boucles, culs-de-sac, îlots</li>
+      <li>Trouve toujours le <b>chemin le plus court</b></li>
+      <li>Standard des compétitions Micromouse depuis 40 ans</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══ CODE STRUCTURE ═══ -->
+<h2>Structure du Code (6 fichiers)</h2>
+
+<div class="code-structure">
+  <div class="code-file"><span class="file-name">config.h</span><span class="file-desc">Toutes les constantes : taille du labyrinthe, pins GPIO, vitesses, PID. Le seul fichier à modifier pour calibrer.</span></div>
+  <div class="code-file"><span class="file-name">motors.h</span><span class="file-desc">Contrôle des 4 moteurs via L298N. PWM, encodeurs, PID pour aller droit, rotation précise.</span></div>
+  <div class="code-file"><span class="file-name">sensors.h</span><span class="file-desc">Gestion des 3 capteurs VL53L0X ToF. Initialisation I2C, lecture, détection de murs.</span></div>
+  <div class="code-file"><span class="file-name">movement.h</span><span class="file-desc">Mouvements haut-niveau : avancer d'une case, tourner 90°, demi-tour.</span></div>
+  <div class="code-file"><span class="file-name">flood_fill.h</span><span class="file-desc">Le cerveau : carte des murs, BFS, choix de direction, exploration et retour.</span></div>
+  <div class="code-file"><span class="file-name">maze_robot_v3.ino</span><span class="file-desc">Programme principal : machine à états ATTENTE → EXPLORATION → RETOUR → FINI.</span></div>
+</div>
+
+<!-- ═══ CALIBRATION ═══ -->
+<h2>Calibration avant le tournoi</h2>
+
+<div class="key-point">
+  <strong>TURN_PULSES_90</strong> — Le nombre de pulses encodeur pour un virage exact de 90°. Procédure : faire tourner le robot 4× à droite (360°) et ajuster jusqu'à ce qu'il revienne exactement à sa position initiale.
+</div>
+<div class="key-point">
+  <strong>CELL_SIZE_MM</strong> — La taille d'une case du labyrinthe en mm. Sera dans le cahier des charges du tournoi.
+</div>
+<div class="key-point">
+  <strong>WALL_THRESHOLD_MM</strong> — En dessous de cette distance (100mm par défaut), le capteur considère qu'il y a un mur. À ajuster selon la taille des cases.
+</div>
+
+</div>
+</body>
+</html>
