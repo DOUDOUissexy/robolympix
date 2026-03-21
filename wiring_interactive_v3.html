@@ -55,7 +55,6 @@ h1 { font-size: 1.8rem; color: #f5f0e6; margin-bottom: 4px; }
   <div class="sidebar">
     <h3>Composants</h3>
     <button class="comp-btn" onclick="select('battery')" id="btn-battery"><span class="dot" style="background:#dc2626"></span>Batterie 3S</button>
-    <button class="comp-btn" onclick="select('bms')" id="btn-bms"><span class="dot" style="background:#dc2626"></span>BMS 3S</button>
     <button class="comp-btn" onclick="select('switch')" id="btn-switch"><span class="dot" style="background:#f59e0b"></span>Interrupteur</button>
     <button class="comp-btn" onclick="select('lm2596')" id="btn-lm2596"><span class="dot" style="background:#ea580c"></span>LM2596</button>
     <button class="comp-btn" onclick="select('l298n')" id="btn-l298n"><span class="dot" style="background:#16a34a"></span>L298N</button>
@@ -66,7 +65,7 @@ h1 { font-size: 1.8rem; color: #f5f0e6; margin-bottom: 4px; }
     <button class="comp-btn" onclick="select('all')" id="btn-all" style="background:#252538"><span class="dot" style="background:#aaa"></span><b>Tout afficher</b></button>
 
     <div class="progress">
-      <div class="progress-label" id="progressLabel">0 / 9 câblés</div>
+      <div class="progress-label" id="progressLabel">0 / 8 câblés</div>
       <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
     </div>
     <div class="check-list" id="checkList"></div>
@@ -103,8 +102,7 @@ const ctx = canvas.getContext('2d');
 // Component positions
 const comps = {
   battery:  { x: 40,  y: 240, w: 110, h: 60, label: 'Batterie 3S', sub: '11.1V', color: '#dc2626', border: '#dc2626' },
-  bms:      { x: 180, y: 240, w: 90,  h: 60, label: 'BMS 3S', sub: 'Protection', color: '#dc2626', border: '#dc2626' },
-  switch:   { x: 300, y: 250, w: 70,  h: 40, label: 'Switch', sub: 'ON/OFF', color: '#f59e0b', border: '#f59e0b' },
+  switch:   { x: 200, y: 250, w: 70,  h: 40, label: 'Switch', sub: 'ON/OFF', color: '#f59e0b', border: '#f59e0b' },
   lm2596:   { x: 400, y: 330, w: 130, h: 70, label: 'LM2596', sub: '12V→5.0V', color: '#ea580c', border: '#ea580c' },
   l298n:    { x: 400, y: 150, w: 130, h: 90, label: 'L298N', sub: 'Pont-H', color: '#16a34a', border: '#16a34a' },
   esp32:    { x: 580, y: 180, w: 170, h: 240, label: 'ESP32', sub: 'WROOM-32D', color: '#2563eb', border: '#2563eb' },
@@ -120,8 +118,7 @@ const comps = {
 // Wires: [from_comp, from_side, to_comp, to_side, color, label]
 const wires = [
   // Power chain
-  ['battery','right','bms','left','#dc2626','12V'],
-  ['bms','right','switch','left','#dc2626','12V'],
+  ['battery','right','switch','left','#dc2626','12V'],
   ['switch','right','l298n','left','#dc2626','12V'],
   ['switch','right','lm2596','left','#dc2626','12V'],
   ['lm2596','right','esp32','left','#ea580c','5V→VIN'],
@@ -145,15 +142,14 @@ const wires = [
 // Which wires belong to which component selection
 const wireGroups = {
   battery: [0],
-  bms: [0,1],
-  switch: [1,2,3],
-  lm2596: [3,4],
-  l298n: [2,5,6,7],
-  esp32: [4,5,8,9,10,11,12,13],
-  motors: [6,7,8,9],
-  tof: [10,11,12],
-  perfboard: [13],
-  all: Array.from({length:14},(_, i)=>i)
+  switch: [0,1,2],
+  lm2596: [2,3],
+  l298n: [1,4,5,6],
+  esp32: [3,4,7,8,9,10,11,12],
+  motors: [5,6,7,8],
+  tof: [9,10,11],
+  perfboard: [12],
+  all: Array.from({length:13},(_, i)=>i)
 };
 
 const info = {
@@ -161,25 +157,15 @@ const info = {
     title: 'Batterie 3S (3× 18650)',
     desc: 'La source de tout le courant. 11.1V nominal.',
     wires: [
-      {color:'#dc2626', text:'+ (Rouge) → BMS B+ (entrée positive)'},
-      {color:'#aaa', text:'− (Noir) → BMS B− (entrée négative)'}
-    ]
-  },
-  bms: {
-    title: 'BMS 3S 10A',
-    desc: 'Protège la batterie contre surcharge, décharge profonde et court-circuit.',
-    wires: [
-      {color:'#dc2626', text:'B+ ← Batterie + (rouge)'},
-      {color:'#aaa', text:'B− ← Batterie − (noir)'},
-      {color:'#dc2626', text:'P+ → Interrupteur (sortie 12V protégée)'},
-      {color:'#aaa', text:'P− → Rail GND du perfboard'}
+      {color:'#dc2626', text:'+ (Rouge) → Interrupteur (borne 1)'},
+      {color:'#aaa', text:'− (Noir) → Rail GND du perfboard'}
     ]
   },
   switch: {
     title: 'Interrupteur ON/OFF',
-    desc: 'Coupe le 12V. Borne 1 = entrée du BMS, Borne 2 = sortie vers rail 12V.',
+    desc: 'Coupe le 12V. Borne 1 = entrée de la batterie, Borne 2 = sortie vers rail 12V.',
     wires: [
-      {color:'#dc2626', text:'Borne 1 ← BMS P+ (rouge)'},
+      {color:'#dc2626', text:'Borne 1 ← Batterie + (rouge)'},
       {color:'#dc2626', text:'Borne 2 → Rail 12V du perfboard'}
     ]
   },
@@ -259,7 +245,7 @@ const info = {
       {color:'#ca8a04', text:'Rail R1 (3.3V) ← ESP32 3V3'},
       {color:'#dc2626', text:'Rail R2 cols 1-9 (12V) ← Interrupteur'},
       {color:'#ea580c', text:'Rail R2 cols 11-18 (5V) ← LM2596 OUT+'},
-      {color:'#aaa', text:'Rail R12 (GND) ← BMS P−'},
+      {color:'#aaa', text:'Rail R12 (GND) ← Batterie −'},
       {color:'#7c3aed', text:'R1: 4.7kΩ entre 3.3V et SDA'},
       {color:'#7c3aed', text:'R2: 4.7kΩ entre 3.3V et SCL'}
     ]
@@ -273,7 +259,7 @@ const info = {
 
 let selected = null;
 let checked = {};
-const compNames = ['battery','bms','switch','lm2596','l298n','esp32','motors','tof','perfboard'];
+const compNames = ['battery','switch','lm2596','l298n','esp32','motors','tof','perfboard'];
 
 function getAnchor(comp, side) {
   const c = comps[comp];
