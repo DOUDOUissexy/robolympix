@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Floor 1 — RoboLymix v4</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg-primary:#0d1117;
+  --bg-surface:#161b22;
+  --border:#30363d;
+  --text-primary:#e6edf3;
+  --text-secondary:#8b949e;
+  --accent-amber:#f0883e;
+  --accent-green:#3fb950;
+  --accent-purple:#bc8cff;
+  --accent-teal:#58a6ff;
+}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Roboto,sans-serif;
+  background:var(--bg-primary);
+  color:var(--text-primary);
+  padding:0;
+  margin:0;
+}
+
+.page-wrapper{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+header{
+  background:linear-gradient(135deg,rgba(25,30,40,0.8) 0%,rgba(22,27,34,0.95) 100%);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(10px);
+  padding:0;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.header-content{
+  max-width:1200px;
+  margin:0 auto;
+  padding:24px 20px;
+}
+
+.header-title{
+  font-size:2rem;
+  font-weight:700;
+  margin-bottom:16px;
+  background:linear-gradient(135deg,var(--text-primary) 0%,var(--accent-teal) 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.breadcrumb{
+  display:flex;
+  gap:0;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.breadcrumb-item{
+  color:var(--text-secondary);
+  font-size:0.9rem;
+  padding:6px 12px;
+  border-right:1px solid var(--border);
+  transition:all 0.3s ease;
+  text-decoration:none;
+  cursor:pointer;
+}
+
+.breadcrumb-item:first-child{
+  padding-left:0;
+}
+
+.breadcrumb-item:last-child{
+  border-right:none;
+  padding-right:0;
+}
+
+.breadcrumb-item.active{
+  color:var(--accent-teal);
+  font-weight:600;
+}
+
+.breadcrumb-item:not(.active):hover{
+  color:var(--text-primary);
+  background:rgba(88,166,255,0.1);
+  border-radius:4px;
+}
+
+.container{
+  max-width:1200px;
+  margin:0 auto;
+  padding:32px 20px;
+  flex:1;
+}
+
+h1{
+  font-size:1.5rem;
+  font-weight:700;
+  color:var(--text-primary);
+  margin-bottom:8px;
+}
+
+.subtitle{
+  color:var(--text-secondary);
+  font-size:0.95rem;
+  line-height:1.6;
+  margin-bottom:24px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.spec-item{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 8px;
+}
+
+.spec-item::before{
+  content:'•';
+  color:var(--accent-teal);
+  font-weight:bold;
+}
+
+.warning-box{
+  background:linear-gradient(135deg,rgba(248,81,73,0.1) 0%,rgba(248,81,73,0.05) 100%);
+  border:1px solid rgba(248,81,73,0.3);
+  border-left:4px solid var(--accent-amber);
+  border-radius:8px;
+  padding:16px 20px;
+  margin-bottom:24px;
+  font-size:0.95rem;
+  color:var(--text-primary);
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  backdrop-filter:blur(10px);
+  animation:slideInDown 0.4s ease;
+}
+
+.warning-box::before{
+  content:'⚠';
+  font-size:1.5rem;
+  flex-shrink:0;
+  color:var(--accent-amber);
+}
+
+@keyframes slideInDown{
+  from{
+    opacity:0;
+    transform:translateY(-10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.diagram-section{
+  background:var(--bg-surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:28px;
+  margin-bottom:32px;
+  backdrop-filter:blur(10px);
+  transition:all 0.3s ease;
+}
+
+.diagram-section:hover{
+  border-color:var(--accent-teal);
+  box-shadow:0 8px 32px rgba(88,166,255,0.1);
+}
+
+.diagram-section svg{
+  width:100%;
+  height:auto;
+  max-width:700px;
+  margin:0 auto;
+  display:block;
+}
+
+section{
+  margin-bottom:32px;
+}
+
+h2{
+  font-size:1.2rem;
+  font-weight:700;
+  color:var(--text-primary);
+  margin-bottom:16px;
+  padding-bottom:12px;
+  border-bottom:2px solid var(--border);
+  position:relative;
+}
+
+h2::before{
+  content:'';
+  position:absolute;
+  bottom:-2px;
+  left:0;
+  width:0;
+  height:2px;
+  background:linear-gradient(90deg,var(--accent-teal),var(--accent-amber));
+  animation:expandWidth 0.6s ease forwards;
+}
+
+@keyframes expandWidth{
+  from{width:0}
+  to{width:48px}
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:var(--bg-surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  margin-bottom:24px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);
+}
+
+thead{
+  background:linear-gradient(135deg,rgba(88,166,255,0.15) 0%,rgba(88,166,255,0.05) 100%);
+}
+
+th{
+  padding:14px 16px;
+  text-align:left;
+  font-size:0.85rem;
+  text-transform:uppercase;
+  letter-spacing:0.8px;
+  color:var(--accent-teal);
+  font-weight:700;
+  border-bottom:2px solid var(--border);
+}
+
+tbody tr{
+  border-bottom:1px solid var(--border);
+  transition:all 0.2s ease;
+}
+
+tbody tr:last-child{
+  border-bottom:none;
+}
+
+tbody tr:nth-child(even){
+  background:rgba(22,27,34,0.5);
+}
+
+tbody tr:hover{
+  background:rgba(88,166,255,0.1);
+  transform:translateX(2px);
+}
+
+td{
+  padding:14px 16px;
+  font-size:0.9rem;
+  color:var(--text-primary);
+}
+
+.mono{
+  font-family:'Monaco','Courier New',monospace;
+  color:var(--accent-amber);
+  font-size:0.85rem;
+  background:rgba(240,136,62,0.15);
+  padding:4px 8px;
+  border-radius:4px;
+  border:1px solid rgba(240,136,62,0.3);
+  display:inline-block;
+  transition:all 0.2s ease;
+}
+
+.mono:hover{
+  background:rgba(240,136,62,0.25);
+  border-color:var(--accent-amber);
+}
+
+.tip-box{
+  background:linear-gradient(135deg,rgba(63,185,80,0.1) 0%,rgba(63,185,80,0.05) 100%);
+  border:1px solid rgba(63,185,80,0.3);
+  border-left:4px solid var(--accent-green);
+  border-radius:8px;
+  padding:16px 20px;
+  margin-bottom:24px;
+  font-size:0.95rem;
+  color:var(--text-primary);
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  backdrop-filter:blur(10px);
+}
+
+.tip-box::before{
+  content:'💡';
+  font-size:1.5rem;
+  flex-shrink:0;
+}
+
+footer{
+  background:linear-gradient(135deg,rgba(22,27,34,0.8) 0%,rgba(13,17,23,0.95) 100%);
+  border-top:1px solid var(--border);
+  padding:24px 20px;
+  text-align:center;
+  color:var(--text-secondary);
+  font-size:0.85rem;
+  margin-top:auto;
+}
+
+@media (max-width:768px){
+  .header-title{
+    font-size:1.5rem;
+  }
+
+  .breadcrumb{
+    flex-direction:column;
+    gap:4px;
+  }
+
+  .breadcrumb-item{
+    border-right:none;
+    border-bottom:1px solid var(--border);
+    padding:8px 0;
+    font-size:0.85rem;
+  }
+
+  .breadcrumb-item:last-child{
+    border-bottom:none;
+  }
+
+  h2{
+    font-size:1.1rem;
+  }
+
+  .container{
+    padding:20px;
+  }
+
+  .diagram-section{
+    padding:16px;
+  }
+
+  th,td{
+    padding:10px 12px;
+    font-size:0.85rem;
+  }
+}
+
+/* SVG Filters and Animations */
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
+}
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+<header>
+<div class="header-content">
+  <div class="header-title">RoboLymix v4 — Chassis Documentation</div>
+  <nav class="breadcrumb">
+    <span class="breadcrumb-item active">Floor 1 (Power)</span>
+    <a href="chassis_floor2_v4.html" class="breadcrumb-item">Floor 2</a>
+    <a href="chassis_floor3_v4.html" class="breadcrumb-item">Floor 3</a>
+    <a href="chassis_profile_v4.html" class="breadcrumb-item">Profile</a>
+    <a href="chassis_assembly_guide_v4.html" class="breadcrumb-item">Assembly</a>
+  </nav>
+</div>
+</header>
+
+<div class="container">
+
+<h1>Floor 1 — Plateau Inférieur (Puissance)</h1>
+<div class="subtitle">
+  <span class="spec-item">150 × 150 × 3mm</span>
+  <span class="spec-item">PLA 30% infill</span>
+  <span class="spec-item">Top-down view</span>
+  <span class="spec-item">4× Motors, L298N, Battery, LM2596, Switch</span>
+</div>
+
+<div class="warning-box">
+  <strong>Remove ENA/ENB jumpers from L298N before assembly!</strong> They short-circuit PWM speed control.
+</div>
+
+<section class="diagram-section">
+<svg viewBox="0 0 620 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;height:auto;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="motorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3fb950;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#3fb950;stop-opacity:0.1"/>
+    </linearGradient>
+
+    <linearGradient id="l298Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0883e;stop-opacity:0.4"/>
+      <stop offset="100%" style="stop-color:#f0883e;stop-opacity:0.15"/>
+    </linearGradient>
+
+    <linearGradient id="batteryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#bc8cff;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#bc8cff;stop-opacity:0.1"/>
+    </linearGradient>
+
+    <linearGradient id="lm2596Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0883e;stop-opacity:0.35"/>
+      <stop offset="100%" style="stop-color:#f0883e;stop-opacity:0.12"/>
+    </linearGradient>
+
+    <linearGradient id="switchGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#58a6ff;stop-opacity:0.25"/>
+      <stop offset="100%" style="stop-color:#58a6ff;stop-opacity:0.08"/>
+    </linearGradient>
+
+    <!-- Subtle Grid Pattern -->
+    <pattern id="gridPattern" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#30363d" stroke-width="0.5" opacity="0.3"/>
+    </pattern>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="dropShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="2" dy="3" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.4"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Glow Filter -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Arrow Marker -->
+    <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L10,3 L0,6 Z" fill="#58a6ff" opacity="0.8"/>
+    </marker>
+
+    <!-- Inner Shadow for Plate -->
+    <filter id="innerShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+      <feOffset in="blur" dx="1" dy="1" result="offset"/>
+      <feFlood flood-color="#ffffff" flood-opacity="0.1" result="offsetcolor"/>
+      <feComposite in="offsetcolor" in2="offset" operator="in" result="offsetblur"/>
+      <feComposite in="offsetblur" in2="SourceAlpha" operator="in" result="offsetblur"/>
+      <feComposite in="offsetblur" in2="SourceGraphic" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="620" height="540" fill="#0d1117"/>
+
+  <!-- Direction Labels -->
+  <text x="310" y="24" text-anchor="middle" fill="#8b949e" font-size="12" font-weight="600">▲ AVANT (FRONT)</text>
+  <text x="310" y="528" text-anchor="middle" fill="#8b949e" font-size="12" font-weight="600">▼ ARRIÈRE (REAR)</text>
+  <text x="30" y="270" text-anchor="middle" fill="#8b949e" font-size="11" font-weight="600" transform="rotate(-90,30,270)">← GAUCHE (LEFT)</text>
+  <text x="590" y="270" text-anchor="middle" fill="#8b949e" font-size="11" font-weight="600" transform="rotate(90,590,270)">DROITE (RIGHT) →</text>
+
+  <!-- Plate Grid Background -->
+  <rect x="115" y="35" width="390" height="390" fill="url(#gridPattern)" rx="12"/>
+
+  <!-- Plate Main Shape with Inner Shadow -->
+  <rect x="115" y="35" width="390" height="390" rx="12" fill="#161b22" stroke="#58a6ff" stroke-width="2.5" opacity="0.9" filter="url(#dropShadow)"/>
+
+  <!-- Plate Inner Highlight -->
+  <rect x="118" y="38" width="384" height="20" rx="12" fill="url(#switchGrad)" opacity="0.4"/>
+
+  <!-- Centerline Guides -->
+  <line x1="115" y1="230" x2="505" y2="230" stroke="#30363d" stroke-width="0.8" opacity="0.4" stroke-dasharray="4,4"/>
+  <line x1="310" y1="35" x2="310" y2="425" stroke="#30363d" stroke-width="0.8" opacity="0.4" stroke-dasharray="4,4"/>
+
+  <!-- ════ MOTORS at 4 corners ════ -->
+  <!-- Motor Cutout Shadows (for visual depth) -->
+  <rect x="115" y="35" width="65" height="115" rx="6" fill="rgba(0,0,0,0.3)" stroke="#30363d" stroke-width="1.5" stroke-dasharray="3,2" opacity="0.6"/>
+  <rect x="115" y="315" width="65" height="115" rx="6" fill="rgba(0,0,0,0.3)" stroke="#30363d" stroke-width="1.5" stroke-dasharray="3,2" opacity="0.6"/>
+  <rect x="440" y="35" width="65" height="115" rx="6" fill="rgba(0,0,0,0.3)" stroke="#30363d" stroke-width="1.5" stroke-dasharray="3,2" opacity="0.6"/>
+  <rect x="440" y="315" width="65" height="115" rx="6" fill="rgba(0,0,0,0.3)" stroke="#30363d" stroke-width="1.5" stroke-dasharray="3,2" opacity="0.6"/>
+
+  <!-- M1 Front-Left -->
+  <g filter="url(#dropShadow)">
+    <rect x="75" y="45" width="65" height="109" rx="6" fill="url(#motorGrad)" stroke="#3fb950" stroke-width="2"/>
+    <text x="107" y="92" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="700" filter="url(#glow)">M1</text>
+    <text x="107" y="107" text-anchor="middle" fill="#8b949e" font-size="9">Front-Left</text>
+    <!-- Motor Shaft (3D cylinder effect) -->
+    <ellipse cx="50" cy="88" rx="8" ry="6" fill="#30363d" stroke="#58a6ff" stroke-width="1.5" opacity="0.8"/>
+    <rect x="42" y="88" width="16" height="18" rx="2" fill="#1a202c" stroke="#58a6ff" stroke-width="1.5"/>
+    <ellipse cx="50" cy="106" rx="8" ry="6" fill="#58a6ff" opacity="0.3"/>
+  </g>
+
+  <!-- M3 Rear-Left -->
+  <g filter="url(#dropShadow)">
+    <rect x="75" y="371" width="65" height="109" rx="6" fill="url(#motorGrad)" stroke="#3fb950" stroke-width="2"/>
+    <text x="107" y="419" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="700" filter="url(#glow)">M3</text>
+    <text x="107" y="434" text-anchor="middle" fill="#8b949e" font-size="9">Rear-Left</text>
+    <!-- Motor Shaft -->
+    <ellipse cx="50" cy="414" rx="8" ry="6" fill="#30363d" stroke="#58a6ff" stroke-width="1.5" opacity="0.8"/>
+    <rect x="42" y="414" width="16" height="18" rx="2" fill="#1a202c" stroke="#58a6ff" stroke-width="1.5"/>
+    <ellipse cx="50" cy="432" rx="8" ry="6" fill="#58a6ff" opacity="0.3"/>
+  </g>
+
+  <!-- M2 Front-Right -->
+  <g filter="url(#dropShadow)">
+    <rect x="480" y="45" width="65" height="109" rx="6" fill="url(#motorGrad)" stroke="#3fb950" stroke-width="2"/>
+    <text x="513" y="92" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="700" filter="url(#glow)">M2</text>
+    <text x="513" y="107" text-anchor="middle" fill="#8b949e" font-size="9">Front-Right</text>
+    <!-- Motor Shaft -->
+    <ellipse cx="570" cy="88" rx="8" ry="6" fill="#30363d" stroke="#58a6ff" stroke-width="1.5" opacity="0.8"/>
+    <rect x="562" y="88" width="16" height="18" rx="2" fill="#1a202c" stroke="#58a6ff" stroke-width="1.5"/>
+    <ellipse cx="570" cy="106" rx="8" ry="6" fill="#58a6ff" opacity="0.3"/>
+  </g>
+
+  <!-- M4 Rear-Right -->
+  <g filter="url(#dropShadow)">
+    <rect x="480" y="371" width="65" height="109" rx="6" fill="url(#motorGrad)" stroke="#3fb950" stroke-width="2"/>
+    <text x="513" y="419" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="700" filter="url(#glow)">M4</text>
+    <text x="513" y="434" text-anchor="middle" fill="#8b949e" font-size="9">Rear-Right</text>
+    <!-- Motor Shaft -->
+    <ellipse cx="570" cy="414" rx="8" ry="6" fill="#30363d" stroke="#58a6ff" stroke-width="1.5" opacity="0.8"/>
+    <rect x="562" y="414" width="16" height="18" rx="2" fill="#1a202c" stroke="#58a6ff" stroke-width="1.5"/>
+    <ellipse cx="570" cy="432" rx="8" ry="6" fill="#58a6ff" opacity="0.3"/>
+  </g>
+
+  <!-- ════ L298N H-Bridge (Centre Front) ════ -->
+  <g filter="url(#dropShadow)">
+    <rect x="245" y="52" width="130" height="80" rx="8" fill="url(#l298Grad)" stroke="#f0883e" stroke-width="2.5"/>
+    <text x="310" y="85" text-anchor="middle" fill="#f0883e" font-size="13" font-weight="700" filter="url(#glow)">L298N</text>
+    <text x="310" y="100" text-anchor="middle" fill="#8b949e" font-size="9">Motor Driver</text>
+    <text x="310" y="115" text-anchor="middle" fill="#8b949e" font-size="8">H-Bridge • 12V</text>
+
+    <!-- Heatsink Fins with gradient -->
+    <line x1="258" y1="52" x2="258" y2="64" stroke="#f0883e" stroke-width="2.5" opacity="0.7"/>
+    <line x1="272" y1="52" x2="272" y2="64" stroke="#f0883e" stroke-width="2.5" opacity="0.7"/>
+    <line x1="286" y1="52" x2="286" y2="64" stroke="#f0883e" stroke-width="2.5" opacity="0.7"/>
+    <line x1="300" y1="52" x2="300" y2="64" stroke="#f0883e" stroke-width="2.5" opacity="0.7"/>
+    <line x1="314" y1="52" x2="314" y2="64" stroke="#f0883e" stroke-width="2.5" opacity="0.7"/>
+    <line x1="328" y1="52" x2="328" y2="64" stroke="#f0883e" stroke-width="2.5" opacity="0.7"/>
+    <line x1="342" y1="52" x2="342" y2="64" stroke="#f0883e" stroke-width="2.5" opacity="0.7"/>
+    <line x1="356" y1="52" x2="356" y2="64" stroke="#f0883e" stroke-width="2.5" opacity="0.7"/>
+  </g>
+
+  <!-- ════ Battery 3S (Centre) ════ -->
+  <g filter="url(#dropShadow)">
+    <rect x="235" y="165" width="150" height="70" rx="8" fill="url(#batteryGrad)" stroke="#bc8cff" stroke-width="2.5"/>
+    <text x="310" y="196" text-anchor="middle" fill="#bc8cff" font-size="13" font-weight="700" filter="url(#glow)">Batterie 3S</text>
+    <text x="310" y="211" text-anchor="middle" fill="#8b949e" font-size="9">3× 18650 Flat-Top</text>
+    <text x="310" y="226" text-anchor="middle" fill="#8b949e" font-size="8">11.1V nominal</text>
+
+    <!-- Battery Terminals with color coding -->
+    <rect x="235" y="192" width="12" height="24" rx="3" fill="#2a2a2a" stroke="#30363d" stroke-width="1.5"/>
+    <rect x="373" y="192" width="12" height="24" rx="3" fill="#c5222c" stroke="#f85149" stroke-width="1.5"/>
+    <circle cx="241" cy="204" r="3" fill="#555"/>
+    <circle cx="379" cy="204" r="3" fill="#f85149"/>
+  </g>
+
+  <!-- ════ LM2596 Step-Down (Rear Centre-Right) ════ -->
+  <g filter="url(#dropShadow)">
+    <rect x="300" y="315" width="100" height="55" rx="7" fill="url(#lm2596Grad)" stroke="#f0883e" stroke-width="2"/>
+    <text x="350" y="340" text-anchor="middle" fill="#f0883e" font-size="12" font-weight="700" filter="url(#glow)">LM2596</text>
+    <text x="350" y="355" text-anchor="middle" fill="#8b949e" font-size="9">12V → 5V</text>
+    <text x="350" y="367" text-anchor="middle" fill="#8b949e" font-size="8">Step-Down</text>
+
+    <!-- Potentiometer Adjuster -->
+    <g>
+      <rect x="362" y="317" width="14" height="14" rx="3" fill="#30363d" stroke="#f0883e" stroke-width="1.5"/>
+      <circle cx="369" cy="324" r="3" fill="#f0883e" opacity="0.7"/>
+    </g>
+  </g>
+
+  <!-- ════ Power Switch (Rear Centre) ════ -->
+  <g filter="url(#dropShadow)">
+    <rect x="270" y="410" width="80" height="22" rx="6" fill="url(#switchGrad)" stroke="#58a6ff" stroke-width="2"/>
+    <text x="310" y="425" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="700">⏻ Switch</text>
+  </g>
+
+  <!-- ════ Cable Slot (Centre) ════ -->
+  <g opacity="0.6">
+    <rect x="285" y="255" width="50" height="28" rx="4" fill="none" stroke="#30363d" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="310" y="273" text-anchor="middle" fill="#8b949e" font-size="9">cables ↑</text>
+  </g>
+
+  <!-- ════ M3 Spacer Mounting Holes ════ -->
+  <circle cx="150" cy="70" r="6" fill="none" stroke="#8b949e" stroke-width="1.5" opacity="0.7"/>
+  <text x="150" y="88" text-anchor="middle" fill="#8b949e" font-size="8">M3</text>
+
+  <circle cx="470" cy="70" r="6" fill="none" stroke="#8b949e" stroke-width="1.5" opacity="0.7"/>
+  <text x="470" y="88" text-anchor="middle" fill="#8b949e" font-size="8">M3</text>
+
+  <circle cx="150" cy="395" r="6" fill="none" stroke="#8b949e" stroke-width="1.5" opacity="0.7"/>
+  <text x="150" y="413" text-anchor="middle" fill="#8b949e" font-size="8">M3</text>
+
+  <circle cx="470" cy="395" r="6" fill="none" stroke="#8b949e" stroke-width="1.5" opacity="0.7"/>
+  <text x="470" y="413" text-anchor="middle" fill="#8b949e" font-size="8">M3</text>
+
+  <!-- ════ Dimension Annotations ════ -->
+  <!-- Bottom Dimension (150mm width) -->
+  <line x1="115" y1="500" x2="505" y2="500" stroke="#58a6ff" stroke-width="1.5" marker-start="url(#arrowHead)" marker-end="url(#arrowHead)" opacity="0.8"/>
+  <rect x="280" y="508" width="60" height="18" rx="3" fill="rgba(88,166,255,0.1)" stroke="rgba(88,166,255,0.3)" stroke-width="1"/>
+  <text x="310" y="520" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="600">150 mm</text>
+
+  <!-- Right Dimension (150mm height) -->
+  <line x1="570" y1="35" x2="570" y2="425" stroke="#58a6ff" stroke-width="1.5" marker-start="url(#arrowHead)" marker-end="url(#arrowHead)" opacity="0.8"/>
+  <text x="600" y="233" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="600" transform="rotate(90,600,233)">150 mm</text>
+
+</svg>
+</section>
+
+<section>
+<h2>Components on Floor 1</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Position</th>
+      <th>Attachment</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>4× Motor JGB37-520</strong></td>
+      <td>Cutouts at 4 corners</td>
+      <td>2× M3×8 screw + Loctite Blue</td>
+      <td>Shafts pointing outward</td>
+    </tr>
+    <tr>
+      <td><strong>L298N H-Bridge</strong></td>
+      <td>Front-centre</td>
+      <td>2× M3×6 screw + nylon washers</td>
+      <td><span class="mono">⚠ Remove ENA/ENB</span></td>
+    </tr>
+    <tr>
+      <td><strong>Battery 3S 18650</strong></td>
+      <td>Centre</td>
+      <td>Double-sided velcro</td>
+      <td>Flat-top only, 11.1V nom</td>
+    </tr>
+    <tr>
+      <td><strong>LM2596 Step-Down</strong></td>
+      <td>Rear centre-right</td>
+      <td>3M foam tape</td>
+      <td>Adjust to 5.0V before ESP32</td>
+    </tr>
+    <tr>
+      <td><strong>Switch 3A</strong></td>
+      <td>Rear edge centre</td>
+      <td>Snap-in clip</td>
+      <td>Series on battery + wire</td>
+    </tr>
+    <tr>
+      <td><strong>4× Spacer M3×30mm</strong></td>
+      <td>4 interior corners</td>
+      <td>M3 nylon nut</td>
+      <td>To Floor 2</td>
+    </tr>
+  </tbody>
+</table>
+</section>
+
+<section>
+<h2>Motor Wiring → L298N</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Motors</th>
+      <th>Side</th>
+      <th>L298N Output</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>M1 (FL) + M3 (RL)</strong></td>
+      <td>Left — parallel</td>
+      <td>OUT1 / OUT2</td>
+    </tr>
+    <tr>
+      <td><strong>M2 (FR) + M4 (RR)</strong></td>
+      <td>Right — parallel</td>
+      <td>OUT3 / OUT4</td>
+    </tr>
+  </tbody>
+</table>
+</section>
+
+<section>
+<div class="tip-box">
+  <strong>Assembly Order:</strong> Motors → L298N (nylon washers!) → Battery → LM2596 → Switch → Spacers. Test voltage BEFORE assembling Floor 2.
+</div>
+</section>
+
+</div>
+
+<footer>
+  <strong>RoboLymix v4</strong> — Chassis Power Layer Documentation
+  <br>
+  Designed for maze-solving robotics competition
+</footer>
+
+</div>
+</body>
+</html>
