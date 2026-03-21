@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Floor 3 — RoboLymix v4</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  background: #0d1117;
+  color: #e6edf3;
+  padding: 40px 20px;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 12px 16px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.breadcrumb a {
+  color: #58a6ff;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.breadcrumb a:hover {
+  color: #f0883e;
+  background: rgba(240, 136, 62, 0.1);
+}
+
+.breadcrumb span {
+  color: #30363d;
+}
+
+.breadcrumb .active {
+  color: #f0883e;
+  font-weight: 600;
+}
+
+/* Header Section */
+.header {
+  margin-bottom: 40px;
+}
+
+h1 {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #e6edf3;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #f0883e 0%, #bc8cff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sub {
+  color: #8b949e;
+  font-size: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.spec {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #8b949e;
+}
+
+.spec-value {
+  color: #58a6ff;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+/* Info/Warning/Tip Boxes */
+.info-box {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  margin: 24px 0;
+  border-left: 4px solid;
+  background: #161b22;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.info-box:hover {
+  background: #1c2128;
+  transform: translateX(4px);
+}
+
+.info-box.info {
+  border-left-color: #58a6ff;
+}
+
+.info-box.warning {
+  border-left-color: #f0883e;
+}
+
+.info-box.tip {
+  border-left-color: #3fb950;
+}
+
+.info-box-icon {
+  font-size: 1.3rem;
+  min-width: 24px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-box.info .info-box-icon {
+  color: #58a6ff;
+}
+
+.info-box.warning .info-box-icon {
+  color: #f0883e;
+}
+
+.info-box.tip .info-box-icon {
+  color: #3fb950;
+}
+
+.info-box-content {
+  flex: 1;
+}
+
+.info-box-content strong {
+  display: block;
+  color: #e6edf3;
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+
+.info-box-content p {
+  font-size: 0.95rem;
+  color: #8b949e;
+}
+
+/* Section Headers */
+h2 {
+  font-size: 1.5rem;
+  color: #e6edf3;
+  margin: 40px 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #30363d;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+h2::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(180deg, #f0883e 0%, #bc8cff 100%);
+  border-radius: 2px;
+}
+
+/* Diagram Wrapper */
+.diagram-wrap {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 32px 24px;
+  margin: 32px 0;
+  overflow-x: auto;
+  transition: all 0.3s ease;
+}
+
+.diagram-wrap:hover {
+  border-color: #58a6ff;
+  box-shadow: 0 0 20px rgba(88, 166, 255, 0.15);
+}
+
+.diagram-wrap svg {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+}
+
+/* Table Styles */
+.table-wrapper {
+  overflow-x: auto;
+  margin: 24px 0;
+  border-radius: 8px;
+  border: 1px solid #30363d;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #161b22;
+}
+
+thead tr {
+  background: #0d1117;
+  border-bottom: 2px solid #30363d;
+}
+
+th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #8b949e;
+}
+
+th:first-child {
+  border-top-left-radius: 8px;
+}
+
+th:last-child {
+  border-top-right-radius: 8px;
+}
+
+tbody tr {
+  border-bottom: 1px solid #30363d;
+  transition: all 0.2s ease;
+}
+
+tbody tr:nth-child(even) {
+  background: #0d1117;
+}
+
+tbody tr:hover {
+  background: #1c2128;
+  border-bottom-color: #58a6ff;
+}
+
+td {
+  padding: 14px 16px;
+  font-size: 0.95rem;
+  color: #e6edf3;
+}
+
+td:first-child {
+  font-weight: 600;
+  color: #58a6ff;
+}
+
+.mono {
+  font-family: 'Courier New', 'Courier', monospace;
+  color: #f0883e;
+  font-size: 0.9rem;
+  background: #0d1117;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #30363d;
+}
+
+/* Footer */
+footer {
+  margin-top: 60px;
+  padding-top: 24px;
+  border-top: 1px solid #30363d;
+  text-align: center;
+  color: #6e7681;
+  font-size: 0.9rem;
+}
+
+footer strong {
+  color: #8b949e;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  .sub {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .breadcrumb {
+    font-size: 0.8rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .diagram-wrap {
+    padding: 20px 16px;
+  }
+
+  td, th {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+/* SVG Filter Definitions */
+@supports (filter: drop-shadow(0 0 0 #000)) {
+  .svg-glow {
+    filter: drop-shadow(0 0 8px rgba(88, 166, 255, 0.4));
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb">
+    <a href="chassis_floor1_v4.html">Floor 1</a>
+    <span>•</span>
+    <a href="chassis_floor2_v4.html">Floor 2</a>
+    <span>•</span>
+    <span class="active">Floor 3</span>
+    <span>•</span>
+    <a href="chassis_profile_v4.html">Profile</a>
+    <span>•</span>
+    <a href="chassis_assembly_guide_v4.html">Guide d'assemblage</a>
+  </nav>
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Floor 3 — Couvercle de Protection</h1>
+    <div class="sub">
+      <span class="spec"><span class="spec-value">150 × 150 × 3mm</span></span>
+      <span class="spec">PLA<span class="spec-value">30% infill</span></span>
+      <span class="spec">Vue<span class="spec-value">de dessus</span></span>
+      <span class="spec">Plaque<span class="spec-value">de protection</span></span>
+    </div>
+  </div>
+
+  <!-- Role Info Box -->
+  <div class="info-box info">
+    <div class="info-box-icon">ℹ️</div>
+    <div class="info-box-content">
+      <strong>Rôle du Floor 3</strong>
+      <p>Plaque de protection supérieure qui couvre l'électronique de Floor 2 contre les chocs et les murs du labyrinthe. Les 3 ouvertures rectangulaires laissent passer les faisceaux laser des capteurs VL53L0X. Cette plaque ne contient aucun composant électronique — c'est uniquement une structure mécanique avec des découpes précises.</p>
+    </div>
+  </div>
+
+  <!-- 3D Diagram -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 640 560" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Hatch pattern for solid material -->
+        <pattern id="platHatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="8" stroke="#3fb950" stroke-width="0.8" opacity="0.15"/>
+        </pattern>
+
+        <!-- Glow filter for ToF openings -->
+        <filter id="toFGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+
+        <!-- Glow filter for LED -->
+        <filter id="ledGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+
+        <!-- Arrow markers -->
+        <marker id="arrowEnd" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <path d="M 0 0 L 8 4 L 0 8 Z" fill="#6e7681"/>
+        </marker>
+      </defs>
+
+      <!-- Background -->
+      <rect width="640" height="560" fill="#0d1117"/>
+
+      <!-- Directional indicators -->
+      <g opacity="0.6">
+        <text x="320" y="20" text-anchor="middle" fill="#8b949e" font-size="12" font-weight="600">▲ AVANT</text>
+        <text x="320" y="545" text-anchor="middle" fill="#8b949e" font-size="12" font-weight="600">▼ ARRIÈRE</text>
+        <text x="18" y="280" text-anchor="middle" fill="#8b949e" font-size="12" font-weight="600" transform="rotate(-90, 18, 280)">← GAUCHE</text>
+        <text x="622" y="280" text-anchor="middle" fill="#8b949e" font-size="12" font-weight="600" transform="rotate(90, 622, 280)">DROITE →</text>
+      </g>
+
+      <!-- Main plate: 150×150mm → 400px scaled -->
+      <g>
+        <!-- Drop shadow effect -->
+        <rect x="120" y="40" width="400" height="400" rx="12" fill="#000000" opacity="0.25" filter="blur(3px)"/>
+
+        <!-- Plate base -->
+        <rect x="120" y="40" width="400" height="400" rx="12" fill="#1c2128" stroke="#58a6ff" stroke-width="2.5" opacity="0.9"/>
+
+        <!-- Material hatch pattern -->
+        <rect x="120" y="40" width="400" height="400" rx="12" fill="url(#platHatch)"/>
+
+        <!-- Crosshairs for reference -->
+        <line x1="120" y1="240" x2="520" y2="240" stroke="#30363d" stroke-width="1" opacity="0.3"/>
+        <line x1="320" y1="40" x2="320" y2="440" stroke="#30363d" stroke-width="1" opacity="0.3"/>
+      </g>
+
+      <!-- =============== FRONT ToF OPENING =============== -->
+      <g>
+        <!-- Opening rectangle: 20×12mm → 52×31px -->
+        <rect x="294" y="40" width="52" height="22" rx="3" fill="#0d1117" stroke="#58a6ff" stroke-width="2.5" filter="url(#toFGlow)"/>
+
+        <!-- Glow effect around opening -->
+        <rect x="294" y="40" width="52" height="22" rx="3" fill="none" stroke="#58a6ff" stroke-width="1" opacity="0.3" r="8"/>
+
+        <!-- Laser cone visualization -->
+        <polygon points="304,62 336,62 356,40 284,40" fill="none" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.5"/>
+
+        <!-- Labels -->
+        <text x="320" y="58" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="700">ToF Avant</text>
+        <text x="320" y="28" text-anchor="middle" fill="#8b949e" font-size="9">20×12mm</text>
+      </g>
+
+      <!-- =============== LEFT ToF OPENING =============== -->
+      <g>
+        <!-- Opening rectangle: 12×20mm → 31×52px -->
+        <rect x="120" y="214" width="22" height="52" rx="3" fill="#0d1117" stroke="#58a6ff" stroke-width="2.5" filter="url(#toFGlow)"/>
+
+        <!-- Glow effect -->
+        <rect x="120" y="214" width="22" height="52" rx="3" fill="none" stroke="#58a6ff" stroke-width="1" opacity="0.3"/>
+
+        <!-- Laser cone visualization -->
+        <polygon points="142,224 142,256 120,276 120,216" fill="none" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.5"/>
+
+        <!-- Labels -->
+        <text x="100" y="240" text-anchor="middle" fill="#8b949e" font-size="9">12×20mm</text>
+        <text x="131" y="242" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="700" transform="rotate(-90, 131, 242)">ToF Gauche</text>
+      </g>
+
+      <!-- =============== RIGHT ToF OPENING =============== -->
+      <g>
+        <!-- Opening rectangle -->
+        <rect x="498" y="214" width="22" height="52" rx="3" fill="#0d1117" stroke="#58a6ff" stroke-width="2.5" filter="url(#toFGlow)"/>
+
+        <!-- Glow effect -->
+        <rect x="498" y="214" width="22" height="52" rx="3" fill="none" stroke="#58a6ff" stroke-width="1" opacity="0.3"/>
+
+        <!-- Laser cone visualization -->
+        <polygon points="498,224 498,256 520,276 520,216" fill="none" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.5"/>
+
+        <!-- Labels -->
+        <text x="540" y="240" text-anchor="middle" fill="#8b949e" font-size="9">12×20mm</text>
+        <text x="509" y="242" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="700" transform="rotate(90, 509, 242)">ToF Droit</text>
+      </g>
+
+      <!-- =============== LED HOLE =============== -->
+      <g>
+        <!-- LED circle: Ø 5mm → ~13px -->
+        <circle cx="320" cy="430" r="8" fill="#0d1117" stroke="#f0883e" stroke-width="2" filter="url(#ledGlow)"/>
+
+        <!-- Warm glow aura -->
+        <circle cx="320" cy="430" r="8" fill="none" stroke="#f0883e" stroke-width="1" opacity="0.25" r="12"/>
+
+        <!-- Label -->
+        <text x="320" y="435" text-anchor="middle" fill="#f0883e" font-size="9" font-weight="700">LED</text>
+        <text x="320" y="450" text-anchor="middle" fill="#8b949e" font-size="8">Ø 5mm</text>
+      </g>
+
+      <!-- =============== M3 MOUNTING HOLES =============== -->
+      <!-- Top-left M3 -->
+      <g>
+        <circle cx="150" cy="70" r="6" fill="none" stroke="#bc8cff" stroke-width="1.5" opacity="0.8"/>
+        <circle cx="150" cy="70" r="4.5" fill="none" stroke="#bc8cff" stroke-width="0.75" opacity="0.4"/>
+        <text x="150" y="95" text-anchor="middle" fill="#8b949e" font-size="8">M3</text>
+      </g>
+
+      <!-- Top-right M3 -->
+      <g>
+        <circle cx="490" cy="70" r="6" fill="none" stroke="#bc8cff" stroke-width="1.5" opacity="0.8"/>
+        <circle cx="490" cy="70" r="4.5" fill="none" stroke="#bc8cff" stroke-width="0.75" opacity="0.4"/>
+        <text x="490" y="95" text-anchor="middle" fill="#8b949e" font-size="8">M3</text>
+      </g>
+
+      <!-- Bottom-left M3 -->
+      <g>
+        <circle cx="150" cy="410" r="6" fill="none" stroke="#bc8cff" stroke-width="1.5" opacity="0.8"/>
+        <circle cx="150" cy="410" r="4.5" fill="none" stroke="#bc8cff" stroke-width="0.75" opacity="0.4"/>
+        <text x="150" y="427" text-anchor="middle" fill="#8b949e" font-size="8">M3</text>
+      </g>
+
+      <!-- Bottom-right M3 -->
+      <g>
+        <circle cx="490" cy="410" r="6" fill="none" stroke="#bc8cff" stroke-width="1.5" opacity="0.8"/>
+        <circle cx="490" cy="410" r="4.5" fill="none" stroke="#bc8cff" stroke-width="0.75" opacity="0.4"/>
+        <text x="490" y="427" text-anchor="middle" fill="#8b949e" font-size="8">M3</text>
+      </g>
+
+      <!-- =============== CENTER LABEL =============== -->
+      <g>
+        <text x="320" y="220" text-anchor="middle" fill="#3fb950" font-size="16" font-weight="700" opacity="0.9">COUVERTURE</text>
+        <text x="320" y="240" text-anchor="middle" fill="#8b949e" font-size="11">PLA 3mm • 30% infill</text>
+        <text x="320" y="258" text-anchor="middle" fill="#8b949e" font-size="10" opacity="0.7">Pas de composants</text>
+      </g>
+
+      <!-- =============== DIMENSION ANNOTATIONS =============== -->
+      <!-- Horizontal dimension (150mm width) -->
+      <g>
+        <line x1="120" y1="490" x2="520" y2="490" stroke="#6e7681" stroke-width="1.5"/>
+        <circle cx="120" cy="490" r="2.5" fill="#6e7681"/>
+        <circle cx="520" cy="490" r="2.5" fill="#6e7681"/>
+        <path d="M 115 485 L 120 490 L 115 495 M 525 485 L 520 490 L 525 495" stroke="#6e7681" stroke-width="1.2" fill="none"/>
+        <text x="320" y="512" text-anchor="middle" fill="#8b949e" font-size="11" font-weight="600">150 mm</text>
+      </g>
+
+      <!-- Vertical dimension (150mm height) -->
+      <g>
+        <line x1="570" y1="40" x2="570" y2="440" stroke="#6e7681" stroke-width="1.5"/>
+        <circle cx="570" cy="40" r="2.5" fill="#6e7681"/>
+        <circle cx="570" cy="440" r="2.5" fill="#6e7681"/>
+        <path d="M 565 35 L 570 40 L 575 35 M 565 445 L 570 440 L 575 445" stroke="#6e7681" stroke-width="1.2" fill="none"/>
+        <text x="595" y="245" text-anchor="middle" fill="#8b949e" font-size="11" font-weight="600" transform="rotate(90, 595, 245)">150 mm</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Cutouts Table -->
+  <h2>Découpes et trous</h2>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Découpe</th>
+          <th>Position</th>
+          <th>Dimensions</th>
+          <th>Rôle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ouverture ToF Avant</td>
+          <td>Centre bord avant</td>
+          <td><span class="mono">20 × 12 mm</span></td>
+          <td>Faisceau laser VL53L0X front</td>
+        </tr>
+        <tr>
+          <td>Ouverture ToF Gauche</td>
+          <td>Centre bord gauche</td>
+          <td><span class="mono">12 × 20 mm</span></td>
+          <td>Faisceau laser VL53L0X gauche</td>
+        </tr>
+        <tr>
+          <td>Ouverture ToF Droit</td>
+          <td>Centre bord droit</td>
+          <td><span class="mono">12 × 20 mm</span></td>
+          <td>Faisceau laser VL53L0X droit</td>
+        </tr>
+        <tr>
+          <td>Trou LED</td>
+          <td>Centre bord arrière</td>
+          <td><span class="mono">Ø 5 mm</span></td>
+          <td>Laisser passer la lumière LED RGB</td>
+        </tr>
+        <tr>
+          <td>4× Trous M3</td>
+          <td>4 coins intérieurs</td>
+          <td><span class="mono">Ø 3.2 mm</span></td>
+          <td>Vis depuis les entretoises F2 (30mm)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Warnings and Tips -->
+  <div class="info-box warning">
+    <div class="info-box-icon">⚠️</div>
+    <div class="info-box-content">
+      <strong>Alignement critique</strong>
+      <p>Les ouvertures ToF doivent être parfaitement alignées avec les capteurs VL53L0X sur Floor 2. Avant d'assembler définitivement, imprime Floor 3 et pose-la sur Floor 2 pour vérifier l'alignement des trois ouvertures laser.</p>
+    </div>
+  </div>
+
+  <div class="info-box tip">
+    <div class="info-box-icon">💡</div>
+    <div class="info-box-content">
+      <strong>Hauteur totale avec 3 étages</strong>
+      <p>F1 (3mm) + entretoise 30mm + F2 (3mm) + entretoise 20mm + F3 (3mm) = <strong>~59mm</strong> pour les étages. Avec les roues (~33mm), la hauteur totale atteint <strong>~92mm</strong>, ce qui reste bien sous la hauteur des murs du labyrinthe (50mm). Les capteurs ToF restent optimalement positionnés.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p><strong>RoboLymix v4</strong> — Documentation du chassis</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
