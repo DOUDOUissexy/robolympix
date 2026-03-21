@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profil Latéral — RoboLymix v4</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+    line-height: 1.6;
+    padding: 24px;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* ── BREADCRUMB NAVIGATION ── */
+  .breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #30363d;
+    font-size: 0.9rem;
+  }
+
+  .breadcrumb a {
+    color: #58a6ff;
+    text-decoration: none;
+    transition: color 0.2s ease, opacity 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+
+  .breadcrumb a:hover {
+    color: #79c0ff;
+    background: rgba(88, 166, 255, 0.1);
+  }
+
+  .breadcrumb .separator {
+    color: #30363d;
+  }
+
+  .breadcrumb .current {
+    color: #f0883e;
+    font-weight: 600;
+  }
+
+  /* ── HEADER ── */
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #e6edf3;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    color: #8b949e;
+    font-size: 1rem;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .subtitle span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .subtitle .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(88, 166, 255, 0.15);
+    border: 1px solid #58a6ff;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: #58a6ff;
+  }
+
+  /* ── DIAGRAM SECTION ── */
+  .diagram-section {
+    background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    overflow-x: auto;
+  }
+
+  .diagram-section svg {
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+  }
+
+  /* ── SECTION HEADERS ── */
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #e6edf3;
+    margin: 32px 0 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #30363d;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  h2::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 1.3rem;
+    background: #f0883e;
+    border-radius: 2px;
+  }
+
+  /* ── TABLES ── */
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 24px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  thead {
+    background: linear-gradient(135deg, #1c2128 0%, #161b22 100%);
+    border-bottom: 2px solid #30363d;
+  }
+
+  th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #8b949e;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #21262d;
+    font-size: 0.95rem;
+    color: #e6edf3;
+  }
+
+  tbody tr {
+    transition: all 0.2s ease;
+    background: #161b22;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #0d1117;
+  }
+
+  tbody tr:hover {
+    background: #1c2128;
+    box-shadow: inset 0 0 8px rgba(88, 166, 255, 0.1);
+  }
+
+  tbody tr:hover td {
+    color: #79c0ff;
+  }
+
+  strong {
+    color: #f0883e;
+    font-weight: 600;
+  }
+
+  /* ── TIP BOX ── */
+  .tip {
+    background: linear-gradient(135deg, rgba(63, 185, 80, 0.08) 0%, rgba(88, 166, 255, 0.08) 100%);
+    border: 1px solid #30363d;
+    border-left: 4px solid #3fb950;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 24px 0;
+    font-size: 0.95rem;
+    color: #e6edf3;
+    line-height: 1.6;
+  }
+
+  .tip strong {
+    color: #3fb950;
+  }
+
+  .tip::before {
+    content: '💡';
+    margin-right: 8px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid #30363d;
+    text-align: center;
+    color: #8b949e;
+    font-size: 0.9rem;
+  }
+
+  footer a {
+    color: #58a6ff;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  footer a:hover {
+    color: #79c0ff;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .container {
+      max-width: 100%;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.85rem;
+      gap: 8px;
+    }
+
+    .diagram-section {
+      padding: 20px;
+    }
+
+    .subtitle {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    table {
+      font-size: 0.85rem;
+    }
+
+    th, td {
+      padding: 10px 12px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ── BREADCRUMB NAVIGATION ── -->
+  <nav class="breadcrumb">
+    <a href="chassis_floor1_v4.html">Étage 1 (Motor)</a>
+    <span class="separator">→</span>
+    <a href="chassis_floor2_v4.html">Étage 2 (Capteurs)</a>
+    <span class="separator">→</span>
+    <a href="chassis_floor3_v4.html">Étage 3 (Couvercle)</a>
+    <span class="separator">→</span>
+    <span class="current">Vue Latérale</span>
+    <span class="separator">→</span>
+    <a href="chassis_assembly_guide_v4.html">Guide Assemblage</a>
+  </nav>
+
+  <!-- ── HEADER ── -->
+  <h1>Profil Latéral — Vue de Côté</h1>
+  <div class="subtitle">
+    <span><strong style="color: #3fb950;">3 étages</strong> • 150×150mm chaque</span>
+    <span><strong style="color: #58a6ff;">Vue latérale droite</strong></span>
+    <span class="badge">~92mm hauteur totale</span>
+  </div>
+
+  <!-- ── DIAGRAM SECTION ── -->
+  <div class="diagram-section">
+    <svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Filters -->
+        <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+        </filter>
+
+        <!-- Gradients for wheels -->
+        <radialGradient id="wheelGrad" cx="30%" cy="30%">
+          <stop offset="0%" style="stop-color:#3a3a3a;stop-opacity:1" />
+          <stop offset="70%" style="stop-color:#1a1a1a;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#0a0a0a;stop-opacity:1" />
+        </radialGradient>
+
+        <!-- Floor gradients -->
+        <linearGradient id="floor1Grad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#3fb950;stop-opacity:0.3" />
+          <stop offset="100%" style="stop-color:#3fb950;stop-opacity:0.15" />
+        </linearGradient>
+
+        <linearGradient id="floor2Grad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#bc8cff;stop-opacity:0.3" />
+          <stop offset="100%" style="stop-color:#bc8cff;stop-opacity:0.15" />
+        </linearGradient>
+
+        <linearGradient id="floor3Grad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#8b949e;stop-opacity:0.2" />
+          <stop offset="100%" style="stop-color:#8b949e;stop-opacity:0.1" />
+        </linearGradient>
+
+        <!-- Component gradients -->
+        <linearGradient id="l298nGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#f0883e;stop-opacity:0.4" />
+          <stop offset="100%" style="stop-color:#f0883e;stop-opacity:0.2" />
+        </linearGradient>
+
+        <linearGradient id="battGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#bc8cff;stop-opacity:0.4" />
+          <stop offset="100%" style="stop-color:#bc8cff;stop-opacity:0.2" />
+        </linearGradient>
+
+        <linearGradient id="esp32Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#3fb950;stop-opacity:0.4" />
+          <stop offset="100%" style="stop-color:#3fb950;stop-opacity:0.2" />
+        </linearGradient>
+
+        <linearGradient id="perfGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#58a6ff;stop-opacity:0.3" />
+          <stop offset="100%" style="stop-color:#58a6ff;stop-opacity:0.15" />
+        </linearGradient>
+
+        <linearGradient id="mpuGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#bc8cff;stop-opacity:0.4" />
+          <stop offset="100%" style="stop-color:#bc8cff;stop-opacity:0.2" />
+        </linearGradient>
+
+        <linearGradient id="tofGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#58a6ff;stop-opacity:0.4" />
+          <stop offset="100%" style="stop-color:#58a6ff;stop-opacity:0.2" />
+        </linearGradient>
+
+        <!-- Spacer cylinder gradient -->
+        <linearGradient id="spacerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#8b949e;stop-opacity:0.3" />
+          <stop offset="50%" style="stop-color:#8b949e;stop-opacity:0.15" />
+          <stop offset="100%" style="stop-color:#8b949e;stop-opacity:0.3" />
+        </linearGradient>
+
+        <!-- Laser beam gradient (fading) -->
+        <linearGradient id="laserGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#58a6ff;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#58a6ff;stop-opacity:0.1" />
+        </linearGradient>
+
+        <!-- Markers -->
+        <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L10,5 L0,10 Z" fill="#58a6ff"/>
+        </marker>
+
+        <marker id="arrowHeadDanger" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L10,5 L0,10 Z" fill="#f85149"/>
+        </marker>
+      </defs>
+
+      <!-- Background -->
+      <rect width="800" height="600" fill="#0d1117"/>
+
+      <!-- ── GROUND SURFACE ── -->
+      <rect x="50" y="500" width="700" height="40" fill="#161b22" rx="4"/>
+      <line x1="50" y1="500" x2="750" y2="500" stroke="#30363d" stroke-width="2"/>
+      <text x="400" y="528" text-anchor="middle" fill="#8b949e" font-size="12" font-weight="500">SOL (Ground)</text>
+
+      <!-- ── WHEELS ── -->
+      <!-- Left wheel -->
+      <g filter="url(#shadow)">
+        <ellipse cx="140" cy="400" rx="26" ry="100" fill="url(#wheelGrad)" stroke="#8b949e" stroke-width="2"/>
+        <ellipse cx="140" cy="400" rx="22" ry="92" fill="none" stroke="#30363d" stroke-width="1" opacity="0.5"/>
+        <text x="140" y="405" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="600">⌀65mm</text>
+      </g>
+
+      <!-- Right wheel -->
+      <g filter="url(#shadow)">
+        <ellipse cx="660" cy="400" rx="26" ry="100" fill="url(#wheelGrad)" stroke="#8b949e" stroke-width="2"/>
+        <ellipse cx="660" cy="400" rx="22" ry="92" fill="none" stroke="#30363d" stroke-width="1" opacity="0.5"/>
+        <text x="660" y="405" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="600">⌀65mm</text>
+      </g>
+
+      <!-- ── FLOOR 1 ── (bottom at y=300, height=10px) -->
+      <rect x="170" y="290" width="460" height="10" rx="3" fill="url(#floor1Grad)" stroke="#3fb950" stroke-width="2"/>
+      <text x="400" y="275" text-anchor="middle" fill="#3fb950" font-size="13" font-weight="700">FLOOR 1</text>
+      <text x="400" y="310" text-anchor="middle" fill="#8b949e" font-size="10">Moteurs • L298N • Batterie • LM2596</text>
+
+      <!-- L298N motor driver on F1 -->
+      <g filter="url(#shadow)">
+        <rect x="280" y="260" width="90" height="30" rx="4" fill="url(#l298nGrad)" stroke="#f0883e" stroke-width="2"/>
+        <text x="325" y="282" text-anchor="middle" fill="#f0883e" font-size="10" font-weight="600">L298N</text>
+      </g>
+
+      <!-- Battery on F1 -->
+      <g filter="url(#shadow)">
+        <rect x="185" y="255" width="80" height="35" rx="4" fill="url(#battGrad)" stroke="#bc8cff" stroke-width="2"/>
+        <text x="225" y="277" text-anchor="middle" fill="#bc8cff" font-size="10" font-weight="600">Batterie</text>
+        <text x="225" y="288" text-anchor="middle" fill="#bc8cff" font-size="9">3S LiPo</text>
+      </g>
+
+      <!-- ── SPACERS F1→F2 (30mm = 78px) ── -->
+      <!-- Left spacer -->
+      <g filter="url(#shadow)">
+        <rect x="175" y="212" width="10" height="78" rx="3" fill="url(#spacerGrad)" stroke="#8b949e" stroke-width="1.5"/>
+        <ellipse cx="180" cy="212" rx="5" ry="3" fill="#8b949e" opacity="0.3"/>
+        <ellipse cx="180" cy="290" rx="5" ry="3" fill="#8b949e" opacity="0.2"/>
+      </g>
+      <text x="155" y="252" text-anchor="end" fill="#8b949e" font-size="10" font-weight="500">30mm</text>
+
+      <!-- Right spacer -->
+      <g filter="url(#shadow)">
+        <rect x="615" y="212" width="10" height="78" rx="3" fill="url(#spacerGrad)" stroke="#8b949e" stroke-width="1.5"/>
+        <ellipse cx="620" cy="212" rx="5" ry="3" fill="#8b949e" opacity="0.3"/>
+        <ellipse cx="620" cy="290" rx="5" ry="3" fill="#8b949e" opacity="0.2"/>
+      </g>
+
+      <!-- ── FLOOR 2 ── (y=202-212, height=10px) -->
+      <rect x="170" y="202" width="460" height="10" rx="3" fill="url(#floor2Grad)" stroke="#bc8cff" stroke-width="2"/>
+      <text x="400" y="187" text-anchor="middle" fill="#bc8cff" font-size="13" font-weight="700">FLOOR 2</text>
+      <text x="400" y="228" text-anchor="middle" fill="#8b949e" font-size="10">ESP32 • Perfboard • MPU9250 • ToF ×2 • LED</text>
+
+      <!-- ESP32 on F2 -->
+      <g filter="url(#shadow)">
+        <rect x="195" y="160" width="65" height="42" rx="4" fill="url(#esp32Grad)" stroke="#3fb950" stroke-width="2"/>
+        <text x="227" y="188" text-anchor="middle" fill="#3fb950" font-size="10" font-weight="600">ESP32</text>
+      </g>
+
+      <!-- Perfboard on F2 -->
+      <g filter="url(#shadow)">
+        <rect x="280" y="153" width="105" height="49" rx="4" fill="url(#perfGrad)" stroke="#58a6ff" stroke-width="2"/>
+        <text x="332" y="183" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="600">Perfboard</text>
+      </g>
+
+      <!-- MPU9250 on perfboard -->
+      <g filter="url(#shadow)">
+        <rect x="305" y="160" width="45" height="20" rx="3" fill="url(#mpuGrad)" stroke="#bc8cff" stroke-width="1.5"/>
+        <text x="327" y="175" text-anchor="middle" fill="#bc8cff" font-size="9" font-weight="600">MPU9250</text>
+      </g>
+
+      <!-- Front ToF sensor on F2 (left side in profile) -->
+      <g filter="url(#shadow)">
+        <rect x="160" y="192" width="10" height="16" rx="2" fill="url(#tofGrad)" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="145" y="197" text-anchor="end" fill="#58a6ff" font-size="9" font-weight="600">ToF</text>
+      </g>
+
+      <!-- Front laser beam with gradient fade -->
+      <line x1="160" y1="200" x2="80" y2="200" stroke="url(#laserGrad)" stroke-width="2" stroke-dasharray="4,3"/>
+      <polygon points="80,195 65,200 80,205" fill="#58a6ff" opacity="0.8"/>
+
+      <!-- Rear ToF sensor on F2 (right side) -->
+      <g filter="url(#shadow)">
+        <rect x="630" y="192" width="10" height="16" rx="2" fill="url(#tofGrad)" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="655" y="197" fill="#58a6ff" font-size="9" font-weight="600">ToF</text>
+      </g>
+
+      <!-- Rear laser beam with gradient fade -->
+      <line x1="640" y1="200" x2="720" y2="200" stroke="url(#laserGrad)" stroke-width="2" stroke-dasharray="4,3"/>
+      <polygon points="720,195 735,200 720,205" fill="#58a6ff" opacity="0.8"/>
+
+      <!-- ── SPACERS F2→F3 (20mm = 52px) ── -->
+      <!-- Left spacer -->
+      <g filter="url(#shadow)">
+        <rect x="175" y="150" width="10" height="52" rx="3" fill="url(#spacerGrad)" stroke="#8b949e" stroke-width="1.5"/>
+        <ellipse cx="180" cy="150" rx="5" ry="3" fill="#8b949e" opacity="0.3"/>
+        <ellipse cx="180" cy="202" rx="5" ry="3" fill="#8b949e" opacity="0.2"/>
+      </g>
+      <text x="155" y="179" text-anchor="end" fill="#8b949e" font-size="10" font-weight="500">20mm</text>
+
+      <!-- Right spacer -->
+      <g filter="url(#shadow)">
+        <rect x="615" y="150" width="10" height="52" rx="3" fill="url(#spacerGrad)" stroke="#8b949e" stroke-width="1.5"/>
+        <ellipse cx="620" cy="150" rx="5" ry="3" fill="#8b949e" opacity="0.3"/>
+        <ellipse cx="620" cy="202" rx="5" ry="3" fill="#8b949e" opacity="0.2"/>
+      </g>
+
+      <!-- ── FLOOR 3 ── (y=140-150, height=10px, dashed cover) -->
+      <rect x="170" y="140" width="460" height="10" rx="3" fill="url(#floor3Grad)" stroke="#8b949e" stroke-width="2" stroke-dasharray="8,4"/>
+      <text x="400" y="125" text-anchor="middle" fill="#8b949e" font-size="13" font-weight="700">FLOOR 3</text>
+      <text x="400" y="168" text-anchor="middle" fill="#8b949e" font-size="10">Couvercle de protection • Ouvertures ToF</text>
+
+      <!-- ToF openings in Floor 3 cover -->
+      <rect x="160" y="140" width="14" height="10" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
+      <rect x="626" y="140" width="14" height="10" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
+
+      <!-- ── WALL REFERENCE LINE (danger style) ── -->
+      <!-- 50mm height mark -->
+      <line x1="50" y1="170" x2="750" y2="170" stroke="#f85149" stroke-width="2" stroke-dasharray="6,4" opacity="0.7"/>
+      <text x="35" y="175" text-anchor="end" fill="#f85149" font-size="11" font-weight="700">MUR</text>
+      <text x="35" y="189" text-anchor="end" fill="#f85149" font-size="9">50mm</text>
+      <text x="35" y="203" text-anchor="end" fill="#f85149" font-size="8" opacity="0.8">(danger)</text>
+
+      <!-- ── HEIGHT DIMENSION ANNOTATIONS ── -->
+      <!-- Ground to wheel radius (33mm) -->
+      <line x1="100" y1="300" x2="100" y2="500" stroke="#58a6ff" stroke-width="1.5" marker-start="url(#arrowHead)" marker-end="url(#arrowHead)"/>
+      <text x="80" y="405" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="600" transform="rotate(-90, 80, 405)">33mm</text>
+
+      <!-- Ground to Floor 2 (sensor height ~101mm) -->
+      <line x1="80" y1="500" x2="80" y2="202" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="3,2" marker-start="url(#arrowHead)" marker-end="url(#arrowHead)"/>
+      <text x="55" y="355" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="600" transform="rotate(-90, 55, 355)">~101mm</text>
+      <text x="30" y="355" text-anchor="middle" fill="#8b949e" font-size="9" transform="rotate(-90, 30, 355)">capteurs</text>
+
+      <!-- Electronics stack height (59mm) -->
+      <line x1="740" y1="290" x2="740" y2="140" stroke="#8b949e" stroke-width="1.5" marker-start="url(#arrowHead)" marker-end="url(#arrowHead)"/>
+      <text x="765" y="218" text-anchor="start" fill="#8b949e" font-size="10" font-weight="600">59mm</text>
+      <text x="765" y="232" text-anchor="start" fill="#8b949e" font-size="8" opacity="0.8">(électronique)</text>
+
+      <!-- Total robot height (92mm) -->
+      <line x1="780" y1="500" x2="780" y2="140" stroke="#f0883e" stroke-width="2.5" marker-start="url(#arrowHead)" marker-end="url(#arrowHead)"/>
+      <text x="805" y="325" text-anchor="start" fill="#f0883e" font-size="11" font-weight="700">~92mm</text>
+      <text x="805" y="341" text-anchor="start" fill="#f0883e" font-size="9">TOTAL</text>
+
+    </svg>
+  </div>
+
+  <!-- ── HEIGHT TABLE ── -->
+  <h2>Tableau des hauteurs</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Élément</th>
+          <th>Hauteur individuelle</th>
+          <th>Cumul depuis sol</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Sol → axe des roues</td>
+          <td>—</td>
+          <td><strong>0mm</strong></td>
+        </tr>
+        <tr>
+          <td>Roues Ø65mm (rayon)</td>
+          <td><strong style="color: #58a6ff;">32.5mm</strong></td>
+          <td><strong>~33mm</strong></td>
+        </tr>
+        <tr>
+          <td>Floor 1 (PLA 3mm)</td>
+          <td><strong style="color: #3fb950;">3mm</strong></td>
+          <td><strong>~36mm</strong></td>
+        </tr>
+        <tr>
+          <td>Entretoises M3×30mm</td>
+          <td><strong style="color: #8b949e;">30mm</strong></td>
+          <td><strong>~66mm</strong></td>
+        </tr>
+        <tr>
+          <td>Floor 2 (PLA 3mm)</td>
+          <td><strong style="color: #bc8cff;">3mm</strong></td>
+          <td><strong>~69mm</strong></td>
+        </tr>
+        <tr>
+          <td>Entretoises M3×20mm</td>
+          <td><strong style="color: #8b949e;">20mm</strong></td>
+          <td><strong>~89mm</strong></td>
+        </tr>
+        <tr>
+          <td>Floor 3 (PLA 3mm)</td>
+          <td><strong style="color: #8b949e;">3mm</strong></td>
+          <td><strong style="color: #f0883e;">~92mm TOTAL</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── TIP BOX ── -->
+  <div class="tip">
+    <strong>Hauteur des capteurs ToF :</strong> Les VL53L0X sont montés sur Floor 2, soit à <strong style="color: #58a6ff;">~69mm</strong> du sol. C'est au-dessus des murs du labyrinthe (50mm) → les capteurs détectent les murs correctement. Le Floor 3 (couvercle) est au-dessus des capteurs mais possède des ouvertures pour laisser passer les faisceaux laser.
+  </div>
+
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p>RoboLymix v4 — Chassis Documentation</p>
+</footer>
+
+</body>
+</html>
