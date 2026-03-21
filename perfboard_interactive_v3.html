@@ -173,12 +173,12 @@ const COMPS = [
     info: {
       title: 'Rail 12V — Rangée 2 gauche',
       sub: 'Cols 1 à 9 (stop à col 10)',
-      html: `<h3>Rôle</h3><p>Distribue le 12V du pack batterie 3S (via BMS) au L298N pour alimenter les moteurs.</p>
+      html: `<h3>Rôle</h3><p>Distribue le 12V du pack batterie 3S au L298N pour alimenter les moteurs.</p>
 <h3>Comment créer</h3><p>Soude un fil de cuivre nu sur R2, pastilles cols 1 à 9. <b>STOP à la colonne 10</b> — laisse un trou vide pour séparer du 5V !</p>
-<h3>Source</h3><p>BMS sortie + → interrupteur → R2-C1.</p>
+<h3>Source</h3><p>Batterie + → interrupteur → R2-C1.</p>
 <div class="warn">⚠️ 12V peut endommager l'ESP32 ! Ne connecte JAMAIS le 12V à un pin GPIO.</div>`,
       connections: [
-        {color:'#dc2626', label:'Batterie (via BMS)', dest:'R2-C1'},
+        {color:'#dc2626', label:'Batterie (via interrupteur)', dest:'R2-C1'},
         {color:'#dc2626', label:'L298N +12V', dest:'R2'},
         {color:'#d97706', label:'C1 100µF (+)', dest:'R2-C1'},
       ]
@@ -223,7 +223,7 @@ const COMPS = [
         {color:'#666', label:'L298N GND', dest:'R12'},
         {color:'#666', label:'ToF GND ×3', dest:'R12'},
         {color:'#666', label:'LM2596 OUT−', dest:'R12'},
-        {color:'#666', label:'BMS GND', dest:'R12'},
+        {color:'#666', label:'Batterie GND', dest:'R12'},
         {color:'#666', label:'C1 100µF (−)', dest:'R12-C2'},
         {color:'#666', label:'C2 100nF', dest:'R12-C13'},
         {color:'#666', label:'C3 100nF', dest:'R12-C6'},
@@ -333,6 +333,170 @@ const COMPS = [
       ]
     }
   },
+  {
+    id: 'tb1',
+    name: 'TB1 — 12V IN',
+    sub: 'Bornier 2-pin — R2, cols 1-2',
+    color: '#dc2626',
+    cells: [{r:1,c:0},{r:1,c:1}],
+    info: {
+      title: 'TB1 — Bornier à vis 12V IN',
+      sub: '5.08mm pitch, 2 broches',
+      html: `<h3>Rôle</h3><p>Point d'entrée du 12V provenant du pack batterie 3S via l'interrupteur. Connecteur à vis robuste pour câblage externe.</p>
+<h3>Placement</h3><p>Rangée R2 (12V rail), colonnes 1-2. Une broche vers +12V (batterie via switch), l'autre vers GND.</p>
+<h3>Câblage</h3>
+<div class="tip">💡 Utilise du fil AWG16 ou AWG18 (robuste) pour l'alimentation batterie. Serre bien les vis !</div>`,
+      connections: [
+        {color:'#dc2626', label:'+12V broche 1 → Batterie', dest:'Switch'},
+        {color:'#666', label:'GND broche 2 → Rail GND', dest:'R12'},
+      ]
+    }
+  },
+  {
+    id: 'tb2',
+    name: 'TB2 — 12V OUT',
+    sub: 'Bornier 2-pin — R3, cols 3-4',
+    color: '#dc2626',
+    cells: [{r:2,c:2},{r:2,c:3}],
+    info: {
+      title: 'TB2 — Bornier à vis 12V OUT',
+      sub: '5.08mm pitch, 2 broches',
+      html: `<h3>Rôle</h3><p>Distribue le 12V du rail vers le L298N en externe. Permet un câblage propre sans traverser le perfboard.</p>
+<h3>Placement</h3><p>Rangée R3, colonnes 3-4. Une broche vers le rail 12V (R2), l'autre vers GND.</p>
+<h3>Destination</h3>
+<div class="warn">⚠️ Ces câbles vont directement au module moteur L298N external. Vérifie que le L298N est bien mis à la terre !</div>`,
+      connections: [
+        {color:'#dc2626', label:'+12V broche 1 → Rail 12V', dest:'R2-C3'},
+        {color:'#666', label:'GND broche 2 → Rail GND', dest:'R12'},
+      ]
+    }
+  },
+  {
+    id: 'tb3',
+    name: 'TB3 — 5V IN',
+    sub: 'Bornier 2-pin — R2, cols 17-18',
+    color: '#ea580c',
+    cells: [{r:1,c:16},{r:1,c:17}],
+    info: {
+      title: 'TB3 — Bornier à vis 5V IN',
+      sub: '5.08mm pitch, 2 broches',
+      html: `<h3>Rôle</h3><p>Entrée du 5V régulé provenant du LM2596 step-down. Connecteur à vis pour câblage propre du régulateur externe.</p>
+<h3>Placement</h3><p>Rangée R2 (5V rail), colonnes 17-18. Une broche vers +5V (du LM2596), l'autre vers GND.</p>
+<h3>Câblage</h3>
+<div class="tip">💡 Utilise du fil AWG20-22 pour le 5V régulé. Doit être bien séparé du 12V pour éviter les parasites.</div>`,
+      connections: [
+        {color:'#ea580c', label:'+5V broche 1 → LM2596 OUT', dest:'Regulator'},
+        {color:'#666', label:'GND broche 2 → Rail GND', dest:'R12'},
+      ]
+    }
+  },
+  {
+    id: 'tb4',
+    name: 'TB4 — 5V OUT',
+    sub: 'Bornier 2-pin — R3, cols 15-16',
+    color: '#ea580c',
+    cells: [{r:2,c:14},{r:2,c:15}],
+    info: {
+      title: 'TB4 — Bornier à vis 5V OUT',
+      sub: '5.08mm pitch, 2 broches',
+      html: `<h3>Rôle</h3><p>Distribue le 5V du rail vers le connecteur externe ESP32 VIN. Permet un câblage modulaire.</p>
+<h3>Placement</h3><p>Rangée R3, colonnes 15-16. Une broche vers le rail 5V (R2), l'autre vers GND.</p>
+<h3>Destination</h3><p>Ces câbles alimentent directement l'ESP32 en 5V via le breadboard ou câble externe.</p>`,
+      connections: [
+        {color:'#ea580c', label:'+5V broche 1 → Rail 5V', dest:'R2-C16'},
+        {color:'#666', label:'GND broche 2 → Rail GND', dest:'R12'},
+      ]
+    }
+  },
+  {
+    id: 'j1_j3',
+    name: 'J1-J3 — ToF (4-pin JST)',
+    sub: '3× JST-XH — Capteurs ToF',
+    color: '#ca8a04',
+    cells: [{r:8,c:0},{r:8,c:1},{r:9,c:0},{r:9,c:1},
+            {r:8,c:3},{r:8,c:4},{r:9,c:3},{r:9,c:4},
+            {r:8,c:6},{r:8,c:7},{r:9,c:6},{r:9,c:7}],
+    info: {
+      title: 'J1–J3 — Connecteurs JST-XH 4-pin',
+      sub: 'ToF sensors (VCC, GND, SDA, SCL)',
+      html: `<h3>Rôle</h3><p>3 connecteurs JST-XH pour brancher les 3 capteurs ToF (Time-of-Flight). Chaque connecteur porte les 4 lignes I2C (VCC, GND, SDA, SCL).</p>
+<h3>Brochage</h3>
+<ul style="margin:6px 0; padding-left:16px">
+  <li><b>Broche 1 (rouge/+):</b> VCC 3.3V → Rail 3.3V</li>
+  <li><b>Broche 2 (noir/−):</b> GND → Rail GND</li>
+  <li><b>Broche 3:</b> SDA (data I2C) → ESP32 GPIO21</li>
+  <li><b>Broche 4:</b> SCL (clock I2C) → ESP32 GPIO22</li>
+</ul>
+<h3>Placement</h3>
+<p>J1: R8-R9, cols 0-1 | J2: R8-R9, cols 3-4 | J3: R8-R9, cols 6-7</p>
+<h3>XSHUT pads</h3>
+<div class="tip">💡 Les 3 capteurs ont des broches XSHUT connectées respectivement à GPIO15, GPIO4, GPIO5 en externe (câbles). Cela permet de les configurer dynamiquement.</div>`,
+      connections: [
+        {color:'#ca8a04', label:'VCC → Rail 3.3V', dest:'R1'},
+        {color:'#666', label:'GND → Rail GND', dest:'R12'},
+        {color:'#e8a435', label:'SDA → GPIO21', dest:'SDA'},
+        {color:'#e8a435', label:'SCL → GPIO22', dest:'SCL'},
+      ]
+    }
+  },
+  {
+    id: 'j4',
+    name: 'J4 — MPU9250 (4-pin JST)',
+    sub: 'JST-XH — IMU sensor',
+    color: '#ca8a04',
+    cells: [{r:8,c:9},{r:8,c:10},{r:9,c:9},{r:9,c:10}],
+    info: {
+      title: 'J4 — Connecteur JST-XH 4-pin',
+      sub: 'MPU9250 IMU (accel, gyro, mag)',
+      html: `<h3>Rôle</h3><p>Connecteur JST-XH pour brancher le capteur IMU MPU9250. Permet la navigation inertielle et détection de rotation.</p>
+<h3>Brochage</h3>
+<ul style="margin:6px 0; padding-left:16px">
+  <li><b>Broche 1 (rouge):</b> VCC 3.3V → Rail 3.3V</li>
+  <li><b>Broche 2 (noir):</b> GND → Rail GND</li>
+  <li><b>Broche 3:</b> SDA → ESP32 GPIO21 (I2C)</li>
+  <li><b>Broche 4:</b> SCL → ESP32 GPIO22 (I2C)</li>
+</ul>
+<h3>Placement</h3><p>R8-R9, cols 9-10. Partage le bus I2C avec les capteurs ToF.</p>
+<h3>Adresses I2C</h3>
+<div class="tip">💡 MPU9250 adresse: 0x68 (default) ou 0x69 (si AD0 high). Configure dans le code Arduino.</div>`,
+      connections: [
+        {color:'#ca8a04', label:'VCC → Rail 3.3V', dest:'R1'},
+        {color:'#666', label:'GND → Rail GND', dest:'R12'},
+        {color:'#e8a435', label:'SDA → GPIO21', dest:'SDA'},
+        {color:'#e8a435', label:'SCL → GPIO22', dest:'SCL'},
+      ]
+    }
+  },
+  {
+    id: 'j5_j8',
+    name: 'J5-J8 — Encodeurs (3-pin JST)',
+    sub: '4× JST-XH — Encoder sensors',
+    color: '#e8a435',
+    cells: [{r:10,c:0},{r:10,c:1},{r:10,c:2},
+            {r:10,c:3},{r:10,c:4},{r:10,c:5},
+            {r:10,c:6},{r:10,c:7},{r:10,c:8},
+            {r:10,c:9},{r:10,c:10},{r:10,c:11}],
+    info: {
+      title: 'J5–J8 — Connecteurs JST-XH 3-pin',
+      sub: 'Encodeurs de moteurs (4× capteurs)',
+      html: `<h3>Rôle</h3><p>4 connecteurs JST-XH 3-pin pour brancher les encodeurs des 4 moteurs (2 avant, 2 arrière). Permettent un contrôle précis de la vitesse et de la direction.</p>
+<h3>Brochage</h3>
+<ul style="margin:6px 0; padding-left:16px">
+  <li><b>Broche 1 (noir/−):</b> GND → Rail GND</li>
+  <li><b>Broche 2 (rouge/+):</b> VCC 5V → Rail 5V</li>
+  <li><b>Broche 3:</b> Signal (sortie encoder) → GPIO Arduino</li>
+</ul>
+<h3>Placement</h3>
+<p>J5: R10, cols 0-2 | J6: R10, cols 3-5 | J7: R10, cols 6-8 | J8: R10, cols 9-11</p>
+<h3>GPIO assignments</h3>
+<div class="tip">💡 Utilise les pins GPIO16-GPIO19 (ou autres libres). Chaque encodeur a sa propre entrée GPIO digitale.</div>`,
+      connections: [
+        {color:'#666', label:'GND broche 1 → Rail GND', dest:'R12'},
+        {color:'#ea580c', label:'VCC broche 2 → Rail 5V', dest:'R2'},
+        {color:'#e8a435', label:'Signal broche 3 → GPIO', dest:'Encoder'},
+      ]
+    }
+  },
 ];
 
 // ═══════════════════════════════════════════════════
@@ -359,6 +523,46 @@ const WIRES = [
   {from:{r:5,c:4}, to:{r:0,c:4}, color:'#ca8a04', dash:true, owner:['c3','rail33']},
   // C3 → GND
   {from:{r:6,c:5}, to:{r:11,c:5}, color:'#666', dash:true, owner:['c3','railgnd']},
+
+  // TB1 (12V IN) → 12V rail
+  {from:{r:1,c:0}, to:{r:1,c:0}, color:'#dc2626', dash:false, owner:['tb1','rail12']},
+  // TB1 → GND
+  {from:{r:1,c:1}, to:{r:11,c:1}, color:'#666', dash:true, owner:['tb1','railgnd']},
+  // TB2 (12V OUT) → 12V rail
+  {from:{r:2,c:2}, to:{r:1,c:2}, color:'#dc2626', dash:true, owner:['tb2','rail12']},
+  // TB2 → GND
+  {from:{r:2,c:3}, to:{r:11,c:3}, color:'#666', dash:true, owner:['tb2','railgnd']},
+
+  // TB3 (5V IN) → 5V rail
+  {from:{r:1,c:16}, to:{r:1,c:11}, color:'#ea580c', dash:true, owner:['tb3','rail5']},
+  // TB3 → GND
+  {from:{r:1,c:17}, to:{r:11,c:17}, color:'#666', dash:true, owner:['tb3','railgnd']},
+  // TB4 (5V OUT) → 5V rail
+  {from:{r:2,c:14}, to:{r:1,c:14}, color:'#ea580c', dash:true, owner:['tb4','rail5']},
+  // TB4 → GND
+  {from:{r:2,c:15}, to:{r:11,c:15}, color:'#666', dash:true, owner:['tb4','railgnd']},
+
+  // J1-J3 (ToF) → 3.3V and I2C
+  {from:{r:8,c:0}, to:{r:0,c:0}, color:'#ca8a04', dash:true, owner:['j1_j3','rail33']},
+  {from:{r:9,c:1}, to:{r:11,c:1}, color:'#666', dash:true, owner:['j1_j3','railgnd']},
+  {from:{r:8,c:3}, to:{r:0,c:3}, color:'#ca8a04', dash:true, owner:['j1_j3','rail33']},
+  {from:{r:9,c:4}, to:{r:11,c:4}, color:'#666', dash:true, owner:['j1_j3','railgnd']},
+  {from:{r:8,c:6}, to:{r:0,c:6}, color:'#ca8a04', dash:true, owner:['j1_j3','rail33']},
+  {from:{r:9,c:7}, to:{r:11,c:7}, color:'#666', dash:true, owner:['j1_j3','railgnd']},
+
+  // J4 (MPU9250) → 3.3V and I2C
+  {from:{r:8,c:9}, to:{r:0,c:9}, color:'#ca8a04', dash:true, owner:['j4','rail33']},
+  {from:{r:9,c:10}, to:{r:11,c:10}, color:'#666', dash:true, owner:['j4','railgnd']},
+
+  // J5-J8 (Encoders) → 5V and GND
+  {from:{r:10,c:0}, to:{r:11,c:0}, color:'#666', dash:true, owner:['j5_j8','railgnd']},
+  {from:{r:10,c:1}, to:{r:1,c:1}, color:'#ea580c', dash:true, owner:['j5_j8','rail5']},
+  {from:{r:10,c:3}, to:{r:11,c:3}, color:'#666', dash:true, owner:['j5_j8','railgnd']},
+  {from:{r:10,c:4}, to:{r:1,c:4}, color:'#ea580c', dash:true, owner:['j5_j8','rail5']},
+  {from:{r:10,c:6}, to:{r:11,c:6}, color:'#666', dash:true, owner:['j5_j8','railgnd']},
+  {from:{r:10,c:7}, to:{r:1,c:7}, color:'#ea580c', dash:true, owner:['j5_j8','rail5']},
+  {from:{r:10,c:9}, to:{r:11,c:9}, color:'#666', dash:true, owner:['j5_j8','railgnd']},
+  {from:{r:10,c:10}, to:{r:1,c:10}, color:'#ea580c', dash:true, owner:['j5_j8','rail5']},
 ];
 
 // ═══════════════════════════════════════════════════
@@ -375,6 +579,10 @@ const STEPS = [
   'Souder C1 100µF (polarité !)',
   'Souder C2 100nF (5V)',
   'Souder C3 100nF (3.3V)',
+  'Souder borniers TB1-TB4 (2-pin)',
+  'Souder connecteurs J1-J3 ToF (4-pin JST)',
+  'Souder connecteur J4 MPU9250 (4-pin JST)',
+  'Souder connecteurs J5-J8 encodeurs (3-pin JST)',
   'Test continuité au multimètre',
 ];
 
@@ -427,11 +635,11 @@ function updateInfo() {
     subEl.textContent = '18 colonnes × 12 rangées — pas 2.54mm';
     bodyEl.innerHTML = `<p>Clique sur un composant à gauche ou directement sur le perfboard pour voir les détails et les connexions.</p>
 <h3>Ce qu'on met dessus</h3>
-<p>4 rails de distribution (3.3V, 12V, 5V, GND), 2 résistances pull-up 4.7kΩ pour I2C, 1 condensateur 100µF, 2 condensateurs 100nF.</p>
+<p><b>Rails:</b> 3.3V, 12V, 5V, GND. <b>Composants passifs:</b> 2 résistances pull-up 4.7kΩ (I2C), 1 condensateur 100µF (12V), 2 condensateurs 100nF. <b>Connecteurs:</b> 4× borniers à vis (TB1-TB4), 3× JST-XH 4-pin ToF (J1-J3), 1× JST-XH 4-pin MPU9250 (J4), 4× JST-XH 3-pin encodeurs (J5-J8).</p>
 <h3>Ordre de soudure</h3>
-<p>1. Rails GND et 3.3V → 2. Rails 12V et 5V → 3. Résistances → 4. Condensateurs → 5. Test</p>
+<p>1. Rails → 2. Composants passifs → 3. Borniers TB1-TB4 → 4. Connecteurs JST J1-J4 (capteurs) → 5. Connecteurs encodeurs J5-J8 → 6. Test continuité</p>
 <h3>Astuce</h3>
-<div class="tip">💡 Commence par souder les rails, puis les composants passifs. Teste chaque rail au multimètre avant de connecter l'ESP32 !</div>`;
+<div class="tip">💡 Commence par souder les rails, puis les composants passifs. Ajoute les borniers et connecteurs en dernier. Teste chaque rail au multimètre avant de brancher les capteurs !</div>`;
     return;
   }
 
