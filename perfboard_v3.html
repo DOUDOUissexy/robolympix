@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Perfboard Layout — Robot Labyrinthe v3</title>
+<title>Perfboard Layout — RoboLymix v3</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Segoe UI', system-ui, sans-serif; background: #1a1a1a; color: #d4d0c8; padding: 20px; }
@@ -56,19 +56,22 @@ tr:hover { background: #262626; }
 .vocab dt { font-weight: 700; color: #e8a435; font-size: 0.88rem; margin-top: 8px; }
 .vocab dt:first-child { margin-top: 0; }
 .vocab dd { font-size: 0.85rem; color: #d4d0c8; margin-left: 16px; margin-bottom: 4px; }
+
+.info-list { background: #222; border: 1px solid #333; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+.info-list li { margin: 6px 0; }
 </style>
 </head>
 <body>
 <div class="container">
 
-<h1>Perfboard Layout — v3</h1>
+<h1>Perfboard Layout — RoboLymix v3</h1>
 <p class="sub">Guide débutant &bull; 9×7cm (18 colonnes × 12 rangées) &bull; Pas 2.54mm &bull; Pastilles cuivre individuelles</p>
 
 <!-- ═══ BEGINNER INTRO ═══ -->
 <div class="intro-box">
   <h3>C'est quoi un perfboard ?</h3>
   <p>Un perfboard (ou « plaque à pastilles ») est une plaque verte avec des trous et des pastilles en cuivre. Contrairement à une breadboard (plaque d'essai blanche), le perfboard est <b>permanent</b> : tu soudes les composants dessus. Les pastilles ne sont PAS connectées entre elles — c'est à toi de créer les connexions avec du fil ou de la soudure.</p>
-  <p style="margin-top:8px">Dans notre robot, le perfboard sert de <b>plaque de distribution</b> : il distribue les différentes tensions (3.3V, 5V, 12V) et accueille les résistances pull-up et les condensateurs de filtrage.</p>
+  <p style="margin-top:8px">Dans notre robot <b>RoboLymix</b>, le perfboard sert de <b>plaque de distribution</b> : il distribue les différentes tensions (3.3V, 5V, 12V) et accueille les résistances pull-up, les condensateurs de filtrage, les connecteurs JST-XH pour les capteurs, et les borniers à vis pour l'alimentation.</p>
 </div>
 
 <!-- ═══ VOCABULARY ═══ -->
@@ -85,12 +88,16 @@ tr:hover { background: #262626; }
     <dd>Un petit composant qui absorbe les variations brusques de tension. Protège les composants sensibles comme l'ESP32.</dd>
     <dt>Électrolytique vs Céramique</dt>
     <dd>Deux types de condensateurs. L'électrolytique est gros et a une <b>polarité</b> (+/−). Le céramique est petit et n'a PAS de polarité.</dd>
+    <dt>Bornier à vis (TB)</dt>
+    <dd>Un petit connecteur avec deux vis qui permettent de bloquer fermement un câble. Idéal pour l'alimentation batterie et la distribution d'électricité.</dd>
+    <dt>Connecteur JST-XH</dt>
+    <dd>Un connecteur à broche blanc avec un loquet de sécurité. On soude l'en-tête JST sur le perfboard, puis on enfiche le câble JST dans le connecteur. Très débutant-friendly !</dd>
   </dl>
 </div>
 
 <!-- ═══ WHAT'S ON THE PERFBOARD ═══ -->
 <h2>Qu'est-ce qu'on met sur le perfboard ?</h2>
-<p style="margin-bottom:14px">Seulement 5 composants + 4 rails de distribution. C'est simple !</p>
+<p style="margin-bottom:14px">Composants + 4 rails de distribution. C'est simple !</p>
 
 <table>
   <tr><th>Composant</th><th>Quantité</th><th>Rôle</th><th>Polarité ?</th></tr>
@@ -98,6 +105,8 @@ tr:hover { background: #262626; }
   <tr><td><b>Résistance 4.7kΩ</b></td><td>2</td><td>Pull-ups pour le bus I2C (SDA et SCL)</td><td>Non (pas de sens)</td></tr>
   <tr><td><b>Condensateur 100µF 16V</b></td><td>1</td><td>Filtre les variations du 12V (lissage moteurs)</td><td><b>OUI ! + et −</b></td></tr>
   <tr><td><b>Condensateur 100nF céramique</b></td><td>2</td><td>Filtre les parasites sur le 5V et le 3.3V</td><td>Non (pas de sens)</td></tr>
+  <tr><td><b>Bornier à vis 2-pin (5.08mm)</b></td><td>4</td><td>Connecteurs robustes pour alimentation (TB1-TB4)</td><td>Non (marqué + et −)</td></tr>
+  <tr><td><b>En-tête JST-XH 2.54mm</b></td><td>8 × (3–4 pins)</td><td>Connecteurs détachables pour capteurs I2C et encodeurs</td><td>Non (pins marquées)</td></tr>
 </table>
 
 <!-- ═══ MAIN SVG DIAGRAM ═══ -->
@@ -105,9 +114,9 @@ tr:hover { background: #262626; }
 <p style="margin-bottom:12px">Les composants sont vus du dessus. Le cuivre est en dessous (tu soudes par en dessous).</p>
 
 <div class="diagram-wrap">
-<svg viewBox="0 0 720 580" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:720px;">
+<svg viewBox="0 0 720 620" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:720px;">
   <!-- Background -->
-  <rect width="720" height="580" fill="#262626"/>
+  <rect width="720" height="620" fill="#262626"/>
 
   <!-- Board outline -->
   <rect x="50" y="50" width="560" height="390" rx="8" fill="#1a1a1a" stroke="#7cc47c" stroke-width="2"/>
@@ -132,8 +141,7 @@ tr:hover { background: #262626; }
   </g>
 
   <!-- Copper pads (full grid, faint) -->
-  <g opacity="0.25" fill="#b87333">
-    <!-- Row by row, all 18 columns × 12 rows = faint circles -->
+  <g opacity="0.2" fill="#b87333">
     <!-- R1 -->
     <circle cx="75" cy="73" r="4.5"/><circle cx="105" cy="73" r="4.5"/><circle cx="135" cy="73" r="4.5"/>
     <circle cx="165" cy="73" r="4.5"/><circle cx="195" cy="73" r="4.5"/><circle cx="225" cy="73" r="4.5"/>
@@ -141,311 +149,459 @@ tr:hover { background: #262626; }
     <circle cx="345" cy="73" r="4.5"/><circle cx="375" cy="73" r="4.5"/><circle cx="405" cy="73" r="4.5"/>
     <circle cx="435" cy="73" r="4.5"/><circle cx="465" cy="73" r="4.5"/><circle cx="495" cy="73" r="4.5"/>
     <circle cx="525" cy="73" r="4.5"/><circle cx="555" cy="73" r="4.5"/><circle cx="585" cy="73" r="4.5"/>
-    <!-- R4 (for resistors) -->
-    <circle cx="135" cy="163" r="4.5"/><circle cx="165" cy="163" r="4.5"/><circle cx="195" cy="163" r="4.5"/>
-    <circle cx="225" cy="163" r="4.5"/><circle cx="255" cy="163" r="4.5"/><circle cx="285" cy="163" r="4.5"/>
-    <!-- R6-R9 (for capacitors) -->
-    <circle cx="75" cy="223" r="4.5"/><circle cx="105" cy="223" r="4.5"/>
-    <circle cx="75" cy="253" r="4.5"/><circle cx="105" cy="253" r="4.5"/>
-    <circle cx="75" cy="283" r="4.5"/><circle cx="105" cy="283" r="4.5"/>
-    <circle cx="75" cy="313" r="4.5"/><circle cx="105" cy="313" r="4.5"/>
+    <!-- R2-R11 samples -->
+    <circle cx="75" cy="103" r="4.5"/><circle cx="105" cy="103" r="4.5"/>
+    <circle cx="195" cy="197" r="4.5"/><circle cx="225" cy="197" r="4.5"/>
+    <circle cx="405" cy="197" r="4.5"/><circle cx="435" cy="197" r="4.5"/>
     <!-- R12 -->
-    <circle cx="75" cy="403" r="4.5"/><circle cx="105" cy="403" r="4.5"/><circle cx="135" cy="403" r="4.5"/>
-    <circle cx="165" cy="403" r="4.5"/><circle cx="195" cy="403" r="4.5"/><circle cx="225" cy="403" r="4.5"/>
-    <circle cx="255" cy="403" r="4.5"/><circle cx="285" cy="403" r="4.5"/><circle cx="315" cy="403" r="4.5"/>
-    <circle cx="345" cy="403" r="4.5"/><circle cx="375" cy="403" r="4.5"/><circle cx="405" cy="403" r="4.5"/>
-    <circle cx="435" cy="403" r="4.5"/><circle cx="465" cy="403" r="4.5"/><circle cx="495" cy="403" r="4.5"/>
-    <circle cx="525" cy="403" r="4.5"/><circle cx="555" cy="403" r="4.5"/><circle cx="585" cy="403" r="4.5"/>
+    <circle cx="75" cy="407" r="4.5"/><circle cx="105" cy="407" r="4.5"/><circle cx="135" cy="407" r="4.5"/>
+    <circle cx="165" cy="407" r="4.5"/><circle cx="195" cy="407" r="4.5"/><circle cx="225" cy="407" r="4.5"/>
+    <circle cx="255" cy="407" r="4.5"/><circle cx="285" cy="407" r="4.5"/><circle cx="315" cy="407" r="4.5"/>
+    <circle cx="345" cy="407" r="4.5"/><circle cx="375" cy="407" r="4.5"/><circle cx="405" cy="407" r="4.5"/>
+    <circle cx="435" cy="407" r="4.5"/><circle cx="465" cy="407" r="4.5"/><circle cx="495" cy="407" r="4.5"/>
+    <circle cx="525" cy="407" r="4.5"/><circle cx="555" cy="407" r="4.5"/><circle cx="585" cy="407" r="4.5"/>
   </g>
 
-  <!-- ═══ RAIL R1: 3.3V (full length, YELLOW) ═══ -->
-  <line x1="65" y1="73" x2="595" y2="73" stroke="#ca8a04" stroke-width="5" stroke-linecap="round"/>
-  <rect x="605" y="63" width="50" height="20" rx="4" fill="#ca8a04"/>
+  <!-- ═══ RAIL R1: 3.3V (full length, AMBER) ═══ -->
+  <line x1="65" y1="73" x2="595" y2="73" stroke="#e8a435" stroke-width="5" stroke-linecap="round"/>
+  <rect x="605" y="63" width="50" height="20" rx="4" fill="#e8a435"/>
   <text x="630" y="77" text-anchor="middle" fill="#1a1a1a" font-size="10" font-weight="700">3.3V</text>
   <!-- Label arrow -->
-  <text x="330" y="62" text-anchor="middle" fill="#ca8a04" font-size="9" font-weight="700">← Rail 3.3V (toute la longueur, rangée 1) →</text>
+  <text x="330" y="62" text-anchor="middle" fill="#e8a435" font-size="9" font-weight="700">← Rail 3.3V (toute la longueur, rangée 1) →</text>
 
   <!-- ═══ RAIL R2 LEFT: 12V (cols 1-9, RED) ═══ -->
-  <line x1="65" y1="103" x2="325" y2="103" stroke="#dc2626" stroke-width="5" stroke-linecap="round"/>
-  <text x="195" y="95" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="700">Rail 12V (cols 1→9)</text>
+  <line x1="65" y1="107" x2="325" y2="107" stroke="#dc2626" stroke-width="5" stroke-linecap="round"/>
+  <text x="195" y="99" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="700">Rail 12V (cols 1→9)</text>
 
   <!-- ═══ SEPARATOR col 10 ═══ -->
-  <rect x="333" y="95" width="24" height="16" rx="4" fill="#222" stroke="#666" stroke-width="1.5" stroke-dasharray="3,2"/>
-  <text x="345" y="107" text-anchor="middle" fill="#666" font-size="8" font-weight="700">VIDE</text>
+  <rect x="333" y="99" width="24" height="16" rx="4" fill="#222" stroke="#666" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="345" y="111" text-anchor="middle" fill="#666" font-size="8" font-weight="700">VIDE</text>
 
   <!-- ═══ RAIL R2 RIGHT: 5V (cols 11-18, ORANGE) ═══ -->
-  <line x1="365" y1="103" x2="595" y2="103" stroke="#ea580c" stroke-width="5" stroke-linecap="round"/>
-  <text x="480" y="95" text-anchor="middle" fill="#ea580c" font-size="10" font-weight="700">Rail 5V (cols 11→18)</text>
+  <line x1="365" y1="107" x2="595" y2="107" stroke="#ea580c" stroke-width="5" stroke-linecap="round"/>
+  <text x="480" y="99" text-anchor="middle" fill="#ea580c" font-size="10" font-weight="700">Rail 5V (cols 11→18)</text>
 
-  <!-- ═══ RAIL R12: GND (full length, BLACK) ═══ -->
-  <line x1="65" y1="403" x2="595" y2="403" stroke="#555" stroke-width="5" stroke-linecap="round"/>
-  <rect x="605" y="393" width="50" height="20" rx="4" fill="#555"/>
-  <text x="630" y="407" text-anchor="middle" fill="#d4d0c8" font-size="10" font-weight="700">GND</text>
-  <text x="330" y="420" text-anchor="middle" fill="#8a8578" font-size="9" font-weight="700">← Rail GND (toute la longueur, rangée 12) →</text>
+  <!-- ═══ RAIL R12: GND (full length, DARK GRAY) ═══ -->
+  <line x1="65" y1="407" x2="595" y2="407" stroke="#555" stroke-width="5" stroke-linecap="round"/>
+  <rect x="605" y="397" width="50" height="20" rx="4" fill="#555"/>
+  <text x="630" y="411" text-anchor="middle" fill="#d4d0c8" font-size="10" font-weight="700">GND</text>
+  <text x="330" y="424" text-anchor="middle" fill="#8a8578" font-size="9" font-weight="700">← Rail GND (toute la longueur, rangée 12) →</text>
+
+  <!-- ═══ TB1: 12V IN (bornier à vis, R2 cols 1-2) ═══ -->
+  <rect x="65" y="97" width="46" height="20" rx="4" fill="#90ee90" stroke="#2a7d2a" stroke-width="2"/>
+  <text x="88" y="110" text-anchor="middle" fill="#1a1a1a" font-size="9" font-weight="700">TB1</text>
+  <circle cx="73" cy="104" r="2.5" fill="#2a7d2a"/>
+  <circle cx="98" cy="104" r="2.5" fill="#2a7d2a"/>
+  <text x="88" y="127" text-anchor="middle" fill="#7cc47c" font-size="8" font-weight="700">12V IN</text>
+  <text x="88" y="138" text-anchor="middle" fill="#7cc47c" font-size="7">(batterie)</text>
+
+  <!-- ═══ TB2: 12V OUT (bornier à vis, R3 cols 3-4) ═══ -->
+  <rect x="127" y="127" width="46" height="20" rx="4" fill="#90ee90" stroke="#2a7d2a" stroke-width="2"/>
+  <text x="150" y="140" text-anchor="middle" fill="#1a1a1a" font-size="9" font-weight="700">TB2</text>
+  <circle cx="135" cy="134" r="2.5" fill="#2a7d2a"/>
+  <circle cx="160" cy="134" r="2.5" fill="#2a7d2a"/>
+  <text x="150" y="157" text-anchor="middle" fill="#7cc47c" font-size="8" font-weight="700">12V OUT</text>
+  <text x="150" y="168" text-anchor="middle" fill="#7cc47c" font-size="7">(moteurs)</text>
+
+  <!-- ═══ TB3: 5V IN (bornier à vis, R2 cols 17-18) ═══ -->
+  <rect x="541" y="97" width="46" height="20" rx="4" fill="#90ee90" stroke="#2a7d2a" stroke-width="2"/>
+  <text x="564" y="110" text-anchor="middle" fill="#1a1a1a" font-size="9" font-weight="700">TB3</text>
+  <circle cx="549" cy="104" r="2.5" fill="#2a7d2a"/>
+  <circle cx="574" cy="104" r="2.5" fill="#2a7d2a"/>
+  <text x="564" y="127" text-anchor="middle" fill="#7cc47c" font-size="8" font-weight="700">5V IN</text>
+  <text x="564" y="138" text-anchor="middle" fill="#7cc47c" font-size="7">(LM2596)</text>
+
+  <!-- ═══ TB4: 5V OUT (bornier à vis, R3 cols 15-16) ═══ -->
+  <rect x="479" y="127" width="46" height="20" rx="4" fill="#90ee90" stroke="#2a7d2a" stroke-width="2"/>
+  <text x="502" y="140" text-anchor="middle" fill="#1a1a1a" font-size="9" font-weight="700">TB4</text>
+  <circle cx="487" cy="134" r="2.5" fill="#2a7d2a"/>
+  <circle cx="512" cy="134" r="2.5" fill="#2a7d2a"/>
+  <text x="502" y="157" text-anchor="middle" fill="#7cc47c" font-size="8" font-weight="700">5V OUT</text>
+  <text x="502" y="168" text-anchor="middle" fill="#7cc47c" font-size="7">(ESP32)</text>
 
   <!-- ═══ PULL-UP R1: SDA (cols 3-5, row 4) ═══ -->
-  <rect x="127" y="153" width="76" height="20" rx="6" fill="#222" stroke="#e8a435" stroke-width="2"/>
-  <text x="165" y="167" text-anchor="middle" fill="#e8a435" font-size="10" font-weight="700">R1 4.7kΩ</text>
+  <rect x="127" y="157" width="76" height="20" rx="6" fill="#222" stroke="#e8a435" stroke-width="2"/>
+  <text x="165" y="171" text-anchor="middle" fill="#e8a435" font-size="10" font-weight="700">R1 4.7kΩ</text>
   <!-- Connection to 3.3V -->
-  <line x1="135" y1="73" x2="135" y2="153" stroke="#ca8a04" stroke-width="1.5" stroke-dasharray="4,3"/>
-  <circle cx="135" cy="73" r="5" fill="#ca8a04" opacity="0.8"/>
-  <text x="122" y="118" fill="#ca8a04" font-size="8" font-weight="700" transform="rotate(-90,122,118)">3.3V</text>
-  <!-- Connection to SDA -->
-  <line x1="195" y1="173" x2="195" y2="200" stroke="#e8a435" stroke-width="2"/>
+  <line x1="135" y1="73" x2="135" y2="157" stroke="#e8a435" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <circle cx="135" cy="73" r="5" fill="#e8a435" opacity="0.8"/>
+  <!-- Connection to SDA bus -->
+  <line x1="195" y1="177" x2="195" y2="200" stroke="#e8a435" stroke-width="2"/>
   <circle cx="195" cy="200" r="4" fill="#e8a435"/>
   <text x="207" y="195" fill="#e8a435" font-size="8" font-weight="700">→ SDA</text>
   <text x="207" y="207" fill="#e8a435" font-size="7">(GPIO21)</text>
 
   <!-- ═══ PULL-UP R2: SCL (cols 6-8, row 4) ═══ -->
-  <rect x="217" y="153" width="76" height="20" rx="6" fill="#222" stroke="#e8a435" stroke-width="2"/>
-  <text x="255" y="167" text-anchor="middle" fill="#e8a435" font-size="10" font-weight="700">R2 4.7kΩ</text>
+  <rect x="217" y="157" width="76" height="20" rx="6" fill="#222" stroke="#e8a435" stroke-width="2"/>
+  <text x="255" y="171" text-anchor="middle" fill="#e8a435" font-size="10" font-weight="700">R2 4.7kΩ</text>
   <!-- Connection to 3.3V -->
-  <line x1="225" y1="73" x2="225" y2="153" stroke="#ca8a04" stroke-width="1.5" stroke-dasharray="4,3"/>
-  <circle cx="225" cy="73" r="5" fill="#ca8a04" opacity="0.8"/>
-  <!-- Connection to SCL -->
-  <line x1="285" y1="173" x2="285" y2="200" stroke="#e8a435" stroke-width="2"/>
+  <line x1="225" y1="73" x2="225" y2="157" stroke="#e8a435" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <circle cx="225" cy="73" r="5" fill="#e8a435" opacity="0.8"/>
+  <!-- Connection to SCL bus -->
+  <line x1="285" y1="177" x2="285" y2="200" stroke="#e8a435" stroke-width="2"/>
   <circle cx="285" cy="200" r="4" fill="#e8a435"/>
   <text x="297" y="195" fill="#e8a435" font-size="8" font-weight="700">→ SCL</text>
   <text x="297" y="207" fill="#e8a435" font-size="7">(GPIO22)</text>
 
   <!-- ═══ C1: 100µF 16V (cols 1-2, rows 6-9) ═══ -->
-  <rect x="65" y="215" width="50" height="110" rx="6" fill="#222" stroke="#d97706" stroke-width="2.5"/>
-  <text x="90" y="248" text-anchor="middle" fill="#d97706" font-size="10" font-weight="700">C1</text>
-  <text x="90" y="263" text-anchor="middle" fill="#d97706" font-size="9">100µF</text>
-  <text x="90" y="278" text-anchor="middle" fill="#d97706" font-size="9">16V</text>
+  <rect x="65" y="219" width="50" height="110" rx="6" fill="#222" stroke="#d97706" stroke-width="2.5"/>
+  <text x="90" y="252" text-anchor="middle" fill="#d97706" font-size="10" font-weight="700">C1</text>
+  <text x="90" y="267" text-anchor="middle" fill="#d97706" font-size="9">100µF</text>
+  <text x="90" y="282" text-anchor="middle" fill="#d97706" font-size="9">16V</text>
   <!-- Polarity marks -->
-  <text x="73" y="232" fill="#dc2626" font-size="14" font-weight="700">+</text>
-  <text x="100" y="315" fill="#8a8578" font-size="14" font-weight="700">−</text>
+  <text x="73" y="236" fill="#dc2626" font-size="14" font-weight="700">+</text>
+  <text x="100" y="319" fill="#8a8578" font-size="14" font-weight="700">−</text>
   <!-- + to 12V -->
-  <line x1="75" y1="215" x2="75" y2="103" stroke="#dc2626" stroke-width="2"/>
-  <circle cx="75" cy="103" r="5" fill="#dc2626" opacity="0.8"/>
+  <line x1="75" y1="219" x2="75" y2="107" stroke="#dc2626" stroke-width="2"/>
+  <circle cx="75" cy="107" r="5" fill="#dc2626" opacity="0.8"/>
   <!-- - to GND -->
-  <line x1="105" y1="325" x2="105" y2="403" stroke="#555" stroke-width="2"/>
-  <circle cx="105" cy="403" r="5" fill="#555" opacity="0.8"/>
+  <line x1="105" y1="329" x2="105" y2="407" stroke="#555" stroke-width="2"/>
+  <circle cx="105" cy="407" r="5" fill="#555" opacity="0.8"/>
   <!-- POLARITY WARNING -->
-  <rect x="60" y="330" width="70" height="24" rx="4" fill="#2a1e1e" stroke="#d47272" stroke-width="1"/>
-  <text x="95" y="346" text-anchor="middle" fill="#d47272" font-size="8" font-weight="700">POLARITÉ !</text>
+  <rect x="60" y="334" width="70" height="24" rx="4" fill="#2a1e1e" stroke="#d47272" stroke-width="1"/>
+  <text x="95" y="350" text-anchor="middle" fill="#d47272" font-size="8" font-weight="700">POLARITÉ !</text>
 
   <!-- ═══ C3: 100nF ceramic (cols 5-6, rows 6-7) — 3.3V filter ═══ -->
-  <rect x="187" y="215" width="46" height="46" rx="5" fill="#222" stroke="#ca8a04" stroke-width="2"/>
-  <text x="210" y="236" text-anchor="middle" fill="#ca8a04" font-size="9" font-weight="700">C3</text>
-  <text x="210" y="250" text-anchor="middle" fill="#ca8a04" font-size="8">100nF</text>
+  <rect x="187" y="219" width="46" height="46" rx="5" fill="#222" stroke="#e8a435" stroke-width="2"/>
+  <text x="210" y="240" text-anchor="middle" fill="#e8a435" font-size="9" font-weight="700">C3</text>
+  <text x="210" y="254" text-anchor="middle" fill="#e8a435" font-size="8">100nF</text>
   <!-- to 3.3V -->
-  <line x1="195" y1="215" x2="195" y2="73" stroke="#ca8a04" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+  <line x1="195" y1="219" x2="195" y2="73" stroke="#e8a435" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
   <!-- to GND -->
-  <line x1="225" y1="261" x2="225" y2="403" stroke="#555" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
-  <text x="232" y="340" fill="#8a8578" font-size="7" transform="rotate(90,232,340)">→ GND</text>
+  <line x1="225" y1="265" x2="225" y2="407" stroke="#555" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
 
   <!-- ═══ C2: 100nF ceramic (cols 12-13, rows 6-7) — 5V filter ═══ -->
-  <rect x="397" y="215" width="46" height="46" rx="5" fill="#222" stroke="#ea580c" stroke-width="2"/>
-  <text x="420" y="236" text-anchor="middle" fill="#ea580c" font-size="9" font-weight="700">C2</text>
-  <text x="420" y="250" text-anchor="middle" fill="#ea580c" font-size="8">100nF</text>
+  <rect x="397" y="219" width="46" height="46" rx="5" fill="#222" stroke="#ea580c" stroke-width="2"/>
+  <text x="420" y="240" text-anchor="middle" fill="#ea580c" font-size="9" font-weight="700">C2</text>
+  <text x="420" y="254" text-anchor="middle" fill="#ea580c" font-size="8">100nF</text>
   <!-- to 5V -->
-  <line x1="405" y1="215" x2="405" y2="103" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+  <line x1="405" y1="219" x2="405" y2="107" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
   <!-- to GND -->
-  <line x1="435" y1="261" x2="435" y2="403" stroke="#555" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+  <line x1="435" y1="265" x2="435" y2="407" stroke="#555" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
 
-  <!-- ═══ OUTPUT POINTS (R3 area) ═══ -->
-  <text x="330" y="132" text-anchor="middle" fill="#d4d0c8" font-size="10" font-weight="700">─── Points de sortie (R3) ───</text>
+  <!-- ═══ JST CONNECTORS (white rectangles with pins) ═══ -->
 
-  <!-- 12V outputs -->
-  <circle cx="105" cy="137" r="6" fill="none" stroke="#dc2626" stroke-width="2"/>
-  <text x="118" y="141" fill="#dc2626" font-size="8" font-weight="700">→ L298N VCC (12V)</text>
-  <circle cx="165" cy="137" r="6" fill="none" stroke="#dc2626" stroke-width="2"/>
-  <text x="178" y="141" fill="#dc2626" font-size="8" font-weight="700">→ LM2596 IN+ (12V)</text>
+  <!-- J1: ToF Front (4-pin, R5-R6, cols 12-15) -->
+  <rect x="397" y="187" width="62" height="16" rx="3" fill="#f5f5f5" stroke="#4acfb0" stroke-width="1.5"/>
+  <circle cx="405" cy="195" r="2" fill="#4acfb0"/><circle cx="415" cy="195" r="2" fill="#4acfb0"/>
+  <circle cx="425" cy="195" r="2" fill="#4acfb0"/><circle cx="435" cy="195" r="2" fill="#4acfb0"/>
+  <text x="420" y="217" text-anchor="middle" fill="#4acfb0" font-size="8" font-weight="700">J1 (ToF Avant)</text>
 
-  <!-- 5V output -->
-  <circle cx="495" cy="137" r="6" fill="none" stroke="#ea580c" stroke-width="2"/>
-  <text x="440" y="141" fill="#ea580c" font-size="8" font-weight="700" text-anchor="end">ESP32 VIN (5V) ←</text>
+  <!-- J2: ToF Left (4-pin, R7-R8, cols 12-15) -->
+  <rect x="397" y="249" width="62" height="16" rx="3" fill="#f5f5f5" stroke="#4acfb0" stroke-width="1.5"/>
+  <circle cx="405" cy="257" r="2" fill="#4acfb0"/><circle cx="415" cy="257" r="2" fill="#4acfb0"/>
+  <circle cx="425" cy="257" r="2" fill="#4acfb0"/><circle cx="435" cy="257" r="2" fill="#4acfb0"/>
+  <text x="420" y="279" text-anchor="middle" fill="#4acfb0" font-size="8" font-weight="700">J2 (ToF Gauche)</text>
 
-  <!-- 3.3V outputs -->
-  <circle cx="375" cy="73" r="6" fill="none" stroke="#ca8a04" stroke-width="2"/>
-  <text x="375" y="60" text-anchor="middle" fill="#8a6504" font-size="7" font-weight="700">Encodeurs VCC</text>
-  <circle cx="525" cy="73" r="6" fill="none" stroke="#ca8a04" stroke-width="2"/>
-  <text x="525" y="60" text-anchor="middle" fill="#8a6504" font-size="7" font-weight="700">ToF VCC</text>
+  <!-- J3: ToF Right (4-pin, R9-R10, cols 12-15) -->
+  <rect x="397" y="311" width="62" height="16" rx="3" fill="#f5f5f5" stroke="#4acfb0" stroke-width="1.5"/>
+  <circle cx="405" cy="319" r="2" fill="#4acfb0"/><circle cx="415" cy="319" r="2" fill="#4acfb0"/>
+  <circle cx="425" cy="319" r="2" fill="#4acfb0"/><circle cx="435" cy="319" r="2" fill="#4acfb0"/>
+  <text x="420" y="341" text-anchor="middle" fill="#4acfb0" font-size="8" font-weight="700">J3 (ToF Droit)</text>
 
-  <!-- GND outputs (R12) -->
-  <g>
-    <circle cx="75" cy="403" r="6" fill="none" stroke="#8a8578" stroke-width="2"/>
-    <circle cx="165" cy="403" r="6" fill="none" stroke="#8a8578" stroke-width="2"/>
-    <circle cx="255" cy="403" r="6" fill="none" stroke="#8a8578" stroke-width="2"/>
-    <circle cx="435" cy="403" r="6" fill="none" stroke="#8a8578" stroke-width="2"/>
-    <circle cx="555" cy="403" r="6" fill="none" stroke="#8a8578" stroke-width="2"/>
-  </g>
-  <!-- GND labels -->
-  <g font-size="7" fill="#8a8578" font-weight="700" text-anchor="middle">
-    <text x="75" y="427">L298N</text>
-    <text x="165" y="427">LM2596</text>
-    <text x="255" y="427">Enc.×4</text>
-    <text x="435" y="427">ESP32</text>
-    <text x="555" y="427">ToF×3</text>
-  </g>
+  <!-- J4: MPU9250 (4-pin, R5-R6, cols 5-8) -->
+  <rect x="187" y="187" width="62" height="16" rx="3" fill="#f5f5f5" stroke="#c27db5" stroke-width="1.5"/>
+  <circle cx="195" cy="195" r="2" fill="#c27db5"/><circle cx="205" cy="195" r="2" fill="#c27db5"/>
+  <circle cx="215" cy="195" r="2" fill="#c27db5"/><circle cx="225" cy="195" r="2" fill="#c27db5"/>
+  <text x="206" y="217" text-anchor="middle" fill="#c27db5" font-size="8" font-weight="700">J4 (MPU9250)</text>
+
+  <!-- J5-J8: Encoders (3-pin each, right edge R5-R11, cols 16-18) -->
+  <!-- J5: Encoder 1 -->
+  <rect x="541" y="187" width="46" height="16" rx="3" fill="#f5f5f5" stroke="#7cc47c" stroke-width="1.5"/>
+  <circle cx="548" cy="195" r="2" fill="#7cc47c"/><circle cx="558" cy="195" r="2" fill="#7cc47c"/>
+  <circle cx="568" cy="195" r="2" fill="#7cc47c"/>
+  <text x="557" y="217" text-anchor="middle" fill="#7cc47c" font-size="7" font-weight="700">J5 Enc1</text>
+
+  <!-- J6: Encoder 2 -->
+  <rect x="541" y="249" width="46" height="16" rx="3" fill="#f5f5f5" stroke="#7cc47c" stroke-width="1.5"/>
+  <circle cx="548" cy="257" r="2" fill="#7cc47c"/><circle cx="558" cy="257" r="2" fill="#7cc47c"/>
+  <circle cx="568" cy="257" r="2" fill="#7cc47c"/>
+  <text x="557" y="279" text-anchor="middle" fill="#7cc47c" font-size="7" font-weight="700">J6 Enc2</text>
+
+  <!-- J7: Encoder 3 -->
+  <rect x="541" y="311" width="46" height="16" rx="3" fill="#f5f5f5" stroke="#7cc47c" stroke-width="1.5"/>
+  <circle cx="548" cy="319" r="2" fill="#7cc47c"/><circle cx="558" cy="319" r="2" fill="#7cc47c"/>
+  <circle cx="568" cy="319" r="2" fill="#7cc47c"/>
+  <text x="557" y="341" text-anchor="middle" fill="#7cc47c" font-size="7" font-weight="700">J7 Enc3</text>
+
+  <!-- J8: Encoder 4 -->
+  <rect x="541" y="373" width="46" height="16" rx="3" fill="#f5f5f5" stroke="#7cc47c" stroke-width="1.5"/>
+  <circle cx="548" cy="381" r="2" fill="#7cc47c"/><circle cx="558" cy="381" r="2" fill="#7cc47c"/>
+  <circle cx="568" cy="381" r="2" fill="#7cc47c"/>
+  <text x="557" y="403" text-anchor="middle" fill="#7cc47c" font-size="7" font-weight="700">J8 Enc4</text>
+
+  <!-- ═══ XSHUT PADS (3 solder pads, near ToF area, cols 9-10) ═══ -->
+  <circle cx="315" cy="197" r="3.5" fill="none" stroke="#ca8a04" stroke-width="1.5" stroke-dasharray="2,2"/>
+  <text x="315" y="220" text-anchor="middle" fill="#ca8a04" font-size="7" font-weight="700">XSHUT-F</text>
+  <text x="315" y="230" text-anchor="middle" fill="#8a8578" font-size="6">(GPIO15)</text>
+
+  <circle cx="315" cy="259" r="3.5" fill="none" stroke="#ca8a04" stroke-width="1.5" stroke-dasharray="2,2"/>
+  <text x="315" y="282" text-anchor="middle" fill="#ca8a04" font-size="7" font-weight="700">XSHUT-L</text>
+  <text x="315" y="292" text-anchor="middle" fill="#8a8578" font-size="6">(GPIO4)</text>
+
+  <circle cx="315" cy="321" r="3.5" fill="none" stroke="#ca8a04" stroke-width="1.5" stroke-dasharray="2,2"/>
+  <text x="315" y="344" text-anchor="middle" fill="#ca8a04" font-size="7" font-weight="700">XSHUT-R</text>
+  <text x="315" y="354" text-anchor="middle" fill="#8a8578" font-size="6">(GPIO5)</text>
 
   <!-- Mounting holes -->
   <circle cx="62" cy="62" r="6" fill="none" stroke="#666" stroke-width="1.5"/>
   <circle cx="598" cy="62" r="6" fill="none" stroke="#666" stroke-width="1.5"/>
-  <circle cx="62" cy="428" r="6" fill="none" stroke="#666" stroke-width="1.5"/>
-  <circle cx="598" cy="428" r="6" fill="none" stroke="#666" stroke-width="1.5"/>
+  <circle cx="62" cy="432" r="6" fill="none" stroke="#666" stroke-width="1.5"/>
+  <circle cx="598" cy="432" r="6" fill="none" stroke="#666" stroke-width="1.5"/>
 
   <!-- Title -->
-  <text x="330" y="560" text-anchor="middle" fill="#8a8578" font-size="10">Perfboard 9×7cm — Vue de dessus — Composants côté visible</text>
+  <text x="330" y="560" text-anchor="middle" fill="#8a8578" font-size="10">Perfboard 9×7cm — Vue de dessus — RoboLymix</text>
 
   <!-- Scale indicator -->
-  <line x1="50" y1="490" x2="260" y2="490" stroke="#666" stroke-width="1"/>
-  <text x="155" y="505" text-anchor="middle" fill="#8a8578" font-size="9">~7cm (largeur réelle)</text>
+  <line x1="50" y1="510" x2="260" y2="510" stroke="#666" stroke-width="1"/>
+  <text x="155" y="525" text-anchor="middle" fill="#8a8578" font-size="9">~7cm (largeur réelle)</text>
 </svg>
 </div>
 
 <!-- ═══ LEGEND ═══ -->
+<h2>Légende</h2>
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:#ca8a04"></div> <b>Rail 3.3V</b> (R1, toute la longueur)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div> <b>Rail 12V</b> (R2, cols 1-9)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#ea580c"></div> <b>Rail 5V</b> (R2, cols 11-18)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#555"></div> <b>Rail GND</b> (R12, toute la longueur)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#e8a435"></div> Résistances pull-up I2C</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#d97706"></div> Condensateurs</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#2a2a3d;border:2px solid #666"></div> Points de sortie (fils vers composants)</div>
-</div>
-
-<!-- ═══ RAILS EXPLAINED ═══ -->
-<h2>Les 4 rails — explication détaillée</h2>
-
-<div class="comp-card" style="border-color:#ca8a04">
-  <h3 style="color:#d4a77a">Rail 3.3V — Rangée 1, colonnes 1 à 18</h3>
-  <p><b>Comment le créer :</b> Prends un fil de cuivre nu (ou du fil étamé) et soude-le sur toute la longueur de la rangée 1, pastille par pastille. Chaque pastille de cette rangée sera à 3.3V.</p>
-  <p><b>D'où vient le 3.3V ?</b> De la broche 3V3 de l'ESP32. Branche un fil jaune de ESP32-3V3 vers une pastille libre de ce rail.</p>
-  <p><b>Qu'est-ce qu'il alimente ?</b> Les 4 encodeurs (fil bleu de chaque moteur) et les 3 capteurs ToF (broche VCC).</p>
-</div>
-
-<div class="comp-card" style="border-color:#dc2626">
-  <h3 style="color:#dc2626">Rail 12V — Rangée 2, colonnes 1 à 9 seulement</h3>
-  <p><b>Comment le créer :</b> Soude un fil de cuivre de la colonne 1 à la colonne 9. <b>ARRÊTE AVANT la colonne 10 !</b></p>
-  <p><b>D'où vient le 12V ?</b> De l'interrupteur (qui vient du BMS, qui vient de la batterie).</p>
-  <p><b>Qu'est-ce qu'il alimente ?</b> Le L298N (12V pour les moteurs) et l'entrée du LM2596 (qui le convertit en 5V).</p>
-</div>
-
-<div class="comp-card" style="border-color:#ea580c">
-  <h3 style="color:#f4a375">Rail 5V — Rangée 2, colonnes 11 à 18</h3>
-  <p><b>Comment le créer :</b> Soude un fil de cuivre de la colonne 11 à la colonne 18. La colonne 10 reste VIDE (c'est le séparateur).</p>
-  <p><b>D'où vient le 5V ?</b> De la sortie OUT+ du LM2596 (qu'on a réglé à exactement 5.0V).</p>
-  <p><b>Qu'est-ce qu'il alimente ?</b> L'ESP32 via sa broche VIN.</p>
-</div>
-
-<div class="comp-card" style="border-color:#444">
-  <h3>Rail GND — Rangée 12, colonnes 1 à 18</h3>
-  <p><b>Comment le créer :</b> Soude un fil de cuivre sur toute la longueur de la rangée 12.</p>
-  <p><b>C'est quoi GND ?</b> La masse (0V). C'est le « retour » du courant. <b>TOUS</b> les composants du circuit doivent avoir leur GND connecté ici.</p>
-  <p><b>Qui se branche ici ?</b> L298N GND, LM2596 GND, ESP32 GND, encodeurs GND (×4), ToF GND (×3), condensateur C1 (−).</p>
-</div>
-
-<div class="danger-box">
-  <div class="title">ATTENTION : Séparation 12V / 5V</div>
-  <div class="desc">La colonne 10 de la rangée 2 doit rester VIDE. C'est le séparateur entre le rail 12V (à gauche) et le rail 5V (à droite). Si tu soudes un pont entre les deux, tu enverras 12V dans l'ESP32, ce qui le <b>détruira immédiatement</b>.</div>
-</div>
-
-<!-- ═══ COMPONENTS DETAIL ═══ -->
-<h2>Placement des composants — un par un</h2>
-
-<div class="comp-card" style="border-color:#7c3aed">
-  <h3 style="color:#c27db5">R1 — Résistance 4.7kΩ (Pull-up SDA)</h3>
-  <p>Position : <span class="loc">Colonnes 3 à 5, Rangée 4</span></p>
-  <p><b>Patte gauche</b> (col 3) → soudée à un fil qui va au rail 3.3V (rangée 1, col 3)</p>
-  <p><b>Patte droite</b> (col 5) → soudée à un fil qui va vers GPIO21 (SDA) de l'ESP32</p>
-  <p style="color:#888;font-size:0.82rem;margin-top:4px">Les résistances n'ont pas de sens — tu peux les mettre dans n'importe quel sens.</p>
-</div>
-
-<div class="comp-card" style="border-color:#7c3aed">
-  <h3 style="color:#c27db5">R2 — Résistance 4.7kΩ (Pull-up SCL)</h3>
-  <p>Position : <span class="loc">Colonnes 6 à 8, Rangée 4</span></p>
-  <p><b>Patte gauche</b> (col 6) → soudée à un fil qui va au rail 3.3V (rangée 1, col 6)</p>
-  <p><b>Patte droite</b> (col 8) → soudée à un fil qui va vers GPIO22 (SCL) de l'ESP32</p>
-</div>
-
-<div class="comp-card" style="border-color:#d97706">
-  <h3 style="color:#d4a77a">C1 — Condensateur électrolytique 100µF 16V</h3>
-  <p>Position : <span class="loc">Colonnes 1-2, Rangées 6 à 9</span> (il est gros, il prend de la place)</p>
-  <p><b>Patte LONGUE (+)</b> → soudée au rail 12V (rangée 2, col 1)</p>
-  <p><b>Patte COURTE (−)</b> → soudée au rail GND (rangée 12, col 2)</p>
-  <div class="danger-box" style="margin-top:8px">
-    <div class="title">POLARITÉ OBLIGATOIRE !</div>
-    <div class="desc">Le condensateur électrolytique a un sens ! La bande grise/noire sur le corps indique le côté <b>NÉGATIF (−)</b>. La patte la plus longue est le <b>POSITIF (+)</b>. Si tu le mets à l'envers, il peut <b>exploser</b>.</div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#e8a435;"></div>
+    <span>Rail 3.3V (toute la longueur)</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#dc2626;"></div>
+    <span>Rail 12V (cols 1–9)</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#ea580c;"></div>
+    <span>Rail 5V (cols 11–18)</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#555;"></div>
+    <span>Rail GND (toute la longueur)</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#90ee90;"></div>
+    <span>Borniers à vis (TB1-TB4)</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#f5f5f5;border:1px solid #4acfb0;"></div>
+    <span>JST-XH (capteurs I2C, encodeurs)</span>
   </div>
 </div>
 
-<div class="comp-card" style="border-color:#ea580c">
-  <h3 style="color:#f4a375">C2 — Condensateur céramique 100nF (filtre 5V)</h3>
-  <p>Position : <span class="loc">Colonnes 12-13, Rangées 6-7</span></p>
-  <p>Un côté → rail 5V (rangée 2, col 12) &bull; L'autre côté → rail GND (rangée 12, col 13)</p>
-  <p style="color:#888;font-size:0.82rem;margin-top:4px">Les condensateurs céramiques (petits, plats, marqués "104") n'ont pas de sens.</p>
+<!-- ═══ DETAILED RAIL EXPLANATIONS ═══ -->
+<h2>Les 4 rails de distribution</h2>
+
+<div class="comp-card" style="border-left-color:#e8a435;">
+  <h3>Rail R1 — 3.3V</h3>
+  <p><b>Colonne :</b> Toute la rangée 1, du haut en bas (cols 1-18)</p>
+  <p><b>Rôle :</b> Fournit 3.3V à tous les capteurs I2C (ToF, MPU9250) et aux encodeurs. La tension 3.3V vient du régulateur interne de l'ESP32.</p>
+  <p><b>Composants connectés :</b> Pull-up R1 (SDA), Pull-up R2 (SCL), Capacité C3 (filtre), J1-J4 (JST des capteurs), J5-J8 (JST des encodeurs)</p>
 </div>
 
-<div class="comp-card" style="border-color:#ca8a04">
-  <h3 style="color:#d4a77a">C3 — Condensateur céramique 100nF (filtre 3.3V)</h3>
-  <p>Position : <span class="loc">Colonnes 5-6, Rangées 6-7</span></p>
-  <p>Un côté → rail 3.3V (rangée 1, col 5) &bull; L'autre côté → rail GND (rangée 12, col 6)</p>
+<div class="comp-card" style="border-left-color:#dc2626;">
+  <h3>Rail R2 LEFT — 12V (cols 1-9)</h3>
+  <p><b>Colonne :</b> Rangée 2, de la col 1 à la col 9</p>
+  <p><b>Rôle :</b> Fournit 12V depuis la batterie aux moteurs (via L298N) et au convertisseur LM2596.</p>
+  <p><b>Composants connectés :</b> TB1 (12V IN), TB2 (12V OUT), C1 (100µF, filtre du 12V)</p>
+  <p><b>⚠ Col 10 est VIDE</b> — Elle sépare les deux parties du rail R2 pour éviter les court-circuits.</p>
+</div>
+
+<div class="comp-card" style="border-left-color:#ea580c;">
+  <h3>Rail R2 RIGHT — 5V (cols 11-18)</h3>
+  <p><b>Colonne :</b> Rangée 2, de la col 11 à la col 18</p>
+  <p><b>Rôle :</b> Fournit 5V depuis le convertisseur LM2596 à l'ESP32 (via TB4).</p>
+  <p><b>Composants connectés :</b> TB3 (5V IN), TB4 (5V OUT), C2 (100nF, filtre du 5V)</p>
+</div>
+
+<div class="comp-card" style="border-left-color:#555;">
+  <h3>Rail R12 — GND (masse)</h3>
+  <p><b>Colonne :</b> Toute la rangée 12, du haut en bas (cols 1-18)</p>
+  <p><b>Rôle :</b> Retour à la masse (0V) pour TOUS les circuits. C'est le point de référence commun.</p>
+  <p><b>Composants connectés :</b> Tous les composants (capacités, JST, encodeurs) reviennent à GND.</p>
+</div>
+
+<!-- ═══ COMPONENT PLACEMENT DETAILS ═══ -->
+<h2>Placement détaillé des composants</h2>
+
+<div class="comp-card" style="border-left-color:#7cc47c;">
+  <h3>TB1 — Bornier 12V IN (Batterie)</h3>
+  <p><b>Position :</b> Rangée R2, colonnes 1-2</p>
+  <p><b>Broche 1 (blanche) :</b> Relié au rail 12V (R2, col 1) — vient du switch/batterie <b>+</b></p>
+  <p><b>Broche 2 (noire) :</b> Relié au rail GND (R12) — vient du switch/batterie <b>−</b></p>
+  <p><b>Comment :</b> Soude deux fils du TB1 vers les pastilles. Puis enfiche l'alimentation batterie dans les deux trous du bornier.</p>
+</div>
+
+<div class="comp-card" style="border-left-color:#7cc47c;">
+  <h3>TB2 — Bornier 12V OUT (Moteurs)</h3>
+  <p><b>Position :</b> Rangée R3, colonnes 3-4</p>
+  <p><b>Broche 1 :</b> Relié au rail 12V (R2) — vers le L298N <b>+VCC</b></p>
+  <p><b>Broche 2 :</b> Relié au rail GND (R12) — vers le L298N <b>GND</b></p>
+  <p><b>Comment :</b> Soude deux fils vers le TB2. Enfiche les câbles du L298N dans les deux trous.</p>
+</div>
+
+<div class="comp-card" style="border-left-color:#7cc47c;">
+  <h3>TB3 — Bornier 5V IN (Convertisseur LM2596)</h3>
+  <p><b>Position :</b> Rangée R2, colonnes 17-18</p>
+  <p><b>Broche 1 :</b> Relié au rail 5V (R2 right) — sortie du LM2596 <b>+OUT</b></p>
+  <p><b>Broche 2 :</b> Relié au rail GND (R12) — sortie du LM2596 <b>−OUT</b></p>
+  <p><b>Comment :</b> Connecte les câbles 5V/GND du LM2596 dans ce bornier.</p>
+</div>
+
+<div class="comp-card" style="border-left-color:#7cc47c;">
+  <h3>TB4 — Bornier 5V OUT (ESP32)</h3>
+  <p><b>Position :</b> Rangée R3, colonnes 15-16</p>
+  <p><b>Broche 1 :</b> Relié au rail 5V — vers l'ESP32 <b>VIN</b></p>
+  <p><b>Broche 2 :</b> Relié au rail GND — vers l'ESP32 <b>GND</b></p>
+  <p><b>Comment :</b> Enfiche les câbles 5V/GND de l'ESP32 dans ce bornier.</p>
+</div>
+
+<div class="comp-card" style="border-left-color:#4acfb0;">
+  <h3>J1-J3 — Connecteurs JST-XH ToF (capteurs de distance)</h3>
+  <p><b>J1 (Avant) — Pos :</b> R5-R6, cols 12-15 &nbsp; | &nbsp; <b>J2 (Gauche) — Pos :</b> R7-R8, cols 12-15 &nbsp; | &nbsp; <b>J3 (Droit) — Pos :</b> R9-R10, cols 12-15</p>
+  <p><b>4 pins chacun :</b></p>
+  <ul class="info-list">
+    <li><b>Pin 1 (VCC) :</b> Vers le rail 3.3V (fil jaune du capteur)</li>
+    <li><b>Pin 2 (GND) :</b> Vers le rail GND (fil noir)</li>
+    <li><b>Pin 3 (SDA) :</b> Vers le bus I2C SDA (fil bleu) — GPIO21 via R1</li>
+    <li><b>Pin 4 (SCL) :</b> Vers le bus I2C SCL (fil vert) — GPIO22 via R2</li>
+  </ul>
+  <p><b>Comment :</b> Soude les 4 fils du ToF sur les 4 pattes du connecteur JST. Puis enfiche simplement le connecteur JST du capteur !</p>
+</div>
+
+<div class="comp-card" style="border-left-color:#c27db5;">
+  <h3>J4 — Connecteur JST-XH MPU9250 (accéléromètre + gyro + magnéto)</h3>
+  <p><b>Position :</b> R5-R6, cols 5-8</p>
+  <p><b>4 pins :</b></p>
+  <ul class="info-list">
+    <li><b>Pin 1 (VCC) :</b> Vers le rail 3.3V</li>
+    <li><b>Pin 2 (GND) :</b> Vers le rail GND</li>
+    <li><b>Pin 3 (SDA) :</b> Vers le bus I2C SDA (GPIO21)</li>
+    <li><b>Pin 4 (SCL) :</b> Vers le bus I2C SCL (GPIO22)</li>
+  </ul>
+  <p><b>Comment :</b> Même logique que les capteurs ToF — soude et enfiche !</p>
+</div>
+
+<div class="comp-card" style="border-left-color:#7cc47c;">
+  <h3>J5-J8 — Connecteurs JST-XH Encodeurs (4 pièces)</h3>
+  <p><b>Positions :</b> Bord droit, colonnes 16-18, rangées R5→R11</p>
+  <p><b>J5 (Encodeur 1) — R5-R6</b> &nbsp; | &nbsp; <b>J6 (Encodeur 2) — R7-R8</b> &nbsp; | &nbsp; <b>J7 (Encodeur 3) — R9-R10</b> &nbsp; | &nbsp; <b>J8 (Encodeur 4) — R11</b></p>
+  <p><b>3 pins chacun :</b></p>
+  <ul class="info-list">
+    <li><b>Pin 1 (Signal/Data) :</b> Vers un GPIO de l'ESP32 (encodeur 1→GPIO35, encodeur 2→GPIO34, etc.)</li>
+    <li><b>Pin 2 (VCC) :</b> Vers le rail 3.3V</li>
+    <li><b>Pin 3 (GND) :</b> Vers le rail GND</li>
+  </ul>
+  <p><b>Comment :</b> Soude les 3 fils de chaque encodeur sur son JST. Enfiche ensuite le câble JST de l'encodeur dans le connecteur.</p>
+</div>
+
+<div class="comp-card" style="border-left-color:#e8a435;">
+  <h3>XSHUT Bus (3 pads de soudure)</h3>
+  <p><b>Position :</b> Cols 9-10, entre les Pads (rangées R5, R7, R9)</p>
+  <p><b>Rôle :</b> Permet de redémarrer individuellement chaque capteur ToF (pour changer son adresse I2C)</p>
+  <p><b>3 fils :</b></p>
+  <ul class="info-list">
+    <li><b>XSHUT-F (ToF Avant) :</b> GPIO15</li>
+    <li><b>XSHUT-L (ToF Gauche) :</b> GPIO4</li>
+    <li><b>XSHUT-R (ToF Droit) :</b> GPIO5</li>
+  </ul>
+  <p><b>Comment :</b> Soude 3 fils fins vers ces pastilles. Chaque fil va vers un GPIO de l'ESP32 (ou tu peux d'abord les tester avec des cavaliers).</p>
 </div>
 
 <!-- ═══ SOLDERING ORDER ═══ -->
-<h2>Ordre de soudure — étape par étape</h2>
-<p style="margin-bottom:14px">Soude dans cet ordre exact. Commencer par les composants les plus bas facilite le travail.</p>
+<h2>Ordre de soudure conseillé</h2>
+<p style="margin-bottom:16px">Pour éviter les problèmes de place et de chaleur :</p>
 
 <div class="step-section">
-  <span class="step-num">1</span>
-  <div class="step-text"><b>Rail GND (rangée 12)</b> — Coupe un fil de cuivre nu de la longueur du perfboard. Soude-le sur toute la rangée 12, pastille par pastille. Vérifie la continuité au multimètre (mode bip) entre la première et la dernière pastille.</div>
+  <div class="step-num">1</div>
+  <div class="step-text"><b>Borniers à vis (TB1-TB4)</b> — Commence par les plus hauts. Ils occupent peu de place et tu les vois bien. Soude chaque patte du bornier.</div>
 </div>
 
 <div class="step-section">
-  <span class="step-num">2</span>
-  <div class="step-text"><b>Rail 3.3V (rangée 1)</b> — Même chose, toute la longueur de la rangée 1. Vérifie la continuité.</div>
+  <div class="step-num">2</div>
+  <div class="step-text"><b>Rails de distribution (R1, R2L, R2R, R12)</b> — Passe un fil de cuivre fin (dénudé) le long de chaque rangée. Soude chaque croisement pour fixer le fil.</div>
 </div>
 
 <div class="step-section">
-  <span class="step-num">3</span>
-  <div class="step-text"><b>Rail 12V (rangée 2, cols 1→9)</b> — Soude un fil de la colonne 1 à la colonne 9 seulement. <b>ARRÊTE AVANT la colonne 10.</b> Vérifie qu'il n'y a PAS de continuité entre la colonne 9 et la colonne 11.</div>
+  <div class="step-num">3</div>
+  <div class="step-text"><b>Résistances pull-up (R1, R2 4.7kΩ)</b> — Elles sont petites et prennent peu de place. Soude les deux pattes et coupe le surplus.</div>
 </div>
 
 <div class="step-section">
-  <span class="step-num">4</span>
-  <div class="step-text"><b>Rail 5V (rangée 2, cols 11→18)</b> — Soude un fil de la colonne 11 à la colonne 18. Vérifie la continuité, et vérifie qu'il n'y a PAS de continuité avec le rail 12V (colonne 9).</div>
+  <div class="step-num">4</div>
+  <div class="step-text"><b>Condensateurs (C1, C2, C3)</b> — Fais très attention à la polarité du 100µF ! Le − doit aller vers GND. Les 100nF peuvent aller n'importe comment (pas de polarité).</div>
 </div>
 
 <div class="step-section">
-  <span class="step-num">5</span>
-  <div class="step-text"><b>Résistances R1 et R2</b> — Insère les 2× 4.7kΩ en rangée 4. Soude par en dessous. Ajoute les fils qui relient une patte au rail 3.3V. Vérifie avec le multimètre que tu lis ~4.7kΩ entre le rail 3.3V et le point SDA/SCL.</div>
+  <div class="step-num">5</div>
+  <div class="step-text"><b>Connecteurs JST-XH (J1-J8)</b> — Soude les 4 pattes (ou 3 pour les encodeurs). Attention à l'ordre des pins ! Soude lentement pour ne pas faire fondre le plastique blanc.</div>
 </div>
 
 <div class="step-section">
-  <span class="step-num">6</span>
-  <div class="step-text"><b>Condensateurs C2 et C3</b> (les petits céramiques) — Soude-les. Pas de polarité, tu ne peux pas te tromper de sens. Vérifie qu'un côté touche le rail de tension et l'autre le rail GND.</div>
+  <div class="step-num">6</div>
+  <div class="step-text"><b>Fils de connexion (SDA, SCL, XSHUT, etc.)</b> — Soude les fils fins vers les points de connexion. Utilise des couleurs différentes pour distinguer les signaux (bleu=SDA, vert=SCL, etc.)</div>
 </div>
 
 <div class="step-section">
-  <span class="step-num">7</span>
-  <div class="step-text"><b>Condensateur C1</b> (le gros électrolytique) — <b>ATTENTION à la polarité !</b> Patte longue (+) vers le rail 12V, patte courte (−) vers le rail GND. Double-vérifie avant de souder.</div>
+  <div class="step-num">7</div>
+  <div class="step-text"><b>Test avant tout !</b> — Avant de brancher les capteurs, teste les continuités : la batterie doit faire passer du courant sur les bons rails.</div>
 </div>
 
-<div class="step-section">
-  <span class="step-num">8</span>
-  <div class="step-text"><b>Fils de sortie</b> — Soude les fils qui vont vers les autres composants. Utilise des couleurs cohérentes : rouge pour 12V, orange pour 5V, jaune pour 3.3V, noir pour GND. Laisse assez de longueur pour atteindre chaque composant.</div>
-</div>
+<!-- ═══ TESTING SECTION ═══ -->
+<h2>Tester le perfboard avant utilisation</h2>
 
-<!-- ═══ TESTING ═══ -->
 <div class="tip-box">
-  <div class="title">Test du perfboard avant de brancher quoi que ce soit</div>
+  <div class="title">✓ Test 1 — Continuités électriques (multimètre)</div>
+  <div class="desc"><b>Mode ohmmètre (Ω)</b> — Mesure entre deux pastilles du même rail :</div>
+  <ul class="info-list" style="margin:8px 0;">
+    <li>R1 (3.3V) : doit lire ~0Ω (ou très petit) entre deux pastilles</li>
+    <li>R2 LEFT (12V) : doit lire ~0Ω entre cols 1-9</li>
+    <li>R2 RIGHT (5V) : doit lire ~0Ω entre cols 11-18</li>
+    <li>R12 (GND) : doit lire ~0Ω entre deux pastilles</li>
+    <li><b>Col 10 doit être VIDE</b> (∞Ω) entre R2L et R2R</li>
+  </ul>
+</div>
+
+<div class="tip-box">
+  <div class="title">✓ Test 2 — Pas de court-circuit</div>
+  <div class="desc"><b>Mode ohmmètre (Ω)</b> — Mesure entre deux rails différents (ne doit PAS faire 0Ω) :</div>
+  <ul class="info-list" style="margin:8px 0;">
+    <li>Entre 3.3V et GND : doit lire très haut (∞Ω) ou plusieurs kΩ (c'est normal : les pull-ups R1 et R2 créent une petite résistance)</li>
+    <li>Entre 12V et GND : doit lire très haut, SAUF si tu as une charge branchée</li>
+    <li>Entre 5V et GND : doit lire très haut</li>
+  </ul>
+</div>
+
+<div class="tip-box">
+  <div class="title">✓ Test 3 — Avec la batterie (mesure de tension)</div>
+  <div class="desc"><b>Mode voltmètre (V DC)</b> — Mets la batterie sur TB1, puis mesure :</div>
+  <ul class="info-list" style="margin:8px 0;">
+    <li>R2 (12V) — doit afficher ~12V</li>
+    <li>R12 (GND) — doit afficher 0V (c'est la référence)</li>
+    <li>R1 (3.3V) — doit afficher 3.3V (vient de l'ESP32, tu ne peux tester que quand l'ESP32 est branché et alimenté)</li>
+    <li>R2 RIGHT (5V) — doit afficher ~5V (seulement si le convertisseur LM2596 est branché et en marche)</li>
+  </ul>
+</div>
+
+<div class="danger-box">
+  <div class="title">⚠ DANGER — Ordre de branchement (très important !)</div>
   <div class="desc">
-    Avec le multimètre en mode continuité (bip), vérifie :<br>
-    ✅ Rail GND : bip de bout en bout<br>
-    ✅ Rail 3.3V : bip de bout en bout<br>
-    ✅ Rail 12V : bip de col 1 à col 9<br>
-    ✅ Rail 5V : bip de col 11 à col 18<br>
-    ❌ PAS de bip entre rail 12V et rail 5V<br>
-    ❌ PAS de bip entre rail 3.3V et rail GND<br>
-    ❌ PAS de bip entre rail 12V et rail GND<br>
-    ❌ PAS de bip entre rail 5V et rail GND<br>
-    Si tu as un bip là où tu ne devrais pas → il y a un court-circuit ! Cherche la soudure qui déborde.
+    <b>1.</b> D'abord la batterie sur TB1 (12V).<br>
+    <b>2.</b> Puis le convertisseur LM2596 : entrée sur TB3 (5V du 12V), sortie sur TB4 (5V vers ESP32).<br>
+    <b>3.</b> Puis les moteurs sur TB2 (12V).<br>
+    <b>4.</b> Enfin les capteurs et l'ESP32 sur les JSTs.<br>
+    <b>5.</b> <b>JAMAIS</b> l'inverse ! Sinon tu vas griller des composants.
   </div>
 </div>
 
+<div class="warn-box">
+  <div class="title">⚠ Attention — Polarité des condensateurs</div>
+  <div class="desc">Le condensateur C1 (100µF) <b>DOIT</b> avoir son + vers 12V et son − vers GND. Si tu le mets à l'envers, il va exploser ! Les deux 100nF (C2, C3) n'ont PAS de polarité — tu peux les mettre n'importe comment.</div>
 </div>
+
+<div class="warn-box">
+  <div class="title">⚠ Attention — Connecteurs JST</div>
+  <div class="desc">Soude très vite les pattes du connecteur JST (ne dépasse pas 3 secondes par patte). La soudure trop longtemps fait fondre le plastique blanc du connecteur, et après ça ne marche plus.</div>
+</div>
+
+</div><!-- fin container -->
 </body>
 </html>
