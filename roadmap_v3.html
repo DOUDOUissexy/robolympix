@@ -149,7 +149,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
 <div class="topbar">
   <h1>RoboLymix · INSAT — Plan Complet</h1>
   <div class="progress-wrap">
-    <span class="count" id="counter">0 / 42</span>
+    <span class="count" id="counter">0 / 43</span>
     <div class="bar"><div class="fill" id="bar" style="width:0%"></div></div>
     <span class="pct" id="pct">0%</span>
   </div>
@@ -244,8 +244,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
     </div></div>
 
     <div class="step"><div class="step-check"><input type="checkbox" data-i="2"></div><div class="step-content">
-      <div class="step-title"><span class="tag tag-buy">Achat</span> Alimentation : batteries + BMS + LM2596</div>
-      <div class="step-desc">3× 18650 flat-top 3400mAh + 1× BMS 3S 10A + 1× LM2596 step-down + 1× chargeur individuel + 1× interrupteur 3A.</div>
+      <div class="step-title"><span class="tag tag-buy">Achat</span> Alimentation : batteries + LM2596</div>
+      <div class="step-desc">3× 18650 flat-top 3400mAh + 1× LM2596 step-down + 1× chargeur individuel + 1× interrupteur 3A.</div>
       <div class="step-warn">⚠ FLAT-TOP uniquement, pas button-top !</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
       <div class="step-detail"><div class="step-detail-inner">
@@ -256,12 +256,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
           <li>Le L298N a besoin de 7-12V pour fonctionner</li>
           <li>Le LM2596 step-down convertit 12V → 5V pour l'ESP32</li>
         </ul>
-        <h4>Le BMS (Battery Management System)</h4>
-        <ul>
-          <li>Protège contre la <b>surcharge</b> (>4.2V par cellule), la <b>décharge profonde</b> (<2.5V), et le <b>court-circuit</b></li>
-          <li>3S 10A = supporte 10A en continu, largement assez pour 4 moteurs (~2A pic total)</li>
-          <li>OBLIGATOIRE — sans BMS, les batteries Li-ion peuvent gonfler ou prendre feu</li>
-        </ul>
         <h4>Le LM2596</h4>
         <ul>
           <li>Module step-down (buck converter) réglable</li>
@@ -269,14 +263,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
           <li>L'ESP32 VIN accepte 5V — NE PAS envoyer 12V dessus !</li>
           <li>Le module a une LED de fonctionnement et un potentiomètre bleu à tourner</li>
         </ul>
-        <div class="detail-warn">⚠ FLAT-TOP = la face positive (+) est plate. Button-top = petit bouton qui dépasse. Le BMS et les supports de batteries ne marchent qu'avec flat-top. Vérifie AVANT d'acheter.</div>
+        <div class="detail-warn">⚠ FLAT-TOP = la face positive (+) est plate. Button-top = petit bouton qui dépasse. Les supports de batteries ne marchent qu'avec flat-top. Vérifie AVANT d'acheter.</div>
         <div class="detail-tip">💡 Achète un chargeur individuel de 18650 (pas un chargeur de pack). Ça permet de charger chaque cellule séparément et de vérifier leur tension.</div>
       </div></div>
     </div></div>
 
     <div class="step"><div class="step-check"><input type="checkbox" data-i="3"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-buy">Achat</span> Composants passifs + perfboard</div>
-      <div class="step-desc">1× perfboard 9×7cm (pastilles individuelles, PAS stripboard), 2× résistance 4.7kΩ, 1× condensateur 100µF 16V, 3× condensateur 100nF, kit soudure.</div>
+      <div class="step-desc">1× perfboard 9×7cm, 4× bornier à vis 2 pôles (5.08mm), 4× JST-XH 4-pin + 4× JST-XH 3-pin (headers PCB + câbles), 2× résistance 4.7kΩ, 1× condensateur 100µF 16V, 3× condensateur 100nF, kit soudure.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
       <div class="step-detail"><div class="step-detail-inner">
         <h4>Perfboard vs Stripboard</h4>
@@ -289,6 +283,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
           <li><b>2× résistances 4.7kΩ</b> : pull-up pour le bus I2C (SDA et SCL). Sans elles, les capteurs ToF et le MPU9250 ne communiquent pas avec l'ESP32.</li>
           <li><b>1× condensateur 100µF 16V (électrolytique)</b> : filtrage du rail 12V. Absorbe les pics de courant quand les moteurs démarrent/s'arrêtent.</li>
           <li><b>3× condensateur 100nF (céramique)</b> : découplage haute fréquence sur chaque rail (3.3V, 5V, 12V). Élimine le bruit électrique qui perturbe les capteurs.</li>
+        </ul>
+        <h4>Connecteurs (rend le robot 10× plus facile)</h4>
+        <ul>
+          <li><b>4× bornier à vis 2 pôles (5.08mm)</b> : pour les entrées/sorties d'alimentation (12V IN, 12V OUT, 5V IN, 5V OUT). Tu visses les fils au lieu de les souder — beaucoup plus facile à modifier et debugger.</li>
+          <li><b>4× JST-XH 4-pin (header PCB)</b> : pour les 3 capteurs ToF + le MPU9250. Tu soudes le header au perfboard, puis tu branches/débranches les capteurs avec un câble JST. Plus besoin de souder les capteurs directement !</li>
+          <li><b>4× JST-XH 3-pin (header PCB)</b> : pour les 4 encodeurs moteur. Même principe plug-and-play.</li>
         </ul>
         <h4>Kit soudure minimum</h4>
         <ul>
@@ -312,7 +312,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
           <li><b>Jumper M-F (mâle-femelle)</b> : pour connecter l'ESP32 (broches mâles) au perfboard et aux capteurs. 30 pièces car on a beaucoup de connexions.</li>
           <li><b>Jumper M-M</b> : pour les connexions entre modules (L298N → perfboard, etc.)</li>
           <li><b>Serre-câbles</b> : organisation des câbles — un robot propre = moins de bugs et plus facile à debugger.</li>
-          <li><b>Foam tape 3M</b> : fixation des composants légers (BMS, LM2596) qui n'ont pas de trous de vis.</li>
+          <li><b>Foam tape 3M</b> : fixation des composants légers (LM2596) qui n'ont pas de trous de vis.</li>
           <li><b>Velcro</b> : fixation de la batterie — permet de la retirer facilement pour la charger.</li>
           <li><b>Loctite bleu (243)</b> : frein-filet pour les vis moteur — empêche les vis de se desserrer avec les vibrations. BLEU pas rouge ! (Le rouge est permanent.)</li>
           <li><b>Entretoises M3 nylon</b> : séparent les étages du châssis. Nylon = isolant et léger.</li>
@@ -364,8 +364,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       <div class="step-title"><span class="tag tag-print">3D</span> Imprimer Floor 1 (150×150mm)</div>
       <div class="step-desc">Avec les 4 encoches moteur aux coins, les trous M3 pour entretoises, la fente câbles au centre, et le trou interrupteur au bord arrière.</div>
       <div class="files">
-        <a class="file-link" href="chassis/chassis_floor1_v3.html"><span class="icon">📐</span> floor1_v3</a>
-        <a class="file-link" href="chassis/chassis_assembly_guide_v3.html"><span class="icon">🔧</span> guide assemblage</a>
+        <a class="file-link" href="chassis/chassis_floor1_v4.html"><span class="icon">📐</span> floor1_v4</a>
+        <a class="file-link" href="chassis/chassis_assembly_guide_v4.html"><span class="icon">🔧</span> guide assemblage</a>
       </div>
       <div class="step-time">⏱ 3-4h d'impression (PLA 30% infill, 0.2mm)</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -388,8 +388,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
         <ul>
           <li><b>L298N</b> : centre-avant (fixé par vis M3 sur rondelles nylon isolantes)</li>
           <li><b>Batterie 3S</b> : centre-arrière (fixée par Velcro pour retrait facile)</li>
-          <li><b>BMS</b> : arrière-gauche (fixé par foam tape)</li>
-          <li><b>LM2596</b> : arrière-droit (fixé par foam tape)</li>
+          <li><b>LM2596</b> : arrière centre-droit (fixé par foam tape)</li>
           <li><b>Interrupteur</b> : bord arrière (clipsé ou vissé)</li>
         </ul>
         <div class="detail-tip">💡 Ouvre le diagramme floor1_v3 pendant l'impression pour vérifier que chaque trou et encoche est au bon endroit. Imprime d'abord un test à 50% de taille pour valider l'alignement.</div>
@@ -398,8 +397,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
 
     <div class="step"><div class="step-check"><input type="checkbox" data-i="7"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-print">3D</span> Imprimer Floor 2 (150×150mm)</div>
-      <div class="step-desc">Avec 2 jeux de trous M3 (4 pour F1, 4 pour F3), 2 fentes câbles (bas vers F1, haut vers F3).</div>
-      <div class="files"><a class="file-link" href="chassis/chassis_floor2_v3.html"><span class="icon">📐</span> floor2_v3</a></div>
+      <div class="step-desc">Avec clips ToF intégrés aux 3 bords (avant/gauche/droit), 2 jeux de trous M3 (4 pour F1, 4 pour F3), fente câbles vers F1, trou LED arrière.</div>
+      <div class="files"><a class="file-link" href="chassis/chassis_floor2_v4.html"><span class="icon">📐</span> floor2_v4</a></div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
       <div class="step-detail"><div class="step-detail-inner">
         <h4>Le Floor 2 — l'étage cerveau</h4>
@@ -413,10 +412,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
           <li><b>4 trous M3 "bas"</b> : s'alignent avec les entretoises de F1 (mêmes positions)</li>
           <li><b>4 trous M3 "haut"</b> : pour les entretoises M3×20mm vers F3 (positions différentes, plus proches du centre-avant car F3 est plus petit)</li>
         </ul>
-        <h4>Fentes câbles</h4>
+        <h4>Fente câbles</h4>
         <ul>
           <li><b>Fente vers le bas</b> (vers F1) : passage des câbles moteurs, encodeurs, alimentation</li>
-          <li><b>Fente vers le haut</b> (vers F3) : passage des 15 câbles des 3 ToF (5 par capteur) + câble LED</li>
+          <li>Les capteurs ToF et la LED sont directement sur Floor 2 — pas besoin de fente vers F3</li>
         </ul>
         <h4>Composants sur Floor 2</h4>
         <ul>
@@ -429,36 +428,36 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
     </div></div>
 
     <div class="step"><div class="step-check"><input type="checkbox" data-i="8"></div><div class="step-content">
-      <div class="step-title"><span class="tag tag-print">3D</span> Imprimer Floor 3 (150×100mm)</div>
-      <div class="step-desc">Plus petit. Avec les 3 clips ToF intégrés (centre de chaque bord : avant, gauche, droite), trou LED, fente câbles vers F2.</div>
-      <div class="files"><a class="file-link" href="chassis/chassis_floor3_v3.html"><span class="icon">📐</span> floor3_v3</a></div>
+      <div class="step-title"><span class="tag tag-print">3D</span> Imprimer Floor 3 (150×150mm)</div>
+      <div class="step-desc">Couvercle de protection. Avec 3 ouvertures rectangulaires pour les faisceaux ToF (avant, gauche, droite), trou LED Ø5mm, 4 trous M3.</div>
+      <div class="files"><a class="file-link" href="chassis/chassis_floor3_v4.html"><span class="icon">📐</span> floor3_v4</a></div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
       <div class="step-detail"><div class="step-detail-inner">
-        <h4>Le Floor 3 — l'étage capteurs</h4>
+        <h4>Le Floor 3 — couvercle de protection</h4>
         <ul>
-          <li>Plus petit : <b>150×100mm</b> (il n'a besoin que de 3 capteurs + 1 LED)</li>
+          <li>Même dimensions que F1 et F2 : <b>150×150mm</b>, épaisseur 3mm</li>
           <li>Suspendu à <b>20mm</b> au-dessus de F2 par les entretoises M3×20mm</li>
-          <li>Hauteur totale du robot ~92mm (sous la limite des murs de labyrinthe ~50mm... les capteurs sont à la bonne hauteur)</li>
+          <li>Hauteur totale du robot ~92mm — les capteurs ToF sur F2 sont à ~69mm du sol</li>
+          <li>Pas de composants électroniques — c'est une plaque de protection pure</li>
         </ul>
-        <h4>Positionnement des ToF</h4>
+        <h4>Ouvertures pour les faisceaux ToF</h4>
         <ul>
-          <li>Chaque VL53L0X est au <b>centre exact</b> de son bord : Front (milieu du bord avant), Left (milieu du bord gauche), Right (milieu du bord droit)</li>
-          <li>Centrer les capteurs = lectures symétriques = le robot sait exactement sa distance aux murs de chaque côté</li>
-          <li>Les clips 3D maintiennent les capteurs sans vis — juste un clip-in</li>
-          <li>Le cône de détection fait <b>25°</b> — aucun câble ne doit passer devant !</li>
+          <li><b>Ouverture avant</b> : 20×12mm au centre du bord avant — alignée avec le ToF Front sur F2</li>
+          <li><b>Ouverture gauche</b> : 12×20mm au centre du bord gauche — alignée avec le ToF Left sur F2</li>
+          <li><b>Ouverture droite</b> : 12×20mm au centre du bord droit — alignée avec le ToF Right sur F2</li>
+          <li>Les ouvertures doivent être <b>parfaitement alignées</b> avec les capteurs sur Floor 2 — pose F3 sur F2 avant d'assembler pour vérifier</li>
         </ul>
-        <h4>La LED</h4>
+        <h4>Trou LED + trous M3</h4>
         <ul>
-          <li>Au centre du bord arrière</li>
-          <li>Connectée à GPIO2 avec une résistance 220Ω en série</li>
-          <li>Utile pour debug : allumée = robot en exploration, clignotante = erreur, éteinte = en attente</li>
+          <li><b>Trou LED Ø5mm</b> : centre du bord arrière — laisse passer la lumière de la LED sur F2</li>
+          <li><b>4 trous M3</b> : aux 4 coins intérieurs, pour les vis des entretoises F2→F3</li>
         </ul>
       </div></div>
     </div></div>
 
     <div class="step"><div class="step-check"><input type="checkbox" data-i="9"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-build">Build</span> Assembler Floor 1 : moteurs + puissance</div>
-      <div class="step-desc">Visser les 4 moteurs (M3×8 + Loctite) → L298N centre-avant (rondelles nylon !) → batterie (Velcro) → BMS (foam) → LM2596 (foam) → interrupteur → 4 entretoises M3×30mm.</div>
+      <div class="step-desc">Visser les 4 moteurs (M3×8 + Loctite) → L298N centre-avant (rondelles nylon !) → batterie (Velcro) → LM2596 (foam) → interrupteur → 4 entretoises M3×30mm.</div>
       <div class="step-warn">⚠ Retirer les jumpers ENA/ENB sur le L298N avant montage !</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
       <div class="step-detail"><div class="step-detail-inner">
@@ -467,10 +466,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
           <li><b>1. Moteurs en premier</b> : vis M3×8 + une goutte de Loctite bleu sur chaque vis. Laisse sécher 10 min avant de manipuler.</li>
           <li><b>2. L298N</b> : centre-avant. Utilise des rondelles nylon entre le L298N et le PLA — le radiateur du L298N peut chauffer et déformer le plastique.</li>
           <li><b>3. Batterie</b> : centre-arrière sur Velcro. Le poids de la batterie au centre aide la stabilité.</li>
-          <li><b>4. BMS</b> : arrière-gauche sur foam tape. Connecte les 3 fils d'équilibrage + les fils B+/B- de la batterie.</li>
-          <li><b>5. LM2596</b> : arrière-droit sur foam tape. NE PAS le connecter à l'ESP32 avant d'avoir réglé la tension !</li>
-          <li><b>6. Interrupteur</b> : bord arrière. En série sur le fil positif (entre BMS P+ et le reste du circuit).</li>
-          <li><b>7. Entretoises</b> : 4× M3×30mm dans les trous dédiés, serrées à la main (pas trop fort sur le PLA).</li>
+          <li><b>4. LM2596</b> : arrière centre-droit sur foam tape. NE PAS le connecter à l'ESP32 avant d'avoir réglé la tension !</li>
+          <li><b>5. Interrupteur</b> : bord arrière. En série sur le fil positif de la batterie.</li>
+          <li><b>6. Entretoises</b> : 4× M3×30mm dans les trous dédiés, serrées à la main (pas trop fort sur le PLA).</li>
         </ul>
         <div class="detail-warn">⚠ Les jumpers ENA/ENB du L298N : ce sont 2 petits cavaliers jaunes/noirs qui connectent les pins ENABLE aux 5V. Il FAUT les retirer car on contrôle la vitesse par PWM depuis l'ESP32 (GPIO14 = ENA, GPIO32 = ENB). Si tu les laisses, les moteurs tournent toujours à fond.</div>
         <div class="detail-tip">💡 Connecte les fils moteur M1+M3 (gauche) en parallèle sur OUT1/OUT2, et M2+M4 (droite) en parallèle sur OUT3/OUT4. Si un côté tourne à l'envers, inverse les 2 fils de ce côté sur les bornes du L298N.</div>
@@ -511,8 +509,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
 
     <div class="step"><div class="step-check"><input type="checkbox" data-i="11"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-build">Build</span> Assembler Floor 2 + Floor 3</div>
-      <div class="step-desc">Floor 2 sur entretoises → ESP32 + perfboard + MPU9250 → entretoises M3×20mm → Floor 3 avec ToF clipsés au centre de chaque bord.</div>
-      <div class="files"><a class="file-link" href="chassis/chassis_profile_v3.html"><span class="icon">📐</span> profil latéral</a></div>
+      <div class="step-desc">Floor 2 sur entretoises → ESP32 + perfboard + MPU9250 → ToF clipsés sur F2 (avant/gauche/droit) → entretoises M3×20mm → Floor 3 (couvercle) aligné avec les ouvertures ToF.</div>
+      <div class="files"><a class="file-link" href="chassis/chassis_profile_v4.html"><span class="icon">📐</span> profil latéral</a></div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
       <div class="step-detail"><div class="step-detail-inner">
         <h4>Montage Floor 2</h4>
@@ -521,15 +519,15 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
           <li><b>2.</b> Fixe avec des écrous M3 nylon (serrage à la main, pas trop fort)</li>
           <li><b>3.</b> Monte l'ESP32 côté avant — le port USB doit être accessible par le bord pour programmer sans démonter</li>
           <li><b>4.</b> Fixe le perfboard au centre (foam tape ou vis M2 si tu as des trous prévus)</li>
-          <li><b>5.</b> Le MPU9250 est déjà soudé au centre du perfboard (étape 16)</li>
+          <li><b>5.</b> Le MPU9250 est déjà soudé au centre du perfboard</li>
+          <li><b>6.</b> Clipse les 3 VL53L0X dans leurs clips sur Floor 2 : Front (centre bord avant), Left (centre bord gauche), Right (centre bord droit)</li>
+          <li><b>7.</b> Place la LED dans son trou au bord arrière de Floor 2</li>
         </ul>
-        <h4>Montage Floor 3</h4>
+        <h4>Montage Floor 3 (couvercle)</h4>
         <ul>
-          <li><b>6.</b> Visse 4 entretoises M3×20mm sur Floor 2 (trous "haut")</li>
-          <li><b>7.</b> Passe les 15 câbles ToF + câble LED par la fente avant de poser F3</li>
-          <li><b>8.</b> Pose Floor 3 et fixe avec écrous M3</li>
-          <li><b>9.</b> Clipse les 3 VL53L0X dans leurs clips au centre de chaque bord</li>
-          <li><b>10.</b> Place la LED dans son trou au bord arrière</li>
+          <li><b>8.</b> Visse 4 entretoises M3×20mm sur Floor 2 (trous "haut")</li>
+          <li><b>9.</b> Pose Floor 3 (couvercle) et vérifie que les 3 ouvertures sont alignées avec les capteurs ToF sur Floor 2</li>
+          <li><b>10.</b> Fixe avec écrous M3 nylon</li>
         </ul>
         <div class="detail-tip">💡 Consulte le diagramme profil latéral pour voir la vue de côté de l'assemblage complet. La hauteur totale doit être ~92mm.</div>
       </div></div>
@@ -568,7 +566,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
   <div class="phase-header" onclick="togglePhase(3)">
     <div class="phase-num">3</div>
     <h3>Souder le perfboard</h3>
-    <span class="phase-count" id="pc3">0/6</span>
+    <span class="phase-count" id="pc3">0/7</span>
     <span class="toggle">▼</span>
   </div>
   <div class="phase-body" id="pb3">
@@ -586,7 +584,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
         <h4>Layout des 4 rails</h4>
         <ul>
           <li><b>Rangée 1 (R1) — 3.3V</b> : fil de cuivre nu soudé sur toute la longueur (cols 1-18). C'est la sortie 3.3V du régulateur interne de l'ESP32.</li>
-          <li><b>Rangée 2 gauche (R2, cols 1-9) — 12V</b> : entrée directe de la batterie 3S via le BMS. Alimente le L298N.</li>
+          <li><b>Rangée 2 gauche (R2, cols 1-9) — 12V</b> : entrée directe de la batterie 3S via l'interrupteur. Alimente le L298N.</li>
           <li><b>Rangée 2 droite (R2, cols 11-18) — 5V</b> : sortie du LM2596. Alimente l'ESP32 VIN et les encodeurs.</li>
           <li><b>Rangée 12 (R12) — GND</b> : masse commune, toute la longueur. TOUT se rejoint ici.</li>
         </ul>
@@ -608,6 +606,50 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
     </div></div>
 
     <div class="step"><div class="step-check"><input type="checkbox" data-i="14"></div><div class="step-content">
+      <div class="step-title"><span class="tag tag-solder">Soudure</span> Souder les borniers à vis et connecteurs JST-XH</div>
+      <div class="step-desc">4× borniers à vis 2 pôles (5.08mm) pour les entrées/sorties d'alimentation (12V IN, 5V IN, Moteurs). 4× JST-XH 4-pin pour les capteurs ToF et le MPU9250. 4× JST-XH 3-pin pour les encodeurs moteurs.</div>
+      <div class="files">
+        <a class="file-link" href="perfboard_v3.html"><span class="icon">📋</span> perfboard_v3</a>
+        <a class="file-link" href="perfboard_interactive_v3.html"><span class="icon">🖱️</span> perfboard interactif</a>
+      </div>
+      <div class="expand-hint">▸ Cliquer pour plus de détails</div>
+      <div class="step-detail"><div class="step-detail-inner">
+        <h4>Borniers à vis (TB1-TB4)</h4>
+        <ul>
+          <li><b>TB1 (12V IN)</b> : entrée 12V depuis l'interrupteur → connecté au rail 12V (R2 cols 1-9)</li>
+          <li><b>TB2 (5V IN)</b> : entrée 5V depuis le LM2596 → connecté au rail 5V (R2 cols 11-18)</li>
+          <li><b>TB3 (Moteurs A)</b> : sortie vers moteurs gauches depuis le L298N</li>
+          <li><b>TB4 (Moteurs B)</b> : sortie vers moteurs droits depuis le L298N</li>
+        </ul>
+        <h4>Connecteurs JST-XH 4-pin (J1-J4)</h4>
+        <ul>
+          <li><b>J1 (ToF Front)</b> : VCC, GND, SDA, XSHUT (GPIO15)</li>
+          <li><b>J2 (ToF Left)</b> : VCC, GND, SDA, XSHUT (GPIO4)</li>
+          <li><b>J3 (ToF Right)</b> : VCC, GND, SDA, XSHUT (GPIO5)</li>
+          <li><b>J4 (MPU9250)</b> : VCC, GND, SDA, SCL — si le MPU9250 est sur un breakout séparé</li>
+        </ul>
+        <h4>Connecteurs JST-XH 3-pin (J5-J8)</h4>
+        <ul>
+          <li><b>J5-J8 (Encodeurs)</b> : VCC (5V), GND, Signal — un par moteur</li>
+        </ul>
+        <h4>Ordre de soudure recommandé</h4>
+        <ul>
+          <li><b>1.</b> Borniers à vis en premier (plus grands, positionnement critique)</li>
+          <li><b>2.</b> JST-XH 4-pin ensuite</li>
+          <li><b>3.</b> JST-XH 3-pin en dernier</li>
+        </ul>
+        <h4>Pourquoi des connecteurs ?</h4>
+        <ul>
+          <li>Permet de <b>débrancher/rebrancher</b> les capteurs et moteurs sans dessouder</li>
+          <li>Les JST-XH sont <b>détrompés</b> — impossible de les brancher à l'envers</li>
+          <li>Les borniers à vis supportent les <b>fils épais</b> de puissance (moteurs, batterie)</li>
+          <li>Si un capteur est défectueux, tu le remplaces en 5 secondes</li>
+        </ul>
+        <div class="detail-tip">💡 Soude les connecteurs APRÈS les rails mais AVANT les résistances et condensateurs. Les connecteurs sont plus grands et plus faciles à positionner quand le perfboard n'est pas encombré.</div>
+      </div></div>
+    </div></div>
+
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="15"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-solder">Soudure</span> Souder les 2 résistances pull-up 4.7kΩ</div>
       <div class="step-desc">R1 (SDA) sur R4 cols 3-5, R2 (SCL) sur R4 cols 6-8. Chaque résistance connecte le rail 3.3V au signal I2C. Pas de polarité.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -629,7 +671,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="15"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="16"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-solder">Soudure</span> Souder les condensateurs</div>
       <div class="step-desc">C1 (100µF) sur R6-R9 cols 1-2 : + vers 12V, − vers GND. C2 (100nF) sur R6-R7 cols 12-13 : 5V↔GND. C3 (100nF) sur R6-R7 cols 5-6 : 3.3V↔GND.</div>
       <div class="step-warn">⚠ C1 a une POLARITÉ — bande marquée = côté négatif. Si inversé, il peut exploser !</div>
@@ -650,7 +692,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="16"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="17"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-solder">Soudure</span> Souder le MPU9250 sur le perfboard</div>
       <div class="step-desc">Au centre exact du perfboard. Broches : VCC→3.3V, GND→GND, SDA→GPIO21 (bus I2C commun), SCL→GPIO22 (bus I2C commun). Adresse 0x68.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -677,7 +719,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="17"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="18"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-test">Test</span> Tester le perfboard au multimètre</div>
       <div class="step-desc">Mode continuité : ✅ 3.3V bout à bout, ✅ GND bout à bout, ✅ 12V cols 1-9, ✅ 5V cols 11-18. ❌ PAS de contact entre 12V et 5V, ❌ PAS de contact entre 3.3V et GND.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -702,7 +744,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="18"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="19"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-test">Test</span> Monter le perfboard et tester les tensions réelles</div>
       <div class="step-desc">Connecte le perfboard à l'alimentation. Multimètre : 3.3V ≈ 3.3V ? 5V ≈ 5.0V ? 12V ≈ 11.1V ? GND = 0V partout ?</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -746,9 +788,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
   </div>
   <div class="phase-body" id="pb4">
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="19"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="20"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-build">Câble</span> Câbler l'alimentation</div>
-      <div class="step-desc">Batterie → BMS → interrupteur → perfboard rail 12V. LM2596 IN← 12V, LM2596 OUT→ perfboard rail 5V. ESP32 VIN ← 5V, ESP32 GND ← GND.</div>
+      <div class="step-desc">Batterie → interrupteur → bornier TB1 (12V IN). LM2596 IN← 12V, LM2596 OUT→ bornier TB2 (5V IN). ESP32 VIN ← 5V, ESP32 GND ← GND. Utilise les borniers à vis pour les connexions de puissance.</div>
       <div class="files">
         <a class="file-link" href="wiring_v3.html"><span class="icon">📋</span> wiring_v3</a>
         <a class="file-link" href="wiring_interactive_v3.html"><span class="icon">🖱️</span> wiring interactif</a>
@@ -757,14 +799,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       <div class="step-detail"><div class="step-detail-inner">
         <h4>Schéma de la chaîne d'alimentation</h4>
         <ul>
-          <li><b>Batterie 3S</b> (3×18650) → <b>BMS 3S</b> (protection) → <b>Interrupteur</b> (ON/OFF) → <b>Rail 12V</b> du perfboard</li>
+          <li><b>Batterie 3S</b> (3×18650) → <b>Interrupteur</b> (ON/OFF) → <b>Rail 12V</b> du perfboard</li>
           <li>Du rail 12V → <b>LM2596 IN+/IN−</b> → LM2596 convertit → <b>LM2596 OUT+/OUT−</b> → <b>Rail 5V</b> du perfboard</li>
           <li>Du rail 5V → <b>ESP32 VIN</b> + <b>ESP32 GND</b></li>
           <li>L'ESP32 génère le 3.3V interne → fil de <b>ESP32 3V3</b> → <b>Rail 3.3V</b> du perfboard</li>
         </ul>
         <h4>Fils recommandés</h4>
         <ul>
-          <li><b>Batterie → BMS → interrupteur → 12V</b> : fil 22AWG rouge (courant ~2A max)</li>
+          <li><b>Batterie → interrupteur → 12V</b> : fil 22AWG rouge (courant ~2A max)</li>
           <li><b>GND</b> : fil 22AWG noir</li>
           <li><b>5V et 3.3V</b> : jumper wires suffisent (courant <500mA)</li>
         </ul>
@@ -772,7 +814,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="20"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="21"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-build">Câble</span> Câbler les moteurs → L298N</div>
       <div class="step-desc">M1+M3 (gauche) en parallèle → OUT1/OUT2. M2+M4 (droite) en parallèle → OUT3/OUT4. L298N 12V ← rail 12V, L298N GND ← GND. ENA→GPIO14, ENB→GPIO32, IN1→GPIO26, IN2→GPIO27, IN3→GPIO25, IN4→GPIO33.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -802,7 +844,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="21"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="22"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-build">Câble</span> Câbler les encodeurs → ESP32</div>
       <div class="step-desc">Chaque encodeur : VCC→5V, GND→GND, signal A→GPIO. M1=GPIO34, M3=GPIO35, M2=GPIO36, M4=GPIO39. Ce sont des pins input-only (pas de pull-up interne, mais les encodeurs ont les leurs).</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -829,10 +871,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="22"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="23"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-build">Câble</span> Câbler les 3 capteurs ToF</div>
       <div class="step-desc">Chaque ToF a 5 fils : VCC→3.3V, GND→GND, SDA→GPIO21, SCL→GPIO22, XSHUT→unique. Front XSHUT=GPIO15, Left XSHUT=GPIO4, Right XSHUT=GPIO5.</div>
-      <div class="step-warn">⚠ Les ToF sont sur Floor 3 — passe les câbles par les fentes vers Floor 2</div>
+      <div class="step-warn">⚠ Les ToF sont sur Floor 2 — câblage court directement vers le perfboard et l'ESP32</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
       <div class="step-detail"><div class="step-detail-inner">
         <h4>Pourquoi 5 fils par ToF ?</h4>
@@ -858,13 +900,13 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
           <li><b>Left</b> : XSHUT = <code>GPIO4</code>, adresse finale = <code>0x31</code></li>
           <li><b>Right</b> : XSHUT = <code>GPIO5</code>, adresse finale = <code>0x32</code></li>
         </ul>
-        <div class="detail-tip">💡 15 fils au total (5×3) doivent passer de Floor 3 à Floor 2. Utilise des câbles de couleurs différentes et étiquette-les. Sinon, le debug sera un cauchemar.</div>
+        <div class="detail-tip">💡 Les 3 ToF sont sur Floor 2, donc les câbles sont courts et directs vers le perfboard. Utilise des couleurs différentes par capteur (ex: rouge=Front, bleu=Left, vert=Right) pour faciliter le debug.</div>
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="23"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="24"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-build">Câble</span> Câbler la LED + organiser</div>
-      <div class="step-desc">LED sur Floor 3 → GPIO2 (+ résistance 220Ω en série). Organise tous les câbles avec des serre-câbles. Vérifie qu'aucun câble n'obstrue les ToF (cône de 25°).</div>
+      <div class="step-desc">LED sur Floor 2 → GPIO2 (+ résistance 220Ω en série). Organise tous les câbles avec des serre-câbles. Vérifie qu'aucun câble n'obstrue les ToF (cône de 25°).</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
       <div class="step-detail"><div class="step-detail-inner">
         <h4>Câblage de la LED</h4>
@@ -884,7 +926,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="24"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="25"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-test">Test</span> Vérification complète du câblage</div>
       <div class="step-desc">Multimètre : continuité de chaque fil, pas de court-circuit. Allume le robot et vérifie que l'ESP32 s'allume, le LED de l'ESP32 clignote.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -928,7 +970,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
   </div>
   <div class="phase-body" id="pb5">
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="25"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="26"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-code">Code</span> Installer Arduino IDE + librairies</div>
       <div class="step-desc">Arduino IDE 2.x → Ajouter le board ESP32 (Espressif) dans le Board Manager. Installer les librairies : Adafruit_VL53L0X, Wire.h (incluse). Sélectionner "ESP32 Dev Module".</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -960,7 +1002,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="26"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="27"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-code">Code</span> Copier les 6 fichiers du code v3</div>
       <div class="step-desc">Dans un dossier "maze_robot_v3", copie : maze_robot_v3.ino, config.h, motors.h, sensors.h, flood_fill.h, movement.h. Ouvre le .ino dans Arduino IDE.</div>
       <div class="files">
@@ -992,7 +1034,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="27"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="28"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-code">Code</span> Flasher un sketch de test I2C</div>
       <div class="step-desc">Avant le code final, flashe un simple I2C scanner. Tu dois voir : 0x30 (ToF F), 0x31 (ToF L), 0x32 (ToF R), 0x68 (MPU9250). Si un appareil manque, vérifie son câble.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -1021,7 +1063,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="28"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="29"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-code">Code</span> Flasher le code v3 complet</div>
       <div class="step-desc">Compile et upload maze_robot_v3.ino. Ouvre le Serial Monitor (115200 baud). Tu dois voir les messages d'initialisation : ToF OK, encodeurs prêts, flood fill initialisé.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -1054,7 +1096,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="29"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="30"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-code">Code</span> Comprendre l'algorithme Flood Fill</div>
       <div class="step-desc">Avant de calibrer, comprends comment le robot navigue. Le Flood Fill est un BFS depuis le centre : chaque cellule a une valeur = distance au but. Le robot suit toujours la cellule voisine de valeur la plus basse.</div>
       <div class="files"><a class="file-link" href="flood_fill_explainer_v3.html"><span class="icon">🧠</span> flood fill interactif</a></div>
@@ -1082,7 +1124,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="30"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="31"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-code">Code</span> Ajouter le code MPU9250 (à faire)</div>
       <div class="step-desc">Le code v3 actuel n'inclut pas encore le MPU9250. Il faut ajouter la lecture du gyroscope pour corriger le cap. Librairie recommandée : MPU9250_WE ou SparkFun_MPU-9250-DMP.</div>
       <div class="step-warn">⚠ TODO : intégrer la correction de cap MPU9250 dans movement.h</div>
@@ -1127,7 +1169,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
   </div>
   <div class="phase-body" id="pb6">
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="31"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="32"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-test">Calibration</span> Calibrer PULSES_PER_MM</div>
       <div class="step-desc">Fait avancer le robot sur exactement 1000mm (1 mètre). Compte les pulses encodeur. La valeur correcte = pulses_comptés / 1000. config.h dit 2.94 mais calibre sur ton robot réel.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -1151,7 +1193,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="32"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="33"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-test">Calibration</span> Calibrer TURN_PULSES_90</div>
       <div class="step-desc">Fait tourner le robot 4× à droite (devrait faire un tour complet de 360°). Si ça fait plus/moins que 360°, ajuste : new = old × 360 / actual_degrees. config.h dit 277.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -1175,7 +1217,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="33"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="34"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-test">Calibration</span> Calibrer les capteurs ToF</div>
       <div class="step-desc">Place un mur à 100mm, 200mm, 500mm devant chaque capteur. Vérifie que les lectures Serial correspondent. Ajuste WALL_THRESHOLD_MM si nécessaire (défaut 100mm).</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -1204,7 +1246,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="34"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="35"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-test">Calibration</span> Calibrer le PID pour lignes droites</div>
       <div class="step-desc">Place le robot dans un long couloir. Lance-le en ligne droite. S'il dévie : augmente KP (défaut 2.5). S'il oscille : augmente KD (défaut 0.8). S'il dérive lentement : ajoute un peu de KI.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -1229,7 +1271,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="35"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="36"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-test">Calibration</span> Calibrer le MPU9250</div>
       <div class="step-desc">Place le robot sur surface plane. Lance la calibration gyro (pose immobile 3s). Pour le magnétomètre : tourne le robot lentement sur 360° pour calibrer le compas. Stocke les offsets.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -1258,7 +1300,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="36"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="37"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-test">Calibration</span> Ajuster CELL_SIZE_MM</div>
       <div class="step-desc">Mesure la taille réelle d'une cellule de ton labyrinthe (généralement 180mm pour RoboCup Junior). Mets la valeur exacte dans config.h.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -1301,7 +1343,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
   </div>
   <div class="phase-body" id="pb7">
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="37"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="38"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-test">Test</span> Test dans un mini-labyrinthe</div>
       <div class="step-desc">Construis un petit labyrinthe 4×4 avec du carton. Le robot doit : détecter les murs, avancer d'une cellule, tourner correctement, et ne pas se coincer.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -1332,7 +1374,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="38"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="39"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-test">Test</span> Test de l'exploration complète</div>
       <div class="step-desc">Dans le mini-labyrinthe : le robot doit explorer toutes les cellules accessibles, mapper les murs, calculer le chemin optimal vers le centre, et revenir au départ.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -1359,7 +1401,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="39"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="40"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-test">Test</span> Test du speed run</div>
       <div class="step-desc">Après l'exploration, le robot doit suivre le chemin optimal en vitesse rapide (SPEED_RETURN = 220). Chronomètre le temps. L'objectif au tournoi = le run le plus rapide.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -1387,7 +1429,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="40"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="41"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-test">Test</span> Test batterie : autonomie</div>
       <div class="step-desc">Charge les 3 cellules à fond. Lance le robot en exploration continue. Note combien de temps il tient. Tu as besoin d'au moins 10 minutes pour un match RoboCup.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -1404,13 +1446,13 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
         <ul>
           <li>Si l'autonomie est < 30 min : vérifie qu'il n'y a pas de court-circuit ou de composant qui chauffe</li>
           <li>Si l'ESP32 redémarre en boucle vers la fin : la tension batterie est trop basse pour le LM2596 → charge les batteries</li>
-          <li>Si les moteurs ralentissent progressivement : normal, la tension batterie baisse. Le BMS coupera la sortie à ~9.9V (3.3V/cellule) pour protéger les batteries.</li>
+          <li>Si les moteurs ralentissent progressivement : normal, la tension batterie baisse. Recharge quand la tension descend sous ~10V pour ne pas endommager les cellules.</li>
         </ul>
         <div class="detail-tip">💡 Au tournoi, charge les batteries entre chaque match. Même si l'autonomie est énorme, des batteries pleines = tensions stables = meilleure performance.</div>
       </div></div>
     </div></div>
 
-    <div class="step"><div class="step-check"><input type="checkbox" data-i="41"></div><div class="step-content">
+    <div class="step"><div class="step-check"><input type="checkbox" data-i="42"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-test">Test</span> Checklist avant tournoi</div>
       <div class="step-desc">✅ Batteries chargées à 100%. ✅ Code flashé (pas en mode debug). ✅ Vis serrées + Loctite. ✅ Câbles organisés et fixés. ✅ Roues propres. ✅ Multimètre et tournevis dans le sac. ✅ Câble USB de secours.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
