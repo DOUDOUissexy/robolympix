@@ -57,7 +57,7 @@ tr:hover { background: #262626; }
 <p class="subtitle">ESP32 + L298N + 4× Moteur DC avec Encodeur + 3× VL53L0X ToF + MPU9250 Gyroscope &bull; Flood Fill</p>
 
 <div class="progress-bar">
-  <span class="text" id="counter">0 / 27 acheté</span>
+  <span class="text" id="counter">0 / 32 acheté</span>
   <div class="bar"><div class="fill" id="bar" style="width:0%"></div></div>
 </div>
 
@@ -111,22 +111,17 @@ tr:hover { background: #262626; }
       <td><span class="avail-tn">Tunisie</span></td></tr>
     <tr><td class="check-col"><input type="checkbox" data-i="7"></td>
       <td class="qty">1×</td>
-      <td>BMS 3S 10A Li-ion<div class="note">Protection surcharge, décharge profonde, court-circuit. Indispensable pour la sécurité.</div></td>
+      <td>LM2596 Convertisseur DC-DC Step-Down<div class="warn">Régler à 5.0V AU MULTIMÈTRE avant de brancher l'ESP32 !</div><div class="note">Entrée : 12V batterie. Sortie : 5.0V pour alimenter l'ESP32 via VIN.</div></td>
       <td class="price">5-10 TND</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
     <tr><td class="check-col"><input type="checkbox" data-i="8"></td>
       <td class="qty">1×</td>
-      <td>LM2596 Convertisseur DC-DC Step-Down<div class="warn">Régler à 5.0V AU MULTIMÈTRE avant de brancher l'ESP32 !</div><div class="note">Entrée : 12V batterie. Sortie : 5.0V pour alimenter l'ESP32 via VIN.</div></td>
-      <td class="price">5-10 TND</td>
-      <td><span class="avail-tn">Tunisie</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="9"></td>
-      <td class="qty">1×</td>
       <td>Chargeur 18650 individuel (Nitecore SC2 ou Xtar VC2)<div class="note">Charge chaque cellule séparément. Ne PAS utiliser un chargeur 3S direct.</div></td>
       <td class="price">40-80 TND</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="10"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="9"></td>
       <td class="qty">1×</td>
-      <td>Interrupteur à bascule miniature ≥3A<div class="note">Coupe le circuit entre BMS et le reste. Position accessible sur le châssis.</div></td>
+      <td>Interrupteur à bascule miniature ≥3A<div class="note">Coupe le circuit entre la batterie et le reste. Position accessible sur le châssis.</div></td>
       <td class="price">2-5 TND</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
   </table>
@@ -137,27 +132,42 @@ tr:hover { background: #262626; }
   <div class="cat-header cat-passive">Perfboard &amp; Composants Passifs</div>
   <table>
     <tr><th class="check-col"></th><th>Qté</th><th>Composant</th><th>Prix est.</th><th>Dispo</th></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="11"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="10"></td>
       <td class="qty">1×</td>
       <td>Perfboard 9×7cm avec pastilles cuivre<div class="warn">PAS stripboard ! Pastilles individuelles avec anneau cuivre.</div><div class="note">18 colonnes × 12 rangées au pas 2.54mm. C'est le "shield maison" du robot.</div></td>
       <td class="price">3-5 TND</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="12"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="11"></td>
       <td class="qty">2×</td>
       <td>Résistance 4.7kΩ (1/4W)<div class="note">Pull-ups I2C sur les lignes SDA et SCL. Indispensables pour la communication ToF.</div></td>
       <td class="price">0.1 TND/u</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="13"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="12"></td>
       <td class="qty">1×</td>
       <td>Condensateur électrolytique 100µF 16V<div class="warn">Respecter la polarité ! Bande = côté négatif.</div><div class="note">Filtrage du rail 12V pour le L298N. Réduit le bruit des moteurs.</div></td>
       <td class="price">0.5 TND</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="14"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="13"></td>
       <td class="qty">3×</td>
       <td>Condensateur céramique 100nF (0.1µF, code "104")<div class="note">Filtrage haute fréquence. 1× rail 5V, 1× rail 3.3V, 1× bruit moteurs.</div></td>
       <td class="price">0.1 TND/u</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
+    <tr><td class="check-col"><input type="checkbox" data-i="14"></td>
+      <td class="qty">4×</td>
+      <td>Bornier à vis 2 pôles (5.08mm, PCB)<div class="note">Screw terminal blocks. Pour connecter les fils d'alimentation (12V IN/OUT, 5V IN/OUT) au perfboard sans souder directement. Beaucoup plus facile à debugger.</div></td>
+      <td class="price">0.5-1 TND/u</td>
+      <td><span class="avail-tn">Tunisie</span></td></tr>
     <tr><td class="check-col"><input type="checkbox" data-i="15"></td>
+      <td class="qty">4×</td>
+      <td>Connecteur JST-XH 4 broches mâle (header PCB)<div class="note">Pour les 3 capteurs ToF + MPU9250. Permet de brancher/débrancher les capteurs sans souder. Prends aussi les câbles JST-XH femelle 4-pin.</div></td>
+      <td class="price">0.5-1 TND/u</td>
+      <td><span class="avail-tn">Tunisie</span></td></tr>
+    <tr><td class="check-col"><input type="checkbox" data-i="16"></td>
+      <td class="qty">4×</td>
+      <td>Connecteur JST-XH 3 broches mâle (header PCB)<div class="note">Pour les 4 encodeurs moteur (Signal, VCC, GND). Prends aussi les câbles JST-XH femelle 3-pin.</div></td>
+      <td class="price">0.5-1 TND/u</td>
+      <td><span class="avail-tn">Tunisie</span></td></tr>
+    <tr><td class="check-col"><input type="checkbox" data-i="17"></td>
       <td class="qty">1×</td>
       <td>Kit soudure : fer à souder + étain + flux<div class="note">Fer 40-60W avec pointe fine. Étain 60/40 ou sans plomb.</div></td>
       <td class="price">20-40 TND</td>
@@ -170,19 +180,19 @@ tr:hover { background: #262626; }
   <div class="cat-header cat-wiring">Câblage</div>
   <table>
     <tr><th class="check-col"></th><th>Qté</th><th>Composant</th><th>Prix est.</th><th>Dispo</th></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="16"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="18"></td>
       <td class="qty">2m</td>
-      <td>Fil souple 22 AWG (rouge + noir, 1m chaque)<div class="note">Pour connexions puissance : batterie→BMS→interrupteur→rails 12V/GND. Ne PAS utiliser du fil jumper pour le courant moteur !</div></td>
+      <td>Fil souple 22 AWG (rouge + noir, 1m chaque)<div class="note">Pour connexions puissance : batterie→interrupteur→rails 12V/GND. Ne PAS utiliser du fil jumper pour le courant moteur !</div></td>
       <td class="price">3-5 TND</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="17"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="19"></td>
       <td class="qty">1 pack</td>
       <td>Fils Jumper Mâle-Femelle 20cm (~30 pcs)<div class="note">27 nécessaires : ESP32→perfboard, ToF→perfboard. Prends les 20cm.</div></td>
       <td class="price">5 TND</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="18"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="20"></td>
       <td class="qty">1 pack</td>
-      <td>Fils Jumper Mâle-Mâle 20cm (~10 pcs)<div class="note">9 nécessaires : perfboard→L298N, perfboard→LM2596, perfboard→BMS.</div></td>
+      <td>Fils Jumper Mâle-Mâle 20cm (~10 pcs)<div class="note">9 nécessaires : perfboard→L298N, perfboard→LM2596.</div></td>
       <td class="price">5 TND</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
   </table>
@@ -193,32 +203,32 @@ tr:hover { background: #262626; }
   <div class="cat-header cat-mounting">Fixation &amp; Divers</div>
   <table>
     <tr><th class="check-col"></th><th>Qté</th><th>Composant</th><th>Prix est.</th><th>Dispo</th></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="19"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="21"></td>
       <td class="qty">1 pack</td>
       <td>Serre-câbles nylon 2.5mm (×100)<div class="note">Indispensable pour organiser tout le câblage.</div></td>
       <td class="price">2 TND</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="20"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="22"></td>
       <td class="qty">1×</td>
-      <td>Scotch double-face 3M mousse (foam tape)<div class="note">Pour fixer le BMS et le LM2596 au châssis.</div></td>
+      <td>Scotch double-face 3M mousse (foam tape)<div class="note">Pour fixer le LM2596 au châssis.</div></td>
       <td class="price">3 TND</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="21"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="23"></td>
       <td class="qty">1×</td>
       <td>Velcro serre-câble<div class="note">Pour la batterie : permet de la retirer facilement pour la recharger.</div></td>
       <td class="price">2 TND</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="22"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="24"></td>
       <td class="qty">1×</td>
       <td>Loctite bleu (frein filet)<div class="note">Pour toutes les vis moteur et entretoises. Empêche les vibrations de tout desserrer.</div></td>
       <td class="price">5 TND</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="23"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="25"></td>
       <td class="qty">1 kit</td>
       <td>Vis/Écrous/Entretoises M3 nylon + rondelles plastiques<div class="note">Entretoises pour fixer le perfboard. Rondelles sous le L298N pour éviter court-circuits.</div></td>
       <td class="price">5 TND</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="24"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="26"></td>
       <td class="qty">1×</td>
       <td>Câble Micro-USB (pour flasher l'ESP32)<div class="note">Doit supporter les données, pas juste la charge !</div></td>
       <td class="price">3 TND</td>
@@ -231,27 +241,27 @@ tr:hover { background: #262626; }
   <div class="cat-header cat-chassis">Châssis (impression 3D PLA)</div>
   <table>
     <tr><th class="check-col"></th><th>Qté</th><th>Composant</th><th>Prix est.</th><th>Dispo</th></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="25"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="27"></td>
       <td class="qty">1×</td>
-      <td>Étage 1 : 150×150×3mm<div class="note">Accueille : 4 moteurs, pack batterie, L298N, BMS, LM2596, interrupteur.</div></td>
+      <td>Étage 1 : 150×150×3mm<div class="note">Accueille : 4 moteurs, pack batterie, L298N, LM2596, interrupteur.</div></td>
       <td class="price">10-15 TND</td>
       <td><span class="avail-tn">Impression 3D</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="26"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="28"></td>
       <td class="qty">1×</td>
       <td>Étage 2 : 150×150×3mm<div class="note">Accueille : ESP32, perfboard, MPU9250 gyroscope.</div></td>
       <td class="price">10-15 TND</td>
       <td><span class="avail-tn">Impression 3D</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="27"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="29"></td>
       <td class="qty">1×</td>
       <td>Étage 3 : 150×100×3mm<div class="note">Accueille : 3× capteurs ToF centrés + LED. Clips capteurs intégrés.</div></td>
       <td class="price">8-12 TND</td>
       <td><span class="avail-tn">Impression 3D</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="28"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="30"></td>
       <td class="qty">4×</td>
       <td>Entretoises M3×20mm (Floor 2 → Floor 3)<div class="note">Nylon ou laiton. S'ajoutent aux 4× M3×30mm (F1→F2).</div></td>
       <td class="price">2 TND</td>
       <td><span class="avail-tn">Tunisie</span></td></tr>
-    <tr><td class="check-col"><input type="checkbox" data-i="29"></td>
+    <tr><td class="check-col"><input type="checkbox" data-i="31"></td>
       <td class="qty">~250g</td>
       <td>Filament PLA 1.75mm<div class="note">Pour les 3 plateaux. Paramètres : 30% remplissage, 3 périmètres, couche 0.2mm.</div></td>
       <td class="price">12-18 TND</td>
@@ -262,8 +272,8 @@ tr:hover { background: #262626; }
 <!-- ═══ TOTAL ═══ -->
 <div class="total-box">
   <div class="sub">Budget Total Estimé</div>
-  <div class="amount">330 – 550 TND</div>
-  <div class="sub">(~110 – 170 USD)</div>
+  <div class="amount">330 – 555 TND</div>
+  <div class="sub">(~108 – 170 USD)</div>
 </div>
 
 <!-- ═══ STORES ═══ -->
