@@ -5,92 +5,87 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Guide d'Assemblage — RoboLymix v4</title>
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
-  background: #0d1117;
-  color: #e6edf3;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #1a1a1a;
+  color: #d4d0c8;
   padding: 20px;
   line-height: 1.6;
 }
 
 .container {
-  max-width: 960px;
+  max-width: 920px;
   margin: 0 auto;
 }
 
-/* Breadcrumb Navigation */
+/* ── Breadcrumb ── */
 .breadcrumb {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
-  margin-bottom: 32px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #30363d;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #333;
 }
 
 .breadcrumb a {
-  color: #58a6ff;
+  color: #e8a435;
   text-decoration: none;
-  font-size: 0.9rem;
-  padding: 6px 12px;
+  font-size: 0.85rem;
+  padding: 4px 10px;
   border-radius: 6px;
-  transition: all 0.2s ease;
-  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.2s;
 }
 
 .breadcrumb a:hover {
-  background: #21262d;
-  color: #79c0ff;
+  background: #252525;
+  border-color: #444;
+  color: #f0c060;
 }
 
 .breadcrumb a.active {
-  background: #161b22;
-  color: #f0883e;
+  background: #252520;
+  border: 1px solid #e8a435;
+  color: #e8a435;
   cursor: default;
 }
 
-/* Header Section */
-header {
-  margin-bottom: 40px;
-}
+/* ── Header ── */
+header { margin-bottom: 36px; }
 
 h1 {
-  font-size: 2.2rem;
-  color: #f0f6fc;
+  font-size: 1.9rem;
+  color: #f5f0e6;
   margin-bottom: 8px;
   font-weight: 600;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
 }
 
 .subtitle {
-  color: #8b949e;
-  font-size: 1rem;
+  color: #8a8680;
+  font-size: 0.95rem;
   display: flex;
-  gap: 24px;
+  gap: 20px;
   flex-wrap: wrap;
 }
 
 .subtitle span {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
-/* Exploded View Diagram */
+/* ── Exploded Diagram ── */
 .diagram-wrap {
-  background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
-  border: 1px solid #30363d;
-  border-radius: 12px;
-  padding: 28px;
-  margin: 32px 0;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 24px;
+  margin: 28px 0;
   overflow: auto;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .diagram-wrap svg {
@@ -100,322 +95,207 @@ h1 {
   display: block;
 }
 
-/* SVG Styles */
 svg text {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
-/* Phase Blocks */
+/* ── Phase blocks ── */
 .phase {
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 12px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
+  border: 1px solid #333;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #1e1e1e;
 }
 
-.phase:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-}
-
-.phase-head {
+.phase-header {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 20px 24px;
-  background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
-  border-bottom: 2px solid #30363d;
-  position: relative;
-  overflow: hidden;
+  gap: 14px;
+  padding: 12px 18px;
+  background: #222;
+  border-bottom: 1px solid #333;
 }
-
-.phase-head::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, currentColor, transparent);
-}
-
-.p1 .phase-head::before { background: linear-gradient(90deg, #3fb950, transparent); }
-.p2 .phase-head::before { background: linear-gradient(90deg, #bc8cff, transparent); }
-.p3 .phase-head::before { background: linear-gradient(90deg, #58a6ff, transparent); }
-.p4 .phase-head::before { background: linear-gradient(90deg, #f0883e, transparent); }
 
 .phase-num {
-  width: 48px;
-  height: 48px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   font-weight: 700;
   flex-shrink: 0;
-  position: relative;
-  z-index: 1;
+  color: #1a1a1a;
 }
 
-.p1 .phase-num {
-  background: radial-gradient(circle at 30% 30%, #3fb950, #2a7a35);
-  color: #ffffff;
-  box-shadow: 0 0 20px rgba(63, 185, 80, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.1);
-}
+.p1 .phase-num { background: #7cc47c; }
+.p2 .phase-num { background: #c27db5; }
+.p3 .phase-num { background: #4acfb0; }
+.p4 .phase-num { background: #e8a435; }
 
-.p2 .phase-num {
-  background: radial-gradient(circle at 30% 30%, #bc8cff, #7a2a99);
-  color: #ffffff;
-  box-shadow: 0 0 20px rgba(188, 140, 255, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.1);
-}
-
-.p3 .phase-num {
-  background: radial-gradient(circle at 30% 30%, #58a6ff, #1f6feb);
-  color: #ffffff;
-  box-shadow: 0 0 20px rgba(88, 166, 255, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.1);
-}
-
-.p4 .phase-num {
-  background: radial-gradient(circle at 30% 30%, #f0883e, #a1470f);
-  color: #ffffff;
-  box-shadow: 0 0 20px rgba(240, 136, 62, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.1);
-}
-
-.phase-title {
-  flex: 1;
-  z-index: 1;
-}
+.phase-title { flex: 1; }
 
 .phase-title h3 {
-  font-size: 1.2rem;
-  color: #f0f6fc;
-  margin-bottom: 4px;
+  font-size: 1.05rem;
+  color: #f5f0e6;
+  margin-bottom: 2px;
   font-weight: 600;
 }
 
 .phase-title p {
-  font-size: 0.85rem;
-  color: #8b949e;
+  font-size: 0.82rem;
+  color: #7a7670;
 }
 
 .steps {
-  padding: 24px;
-  background: #0d1117;
+  padding: 16px 18px;
+  background: #1a1a1a;
 }
 
+/* ── Step items ── */
 .step-item {
   display: flex;
-  gap: 16px;
-  padding: 14px 16px;
-  margin-bottom: 12px;
-  background: #161b22;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  background: #1e1e1e;
+  border: 1px solid #2a2a2a;
   border-radius: 8px;
-  border: 1px solid #30363d;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s;
 }
 
 .step-item:hover {
-  background: #21262d;
-  border-color: #8b949e;
-  transform: translateX(4px);
+  border-color: #444;
 }
 
-.step-item:last-child {
-  margin-bottom: 0;
-}
+.step-item:last-child { margin-bottom: 0; }
 
 .step-n {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   font-weight: 700;
   flex-shrink: 0;
-  color: #ffffff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #1a1a1a;
 }
 
-.p1 .step-n { background: #3fb950; box-shadow: 0 0 12px rgba(63, 185, 80, 0.3); }
-.p2 .step-n { background: #bc8cff; box-shadow: 0 0 12px rgba(188, 140, 255, 0.3); }
-.p3 .step-n { background: #58a6ff; box-shadow: 0 0 12px rgba(88, 166, 255, 0.3); }
-.p4 .step-n { background: #f0883e; box-shadow: 0 0 12px rgba(240, 136, 62, 0.3); }
+.p1 .step-n { background: #7cc47c; }
+.p2 .step-n { background: #c27db5; }
+.p3 .step-n { background: #4acfb0; }
+.p4 .step-n { background: #e8a435; }
 
-.step-body {
-  flex: 1;
-}
+.step-body { flex: 1; }
 
 .step-body strong {
-  color: #f0f6fc;
-  font-size: 0.95rem;
+  color: #f5f0e6;
+  font-size: 0.92rem;
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   font-weight: 600;
 }
 
 .step-body span {
-  font-size: 0.85rem;
-  color: #8b949e;
-  line-height: 1.6;
+  font-size: 0.83rem;
+  color: #9a9690;
+  line-height: 1.55;
 }
 
+/* ── Checkpoint ── */
 .checkpoint {
-  background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
-  border: 2px solid;
+  background: #2a2518;
+  border: 1px solid #e8a435;
   border-radius: 8px;
-  padding: 14px 16px;
-  margin-top: 16px;
-  font-size: 0.9rem;
+  padding: 10px 14px;
+  margin-top: 14px;
+  color: #e8a435;
+  font-size: 0.88rem;
   font-weight: 500;
+  line-height: 1.5;
 }
 
-.p1 .checkpoint { border-color: #3fb950; color: #3fb950; }
-.p2 .checkpoint { border-color: #bc8cff; color: #bc8cff; }
-.p3 .checkpoint { border-color: #58a6ff; color: #58a6ff; }
-.p4 .checkpoint { border-color: #f0883e; color: #f0883e; }
-
-/* Materials Table */
+/* ── Materials Table ── */
 h2 {
-  font-size: 1.4rem;
-  color: #f0f6fc;
-  margin: 40px 0 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #30363d;
+  font-size: 1.25rem;
+  color: #f5f0e6;
+  margin: 36px 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #333;
   font-weight: 600;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  background: #161b22;
-  border: 1px solid #30363d;
+  background: #1e1e1e;
+  border: 1px solid #333;
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 32px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-thead {
-  background: linear-gradient(135deg, #21262d 0%, #161b22 100%);
-}
+thead { background: #222; }
 
 th {
-  padding: 14px 16px;
+  padding: 12px 14px;
   text-align: left;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: #8b949e;
+  letter-spacing: 0.6px;
+  color: #8a8680;
   font-weight: 600;
-  border-bottom: 2px solid #30363d;
+  border-bottom: 1px solid #333;
 }
 
 td {
-  padding: 12px 16px;
-  font-size: 0.9rem;
-  border-bottom: 1px solid #30363d;
+  padding: 10px 14px;
+  font-size: 0.87rem;
+  color: #d4d0c8;
+  border-bottom: 1px solid #2a2a2a;
 }
 
-tbody tr {
-  transition: background 0.2s ease;
-}
+tbody tr:nth-child(even) { background: #222; }
+tbody tr:hover { background: #252525; }
+tbody tr:last-child td { border-bottom: none; }
 
-tbody tr:nth-child(even) {
-  background: #0d1117;
-}
+td:nth-child(2) { color: #e8a435; font-weight: 600; }
 
-tbody tr:hover {
-  background: #21262d;
-}
-
-tbody tr:last-child td {
-  border-bottom: none;
-}
-
-/* Footer */
+/* ── Footer ── */
 footer {
   text-align: center;
-  padding: 32px 0;
-  border-top: 1px solid #30363d;
-  margin-top: 48px;
-  color: #8b949e;
-  font-size: 0.9rem;
+  padding: 28px 0;
+  border-top: 1px solid #333;
+  margin-top: 40px;
+  color: #6a6660;
+  font-size: 0.87rem;
 }
 
-footer strong {
-  color: #f0883e;
-}
+footer strong { color: #e8a435; }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .container {
-    padding: 0;
-  }
-
-  .breadcrumb {
-    gap: 6px;
-  }
-
-  .breadcrumb a {
-    padding: 4px 8px;
-    font-size: 0.8rem;
-  }
-
-  h1 {
-    font-size: 1.8rem;
-  }
-
-  .subtitle {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .phase-head {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .step-item {
-    flex-direction: column;
-  }
-
-  .diagram-wrap {
-    padding: 16px;
-  }
-
-  table {
-    font-size: 0.8rem;
-  }
-
-  td, th {
-    padding: 8px 10px;
-  }
-}
-
-/* Utility Classes */
+/* ── Mono code ── */
 .mono {
-  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-  color: #f0883e;
-  font-size: 0.85rem;
-  background: #161b22;
-  padding: 2px 6px;
-  border-radius: 4px;
-  border: 1px solid #30363d;
+  font-family: 'Consolas', 'Courier New', monospace;
+  color: #4acfb0;
+  font-size: 0.82rem;
+  background: #222;
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid #333;
 }
 
-/* Smooth Transitions */
-a {
-  transition: color 0.2s ease, background 0.2s ease;
-}
-
-button {
-  transition: all 0.2s ease;
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  h1 { font-size: 1.5rem; }
+  .subtitle { flex-direction: column; gap: 4px; }
+  .phase-header { gap: 10px; }
+  .step-item { flex-direction: column; }
+  td, th { padding: 8px 10px; }
+  table { font-size: 0.8rem; }
 }
 </style>
 </head>
@@ -423,7 +303,7 @@ button {
 
 <div class="container">
 
-<!-- Breadcrumb Navigation -->
+<!-- Breadcrumb -->
 <nav class="breadcrumb">
   <a href="chassis_floor1_v4.html">Floor 1</a>
   <a href="chassis_floor2_v4.html">Floor 2</a>
@@ -444,154 +324,195 @@ button {
 
 <!-- Exploded View Diagram -->
 <div class="diagram-wrap">
-<svg viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:680px;">
-  <defs>
-    <linearGradient id="floorGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#3fb950;stop-opacity:0.15" />
-      <stop offset="100%" style="stop-color:#3fb950;stop-opacity:0.05" />
-    </linearGradient>
-    <linearGradient id="floorGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#bc8cff;stop-opacity:0.15" />
-      <stop offset="100%" style="stop-color:#bc8cff;stop-opacity:0.05" />
-    </linearGradient>
-    <linearGradient id="floorGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#58a6ff;stop-opacity:0.15" />
-      <stop offset="100%" style="stop-color:#58a6ff;stop-opacity:0.05" />
-    </linearGradient>
-    <linearGradient id="wheelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#444;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#222;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#1a1a1a;stop-opacity:1" />
-    </linearGradient>
-    <linearGradient id="arrowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#f0883e;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#d16c1f;stop-opacity:1" />
-    </linearGradient>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-      <feMerge>
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-    <marker id="arrA" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
-      <path d="M0,0 L8,4 L0,8 Z" fill="url(#arrowGrad)"/>
-    </marker>
-  </defs>
+<svg viewBox="0 0 760 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:760px;">
+<defs>
+  <radialGradient id="gWhl" cx="30%" cy="30%">
+    <stop offset="0%" stop-color="#3a3a3a"/><stop offset="70%" stop-color="#1a1a1a"/><stop offset="100%" stop-color="#0a0a0a"/>
+  </radialGradient>
+  <linearGradient id="gF1" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" stop-color="#7cc47c" stop-opacity="0.28"/><stop offset="100%" stop-color="#7cc47c" stop-opacity="0.12"/>
+  </linearGradient>
+  <linearGradient id="gF2" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" stop-color="#c27db5" stop-opacity="0.28"/><stop offset="100%" stop-color="#c27db5" stop-opacity="0.12"/>
+  </linearGradient>
+  <linearGradient id="gF3" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" stop-color="#4acfb0" stop-opacity="0.22"/><stop offset="100%" stop-color="#4acfb0" stop-opacity="0.08"/>
+  </linearGradient>
+  <linearGradient id="gSpc" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#8a8680" stop-opacity="0.35"/><stop offset="50%" stop-color="#8a8680" stop-opacity="0.15"/><stop offset="100%" stop-color="#8a8680" stop-opacity="0.35"/>
+  </linearGradient>
+  <linearGradient id="gL298" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#e8a435" stop-opacity="0.4"/><stop offset="100%" stop-color="#e8a435" stop-opacity="0.18"/>
+  </linearGradient>
+  <linearGradient id="gBatt" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#8888cc" stop-opacity="0.4"/><stop offset="100%" stop-color="#8888cc" stop-opacity="0.18"/>
+  </linearGradient>
+  <linearGradient id="gEsp" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#7cc47c" stop-opacity="0.4"/><stop offset="100%" stop-color="#7cc47c" stop-opacity="0.18"/>
+  </linearGradient>
+  <linearGradient id="gPerf" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#c27db5" stop-opacity="0.35"/><stop offset="100%" stop-color="#c27db5" stop-opacity="0.15"/>
+  </linearGradient>
+  <linearGradient id="gTof" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#4acfb0" stop-opacity="0.45"/><stop offset="100%" stop-color="#4acfb0" stop-opacity="0.2"/>
+  </linearGradient>
+  <linearGradient id="gLaser" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#4acfb0" stop-opacity="1"/><stop offset="100%" stop-color="#4acfb0" stop-opacity="0.0"/>
+  </linearGradient>
+  <linearGradient id="gLaserR" x1="100%" y1="0%" x2="0%" y2="0%">
+    <stop offset="0%" stop-color="#4acfb0" stop-opacity="1"/><stop offset="100%" stop-color="#4acfb0" stop-opacity="0.0"/>
+  </linearGradient>
+  <filter id="sh" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.25"/>
+  </filter>
+  <marker id="arrH" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto" markerUnits="strokeWidth">
+    <path d="M0,1 L8,4 L0,7 Z" fill="#8a8680"/>
+  </marker>
+  <marker id="arrA" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto" markerUnits="strokeWidth">
+    <path d="M0,1 L8,4 L0,7 Z" fill="#e8a435"/>
+  </marker>
+</defs>
 
-  <rect width="680" height="420" fill="#0d1117"/>
-  <text x="340" y="22" text-anchor="middle" fill="#f0f6fc" font-size="14" font-weight="bold">Vue Éclatée — 3 Étages</text>
+<!-- Background -->
+<rect width="760" height="500" fill="#1a1a1a"/>
 
-  <!-- Floor 3 (top) with gradient -->
-  <rect x="200" y="38" width="280" height="55" rx="8" fill="url(#floorGrad3)" stroke="#58a6ff" stroke-width="2" filter="url(#glow)"/>
-  <text x="340" y="62" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold">FLOOR 3 — Couvercle</text>
-  <text x="340" y="78" text-anchor="middle" fill="#8b949e" font-size="9">150×150mm • Ouvertures ToF avant/gauche/droit</text>
+<!-- ── GROUND ── -->
+<rect x="50" y="448" width="660" height="32" rx="3" fill="#1e1e1e"/>
+<line x1="50" y1="448" x2="710" y2="448" stroke="#333" stroke-width="2"/>
+<text x="380" y="470" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="11" fill="#5a5650">Sol</text>
 
-  <!-- ToF cutout indicators on F3 -->
-  <g filter="url(#glow)">
-    <rect x="200" y="52" width="14" height="12" rx="2" fill="#58a6ff" stroke="#58a6ff" stroke-width="1" opacity="0.6"/>
-    <rect x="466" y="52" width="14" height="12" rx="2" fill="#58a6ff" stroke="#58a6ff" stroke-width="1" opacity="0.6"/>
-    <rect x="326" y="38" width="28" height="10" rx="2" fill="#58a6ff" stroke="#58a6ff" stroke-width="1" opacity="0.6"/>
-  </g>
+<!-- ── WHEELS ── -->
+<g filter="url(#sh)">
+  <ellipse cx="115" cy="360" rx="24" ry="88" fill="url(#gWhl)" stroke="#4a4a4a" stroke-width="2"/>
+  <ellipse cx="115" cy="360" rx="20" ry="80" fill="none" stroke="#333" stroke-width="1" opacity="0.5"/>
+  <text x="115" y="364" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" fill="#6a6660">&#216;65</text>
+</g>
+<g filter="url(#sh)">
+  <ellipse cx="645" cy="360" rx="24" ry="88" fill="url(#gWhl)" stroke="#4a4a4a" stroke-width="2"/>
+  <ellipse cx="645" cy="360" rx="20" ry="80" fill="none" stroke="#333" stroke-width="1" opacity="0.5"/>
+  <text x="645" y="364" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" fill="#6a6660">&#216;65</text>
+</g>
 
-  <!-- Spacers F2→F3 as 3D cylinders -->
-  <g filter="url(#glow)">
-    <ellipse cx="222" cy="93" rx="5" ry="3" fill="#4a4a3a" stroke="#8b949e" stroke-width="1"/>
-    <rect x="218" y="93" width="8" height="40" rx="2" fill="#3a3a2a" stroke="#8b949e" stroke-width="1.5"/>
-    <ellipse cx="222" cy="133" rx="5" ry="3" fill="#5a5a4a" stroke="#8b949e" stroke-width="1"/>
+<!-- ── FLOOR 1 (green) — y=272, h=12 ── -->
+<rect x="148" y="272" width="464" height="12" rx="3" fill="url(#gF1)" stroke="#7cc47c" stroke-width="2"/>
+<text x="380" y="258" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="13" font-weight="700" fill="#7cc47c">FLOOR 1 — Puissance</text>
+<text x="380" y="298" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" fill="#5a7a5a">150 &#215; 150mm</text>
 
-    <ellipse cx="458" cy="93" rx="5" ry="3" fill="#4a4a3a" stroke="#8b949e" stroke-width="1"/>
-    <rect x="454" y="93" width="8" height="40" rx="2" fill="#3a3a2a" stroke="#8b949e" stroke-width="1.5"/>
-    <ellipse cx="458" cy="133" rx="5" ry="3" fill="#5a5a4a" stroke="#8b949e" stroke-width="1"/>
-  </g>
+<!-- Components on F1 -->
+<g filter="url(#sh)">
+  <rect x="165" y="233" width="80" height="38" rx="4" fill="url(#gBatt)" stroke="#8888cc" stroke-width="1.8"/>
+  <text x="205" y="257" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" font-weight="600" fill="#8888cc">Batterie</text>
+  <text x="205" y="268" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="8.5" fill="#8888cc">3S 18650</text>
+</g>
+<g filter="url(#sh)">
+  <rect x="265" y="236" width="85" height="35" rx="4" fill="url(#gL298)" stroke="#e8a435" stroke-width="1.8"/>
+  <text x="307" y="258" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" font-weight="600" fill="#e8a435">L298N</text>
+</g>
+<g filter="url(#sh)">
+  <rect x="365" y="240" width="62" height="30" rx="4" fill="url(#gL298)" stroke="#e8a435" stroke-width="1.5"/>
+  <text x="396" y="260" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="9.5" font-weight="600" fill="#e8a435">LM2596</text>
+</g>
+<!-- Motor blocks on sides of F1 -->
+<rect x="140" y="278" width="8" height="28" rx="2" fill="#303030" stroke="#7cc47c" stroke-width="1.2"/>
+<rect x="612" y="278" width="8" height="28" rx="2" fill="#303030" stroke="#7cc47c" stroke-width="1.2"/>
+<text x="133" y="297" text-anchor="end" font-family="'Segoe UI',system-ui,sans-serif" font-size="9" fill="#5a7a5a">M</text>
+<text x="627" y="297" font-family="'Segoe UI',system-ui,sans-serif" font-size="9" fill="#5a7a5a">M</text>
 
-  <text x="340" y="117" text-anchor="middle" fill="#8b949e" font-size="9">Entretoises M3×20mm</text>
+<!-- ── SPACERS F1&#8594;F2 (30mm = 72px) ── -->
+<rect x="153" y="200" width="9" height="72" rx="3" fill="url(#gSpc)" stroke="#6a6660" stroke-width="1.5"/>
+<ellipse cx="157" cy="200" rx="5" ry="3" fill="#6a6660" opacity="0.35"/>
+<ellipse cx="157" cy="272" rx="5" ry="3" fill="#6a6660" opacity="0.25"/>
+<rect x="598" y="200" width="9" height="72" rx="3" fill="url(#gSpc)" stroke="#6a6660" stroke-width="1.5"/>
+<ellipse cx="602" cy="200" rx="5" ry="3" fill="#6a6660" opacity="0.35"/>
+<ellipse cx="602" cy="272" rx="5" ry="3" fill="#6a6660" opacity="0.25"/>
+<text x="140" y="237" text-anchor="end" font-family="'Segoe UI',system-ui,sans-serif" font-size="9.5" fill="#6a6660">30mm</text>
 
-  <!-- Floor 2 (middle) with gradient -->
-  <rect x="200" y="133" width="280" height="70" rx="8" fill="url(#floorGrad2)" stroke="#bc8cff" stroke-width="2" filter="url(#glow)"/>
-  <text x="340" y="154" text-anchor="middle" fill="#bc8cff" font-size="12" font-weight="bold">FLOOR 2 — Cerveau + Capteurs</text>
-  <text x="340" y="168" text-anchor="middle" fill="#8b949e" font-size="9">ESP32 · Perfboard · MPU9250 · 3× VL53L0X · LED</text>
+<!-- ── FLOOR 2 (purple) — y=188, h=12 ── -->
+<rect x="148" y="188" width="464" height="12" rx="3" fill="url(#gF2)" stroke="#c27db5" stroke-width="2"/>
+<text x="380" y="174" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="13" font-weight="700" fill="#c27db5">FLOOR 2 — Cerveau + Capteurs</text>
+<text x="380" y="214" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" fill="#7a5a72">150 &#215; 150mm</text>
 
-  <!-- ToF sensors on F2 edges -->
-  <g filter="url(#glow)">
-    <rect x="186" y="152" width="14" height="22" rx="3" fill="#58a6ff" stroke="#58a6ff" stroke-width="1.5" opacity="0.7"/>
-    <text x="176" y="160" text-anchor="end" fill="#58a6ff" font-size="8" font-weight="bold">ToF G</text>
+<!-- Components on F2 -->
+<g filter="url(#sh)">
+  <rect x="170" y="148" width="58" height="40" rx="4" fill="url(#gEsp)" stroke="#7cc47c" stroke-width="1.8"/>
+  <text x="199" y="173" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" font-weight="600" fill="#7cc47c">ESP32</text>
+</g>
+<g filter="url(#sh)">
+  <rect x="242" y="143" width="100" height="45" rx="4" fill="url(#gPerf)" stroke="#c27db5" stroke-width="1.8"/>
+  <text x="292" y="170" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" font-weight="600" fill="#c27db5">Perfboard</text>
+  <!-- MPU on perfboard -->
+  <rect x="258" y="148" width="52" height="18" rx="3" fill="#1e1428" stroke="#c27db5" stroke-width="1.2"/>
+  <text x="284" y="160" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="8" font-weight="600" fill="#c27db5">MPU9250</text>
+</g>
 
-    <rect x="480" y="152" width="14" height="22" rx="3" fill="#58a6ff" stroke="#58a6ff" stroke-width="1.5" opacity="0.7"/>
-    <text x="504" y="160" fill="#58a6ff" font-size="8" font-weight="bold">ToF D</text>
+<!-- ToF Left sensor + laser -->
+<g filter="url(#sh)">
+  <rect x="136" y="180" width="12" height="14" rx="2" fill="url(#gTof)" stroke="#4acfb0" stroke-width="1.5"/>
+  <text x="125" y="183" text-anchor="end" font-family="'Segoe UI',system-ui,sans-serif" font-size="9" font-weight="600" fill="#4acfb0">ToF G</text>
+</g>
+<line x1="136" y1="187" x2="65" y2="187" stroke="url(#gLaserR)" stroke-width="2" stroke-dasharray="4,3"/>
+<polygon points="65,183 52,187 65,191" fill="#4acfb0" opacity="0.7"/>
 
-    <rect x="320" y="133" width="40" height="14" rx="3" fill="#58a6ff" stroke="#58a6ff" stroke-width="1.5" opacity="0.7"/>
-    <text x="340" y="145" text-anchor="middle" fill="#58a6ff" font-size="8" font-weight="bold">ToF F</text>
-  </g>
+<!-- ToF Right sensor + laser -->
+<g filter="url(#sh)">
+  <rect x="612" y="180" width="12" height="14" rx="2" fill="url(#gTof)" stroke="#4acfb0" stroke-width="1.5"/>
+  <text x="635" y="183" font-family="'Segoe UI',system-ui,sans-serif" font-size="9" font-weight="600" fill="#4acfb0">ToF D</text>
+</g>
+<line x1="624" y1="187" x2="695" y2="187" stroke="url(#gLaser)" stroke-width="2" stroke-dasharray="4,3"/>
+<polygon points="695,183 708,187 695,191" fill="#4acfb0" opacity="0.7"/>
 
-  <!-- ESP32 mini -->
-  <rect x="210" y="148" width="40" height="28" rx="3" fill="#3fb950" stroke="#3fb950" stroke-width="1.5" opacity="0.8" filter="url(#glow)"/>
-  <text x="230" y="166" text-anchor="middle" fill="#ffffff" font-size="8" font-weight="bold">ESP32</text>
+<!-- ToF Front sensor (on front face of F2, pointing left in profile) -->
+<g filter="url(#sh)">
+  <rect x="136" y="162" width="12" height="14" rx="2" fill="url(#gTof)" stroke="#4acfb0" stroke-width="1.5"/>
+  <text x="125" y="165" text-anchor="end" font-family="'Segoe UI',system-ui,sans-serif" font-size="9" font-weight="600" fill="#4acfb0">ToF F</text>
+</g>
+<line x1="136" y1="169" x2="65" y2="169" stroke="url(#gLaserR)" stroke-width="2" stroke-dasharray="4,3"/>
+<polygon points="65,165 52,169 65,173" fill="#4acfb0" opacity="0.7"/>
 
-  <!-- Perfboard + MPU mini -->
-  <rect x="270" y="143" width="65" height="40" rx="3" fill="#1a201a" stroke="#3fb950" stroke-width="1.5"/>
-  <text x="302" y="165" text-anchor="middle" fill="#3fb950" font-size="8" font-weight="bold">Perfboard</text>
+<!-- ── SPACERS F2&#8594;F3 (20mm = 48px) ── -->
+<rect x="153" y="140" width="9" height="48" rx="3" fill="url(#gSpc)" stroke="#6a6660" stroke-width="1.5"/>
+<ellipse cx="157" cy="140" rx="5" ry="3" fill="#6a6660" opacity="0.35"/>
+<ellipse cx="157" cy="188" rx="5" ry="3" fill="#6a6660" opacity="0.25"/>
+<rect x="598" y="140" width="9" height="48" rx="3" fill="url(#gSpc)" stroke="#6a6660" stroke-width="1.5"/>
+<ellipse cx="602" cy="140" rx="5" ry="3" fill="#6a6660" opacity="0.35"/>
+<ellipse cx="602" cy="188" rx="5" ry="3" fill="#6a6660" opacity="0.25"/>
+<text x="140" y="167" text-anchor="end" font-family="'Segoe UI',system-ui,sans-serif" font-size="9.5" fill="#6a6660">20mm</text>
 
-  <rect x="278" y="144" width="32" height="14" rx="2" fill="#bc8cff" stroke="#bc8cff" stroke-width="1.5" opacity="0.8" filter="url(#glow)"/>
-  <text x="294" y="155" text-anchor="middle" fill="#ffffff" font-size="7" font-weight="bold">MPU9250</text>
+<!-- ── FLOOR 3 (teal, dashed = cover) — y=128, h=12 ── -->
+<rect x="148" y="128" width="464" height="12" rx="3" fill="url(#gF3)" stroke="#4acfb0" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="380" y="114" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="13" font-weight="700" fill="#4acfb0">FLOOR 3 — Couvercle</text>
+<text x="380" y="154" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" fill="#3a7870">150 &#215; 150mm &#183; Ouvertures ToF</text>
 
-  <!-- Spacers F1→F2 as 3D cylinders -->
-  <g filter="url(#glow)">
-    <ellipse cx="222" cy="203" rx="5" ry="3" fill="#4a4a3a" stroke="#8b949e" stroke-width="1"/>
-    <rect x="218" y="203" width="8" height="55" rx="2" fill="#3a3a2a" stroke="#8b949e" stroke-width="1.5"/>
-    <ellipse cx="222" cy="258" rx="5" ry="3" fill="#5a5a4a" stroke="#8b949e" stroke-width="1"/>
+<!-- ToF openings in F3 (cutouts shown as gaps in the slab) -->
+<rect x="148" y="128" width="22" height="12" rx="0" fill="#1a1a1a" stroke="#4acfb0" stroke-width="1.2"/>
+<rect x="590" y="128" width="22" height="12" rx="0" fill="#1a1a1a" stroke="#4acfb0" stroke-width="1.2"/>
+<rect x="366" y="128" width="28" height="12" rx="0" fill="#1a1a1a" stroke="#4acfb0" stroke-width="1.2"/>
 
-    <ellipse cx="458" cy="203" rx="5" ry="3" fill="#4a4a3a" stroke="#8b949e" stroke-width="1"/>
-    <rect x="454" y="203" width="8" height="55" rx="2" fill="#3a3a2a" stroke="#8b949e" stroke-width="1.5"/>
-    <ellipse cx="458" cy="258" rx="5" ry="3" fill="#5a5a4a" stroke="#8b949e" stroke-width="1"/>
-  </g>
+<!-- ── HEIGHT DIMENSION — total stack ── -->
+<line x1="720" y1="272" x2="720" y2="128" stroke="#e8a435" stroke-width="1.8" marker-start="url(#arrA)" marker-end="url(#arrA)"/>
+<text x="736" y="204" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" font-weight="600" fill="#e8a435">&#126;59mm</text>
 
-  <text x="340" y="233" text-anchor="middle" fill="#8b949e" font-size="9">Entretoises M3×30mm</text>
+<!-- ── LEGEND ── -->
+<g font-family="'Segoe UI',system-ui,sans-serif" font-size="9.5">
+  <rect x="170" y="478" width="10" height="10" rx="2" fill="url(#gF1)" stroke="#7cc47c" stroke-width="1.5"/>
+  <text x="184" y="487" fill="#7cc47c">Floor 1</text>
+  <rect x="244" y="478" width="10" height="10" rx="2" fill="url(#gF2)" stroke="#c27db5" stroke-width="1.5"/>
+  <text x="258" y="487" fill="#c27db5">Floor 2</text>
+  <rect x="318" y="478" width="10" height="10" rx="2" fill="url(#gF3)" stroke="#4acfb0" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="332" y="487" fill="#4acfb0">Floor 3</text>
+  <line x1="400" y1="483" x2="420" y2="483" stroke="#6a6660" stroke-width="2" stroke-dasharray="4,2"/>
+  <rect x="421" y="478" width="6" height="10" rx="1" fill="url(#gSpc)" stroke="#6a6660" stroke-width="1"/>
+  <text x="431" y="487" fill="#6a6660">Entretoises</text>
+  <line x1="505" y1="483" x2="520" y2="483" stroke="#4acfb0" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="524" y="487" fill="#4acfb0">Laser ToF</text>
+</g>
 
-  <!-- Floor 1 (bottom) with gradient -->
-  <rect x="200" y="258" width="280" height="65" rx="8" fill="url(#floorGrad1)" stroke="#3fb950" stroke-width="2" filter="url(#glow)"/>
-  <text x="340" y="280" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="bold">FLOOR 1 — Puissance</text>
-  <text x="340" y="294" text-anchor="middle" fill="#8b949e" font-size="9">Moteurs · L298N · Batterie · LM2596 · Switch</text>
-
-  <!-- Motors mini -->
-  <g filter="url(#glow)">
-    <rect x="200" y="262" width="22" height="42" rx="3" fill="#3fb950" stroke="#3fb950" stroke-width="1.5" opacity="0.7"/>
-    <text x="211" y="287" text-anchor="middle" fill="#ffffff" font-size="7" font-weight="bold">M1</text>
-
-    <rect x="458" y="262" width="22" height="42" rx="3" fill="#3fb950" stroke="#3fb950" stroke-width="1.5" opacity="0.7"/>
-    <text x="469" y="287" text-anchor="middle" fill="#ffffff" font-size="7" font-weight="bold">M2</text>
-  </g>
-
-  <!-- L298N mini -->
-  <rect x="298" y="262" width="50" height="30" rx="3" fill="#f0883e" stroke="#f0883e" stroke-width="1.5" opacity="0.8" filter="url(#glow)"/>
-  <text x="323" y="281" text-anchor="middle" fill="#ffffff" font-size="8" font-weight="bold">L298N</text>
-
-  <!-- Wheels as 3D with gradient -->
-  <g filter="url(#glow)">
-    <ellipse cx="185" cy="360" rx="14" ry="50" fill="url(#wheelGrad)" stroke="#444" stroke-width="1.5"/>
-    <ellipse cx="185" cy="330" rx="12" ry="4" fill="#333" stroke="#555" stroke-width="1"/>
-    <text x="185" y="365" text-anchor="middle" fill="#8b949e" font-size="8">roue Ø65mm</text>
-
-    <ellipse cx="495" cy="360" rx="14" ry="50" fill="url(#wheelGrad)" stroke="#444" stroke-width="1.5"/>
-    <ellipse cx="495" cy="330" rx="12" ry="4" fill="#333" stroke="#555" stroke-width="1"/>
-    <text x="495" y="365" text-anchor="middle" fill="#8b949e" font-size="8">roue Ø65mm</text>
-  </g>
-
-  <!-- Assembly arrows -->
-  <g filter="url(#glow)">
-    <path d="M 540 116 L 560 116 L 555 110 M 560 116 L 555 122" stroke="url(#arrowGrad)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M 540 205 L 560 205 L 555 199 M 560 205 L 555 211" stroke="url(#arrowGrad)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </g>
-
-  <!-- Height bracket -->
-  <line x1="600" y1="38" x2="600" y2="323" stroke="#f0883e" stroke-width="2" marker-start="url(#arrA)" marker-end="url(#arrA)"/>
-  <text x="618" y="185" text-anchor="start" fill="#f0883e" font-size="11" font-weight="bold">~59mm</text>
 </svg>
 </div>
 
 <!-- ═══ PHASE 1 ═══ -->
 <div class="phase p1">
-  <div class="phase-head">
+  <div class="phase-header">
     <div class="phase-num">1</div>
     <div class="phase-title">
       <h3>Floor 1 — Puissance</h3>
@@ -647,7 +568,7 @@ button {
 
 <!-- ═══ PHASE 2 ═══ -->
 <div class="phase p2">
-  <div class="phase-head">
+  <div class="phase-header">
     <div class="phase-num">2</div>
     <div class="phase-title">
       <h3>Floor 2 — Cerveau + Capteurs</h3>
@@ -724,7 +645,7 @@ button {
 
 <!-- ═══ PHASE 3 ═══ -->
 <div class="phase p3">
-  <div class="phase-head">
+  <div class="phase-header">
     <div class="phase-num">3</div>
     <div class="phase-title">
       <h3>Floor 3 — Couvercle</h3>
@@ -759,7 +680,7 @@ button {
 
 <!-- ═══ PHASE 4 ═══ -->
 <div class="phase p4">
-  <div class="phase-head">
+  <div class="phase-header">
     <div class="phase-num">4</div>
     <div class="phase-title">
       <h3>Finalisation</h3>
@@ -902,6 +823,5 @@ button {
 </footer>
 
 </div>
-
 </body>
 </html>
