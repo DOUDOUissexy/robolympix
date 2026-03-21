@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Floor 2 — RoboLymix v4</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #0d1117;
+  --bg-surface: #161b22;
+  --bg-hover: #1f2633;
+  --border-color: #30363d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --accent-amber: #f0883e;
+  --accent-green: #3fb950;
+  --accent-purple: #bc8cff;
+  --accent-teal: #58a6ff;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background: linear-gradient(135deg, var(--bg-primary) 0%, #0a0e13 100%);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────── */
+/* HEADER & BREADCRUMB */
+/* ──────────────────────────────────────────────────────────────────────── */
+
+header {
+  margin-bottom: 48px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 24px;
+}
+
+.breadcrumb {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.breadcrumb a,
+.breadcrumb span {
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: var(--text-secondary);
+  border-right: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb a:first-child,
+.breadcrumb span:first-child {
+  padding-left: 0;
+}
+
+.breadcrumb a {
+  color: var(--accent-teal);
+}
+
+.breadcrumb a:hover {
+  background: rgba(88, 166, 255, 0.1);
+  color: #79c0ff;
+}
+
+.breadcrumb span.current {
+  color: var(--accent-purple);
+  font-weight: 600;
+}
+
+.breadcrumb span:last-child {
+  border-right: none;
+}
+
+h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-bottom: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────────── */
+/* HEADINGS */
+/* ──────────────────────────────────────────────────────────────────────── */
+
+h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 40px 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border-color);
+  position: relative;
+}
+
+h2::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent-teal), transparent);
+  opacity: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────────── */
+/* INFO/TIP/WARNING BOXES */
+/* ──────────────────────────────────────────────────────────────────────── */
+
+.info-box {
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 20px 0;
+  border-left: 4px solid;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.info-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(88, 166, 255, 0.05) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.info-box strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.info-box.info {
+  border-left-color: var(--accent-teal);
+  color: #79c0ff;
+}
+
+.info-box.info strong {
+  color: var(--accent-teal);
+}
+
+.info-box.tip {
+  border-left-color: var(--accent-green);
+  color: #56d364;
+}
+
+.info-box.tip strong {
+  color: var(--accent-green);
+}
+
+.info-box.warn {
+  border-left-color: var(--accent-amber);
+  color: #f0883e;
+}
+
+.info-box.warn strong {
+  color: #ffa657;
+}
+
+/* ──────────────────────────────────────────────────────────────────────── */
+/* DIAGRAM CONTAINER */
+/* ──────────────────────────────────────────────────────────────────────── */
+
+.diagram-wrap {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 32px;
+  margin: 32px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(88, 166, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.diagram-wrap svg {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ──────────────────────────────────────────────────────────────────────── */
+/* TABLES */
+/* ──────────────────────────────────────────────────────────────────────── */
+
+.table-wrap {
+  margin: 24px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent;
+}
+
+th {
+  background: rgba(88, 166, 255, 0.1);
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--accent-teal);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-color);
+}
+
+td {
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+tbody tr {
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(88, 166, 255, 0.03);
+}
+
+tbody tr:hover {
+  background: rgba(88, 166, 255, 0.08);
+  transform: scale(1.001);
+  box-shadow: inset 0 0 12px rgba(88, 166, 255, 0.08);
+}
+
+/* ──────────────────────────────────────────────────────────────────────── */
+/* CODE/MONOSPACE */
+/* ──────────────────────────────────────────────────────────────────────── */
+
+.mono {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  color: var(--accent-amber);
+  background: rgba(240, 136, 62, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  border: 1px solid rgba(240, 136, 62, 0.2);
+  display: inline-block;
+  letter-spacing: 0.5px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────── */
+/* FOOTER */
+/* ──────────────────────────────────────────────────────────────────────── */
+
+footer {
+  margin-top: 60px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  letter-spacing: 0.3px;
+}
+
+footer a {
+  color: var(--accent-teal);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  color: #79c0ff;
+  text-decoration: underline;
+}
+
+/* ──────────────────────────────────────────────────────────────────────── */
+/* RESPONSIVE */
+/* ──────────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 16px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .breadcrumb a,
+  .breadcrumb span {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  .diagram-wrap {
+    padding: 20px;
+  }
+
+  th {
+    font-size: 0.75rem;
+    padding: 10px 12px;
+  }
+
+  td {
+    font-size: 0.85rem;
+    padding: 10px 12px;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────────────── */
+/* SVG STYLING */
+/* ──────────────────────────────────────────────────────────────────────── */
+
+svg text {
+  font-family: inherit;
+}
+
+svg line,
+svg rect,
+svg circle,
+svg polygon {
+  transition: all 0.3s ease;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <!-- HEADER WITH BREADCRUMB NAVIGATION -->
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <header>
+    <nav class="breadcrumb">
+      <a href="chassis_floor1_v4.html">Floor 1</a>
+      <span class="current">Floor 2</span>
+      <a href="chassis_floor3_v4.html">Floor 3</a>
+      <a href="chassis_profile_v4.html">Profil</a>
+      <a href="chassis_assembly_guide_v4.html">Assemblage</a>
+    </nav>
+    <h1>Floor 2 — Plateau Supérieur</h1>
+    <p class="subtitle">Cerveau + Capteurs • 150 × 150 × 3 mm • PLA 30% infill • Vue de dessus</p>
+  </header>
+
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <!-- INFO BOX -->
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <div class="info-box info">
+    <strong>
+      <span>ℹ</span> Nouveau layout v4
+    </strong>
+    Les capteurs ToF (×3) et le MPU9250 sont maintenant sur Floor 2 avec l'ESP32. Plus de Floor 3 — le robot est plus compact et plus bas.
+  </div>
+
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <!-- MAIN SVG DIAGRAM -->
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 680 620" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:680px;" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <!-- Gradient: Plate background -->
+        <linearGradient id="plateBg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#1a2430;stop-opacity:0.6" />
+          <stop offset="100%" style="stop-color:#0d1520;stop-opacity:0.3" />
+        </linearGradient>
+
+        <!-- Dot-grid pattern -->
+        <pattern id="dotGrid" x="10" y="10" width="10" height="10" patternUnits="userSpaceOnUse">
+          <circle cx="5" cy="5" r="1.5" fill="#30363d" opacity="0.4"/>
+        </pattern>
+
+        <!-- Gradient: ESP32 (green) -->
+        <linearGradient id="esp32Grad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#4ade80;stop-opacity:0.8" />
+          <stop offset="100%" style="stop-color:#22c55e;stop-opacity:0.5" />
+        </linearGradient>
+
+        <!-- Gradient: Perfboard -->
+        <linearGradient id="perfboardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#1a2a2a;stop-opacity:0.8" />
+          <stop offset="100%" style="stop-color:#0f1f1f;stop-opacity:0.4" />
+        </linearGradient>
+
+        <!-- Gradient: MPU9250 (purple) -->
+        <linearGradient id="mpu9250Grad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#d8b4fe;stop-opacity:0.9" />
+          <stop offset="100%" style="stop-color:#a855f7;stop-opacity:0.6" />
+        </linearGradient>
+
+        <!-- Gradient: ToF laser cone -->
+        <linearGradient id="laserCone" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#58a6ff;stop-opacity:0.6" />
+          <stop offset="50%" style="stop-color:#58a6ff;stop-opacity:0.2" />
+          <stop offset="100%" style="stop-color:#58a6ff;stop-opacity:0" />
+        </linearGradient>
+
+        <!-- Shadow filters -->
+        <filter id="shadowLight" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+          <feOffset dx="0" dy="2" result="offsetblur"/>
+          <feComponentTransfer>
+            <feFuncA type="linear" slope="0.3"/>
+          </feComponentTransfer>
+          <feMerge>
+            <feMergeNode/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+
+        <filter id="glowSmall" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      <!-- Background -->
+      <rect width="680" height="620" fill="#0d1117"/>
+
+      <!-- Plate background with dot grid -->
+      <rect x="115" y="35" width="390" height="390" rx="10" fill="url(#plateBg)"/>
+      <rect x="115" y="35" width="390" height="390" rx="10" fill="url(#dotGrid)"/>
+
+      <!-- Plate border -->
+      <rect x="115" y="35" width="390" height="390" rx="10" fill="none" stroke="#30363d" stroke-width="2"/>
+
+      <!-- Center crosshairs -->
+      <line x1="115" y1="230" x2="505" y2="230" stroke="#30363d" stroke-width="1" opacity="0.5"/>
+      <line x1="310" y1="35" x2="310" y2="425" stroke="#30363d" stroke-width="1" opacity="0.5"/>
+
+      <!-- Direction labels -->
+      <text x="310" y="22" text-anchor="middle" fill="#8b949e" font-size="12" font-weight="500">▲ AVANT</text>
+      <text x="310" y="555" text-anchor="middle" fill="#8b949e" font-size="12" font-weight="500">▼ ARRIÈRE</text>
+      <text x="85" y="270" text-anchor="middle" fill="#8b949e" font-size="11" transform="rotate(-90,85,270)" font-weight="500">← GAUCHE</text>
+      <text x="545" y="270" text-anchor="middle" fill="#8b949e" font-size="11" transform="rotate(90,545,270)" font-weight="500">DROITE →</text>
+
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <!-- ToF FRONT SENSOR -->
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <!-- Laser cone with gradient -->
+      <polygon points="292,44 328,44 340,28 280,28" fill="url(#laserCone)" opacity="0.8"/>
+      <!-- Sensor body with shadow -->
+      <rect x="280" y="22" width="60" height="22" rx="4" fill="#1e3a40" stroke="#58a6ff" stroke-width="2.5" filter="url(#shadowLight)"/>
+      <text x="310" y="37" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="700">ToF AVANT</text>
+      <!-- Bracket -->
+      <rect x="284" y="35" width="52" height="8" rx="2" fill="#2a4a52" stroke="#58a6ff" stroke-width="1" opacity="0.8"/>
+      <!-- XSHUT badge -->
+      <rect x="270" y="6" width="80" height="16" rx="3" fill="rgba(88, 166, 255, 0.15)" stroke="#58a6ff" stroke-width="1"/>
+      <text x="310" y="16" text-anchor="middle" fill="#58a6ff" font-size="8" font-weight="600">XSHUT→GPIO15</text>
+
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <!-- ToF LEFT SENSOR -->
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <!-- Laser cone -->
+      <polygon points="115,213 115,249 93,250 93,212" fill="url(#laserCone)" opacity="0.8"/>
+      <!-- Sensor body -->
+      <rect x="93" y="199" width="22" height="64" rx="4" fill="#1e3a40" stroke="#58a6ff" stroke-width="2.5" filter="url(#shadowLight)"/>
+      <text x="104" y="231" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="700" transform="rotate(-90,104,231)">ToF GAUCHE</text>
+      <!-- Bracket -->
+      <rect x="105" y="203" width="8" height="56" rx="2" fill="#2a4a52" stroke="#58a6ff" stroke-width="1" opacity="0.8"/>
+      <!-- XSHUT badge -->
+      <rect x="60" y="215" width="18" height="32" rx="3" fill="rgba(88, 166, 255, 0.15)" stroke="#58a6ff" stroke-width="1"/>
+      <text x="69" y="235" text-anchor="middle" fill="#58a6ff" font-size="7" font-weight="600" transform="rotate(-90,69,235)">XSHUT→GPIO4</text>
+
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <!-- ToF RIGHT SENSOR -->
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <!-- Laser cone -->
+      <polygon points="505,213 505,249 527,250 527,212" fill="url(#laserCone)" opacity="0.8"/>
+      <!-- Sensor body -->
+      <rect x="505" y="199" width="22" height="64" rx="4" fill="#1e3a40" stroke="#58a6ff" stroke-width="2.5" filter="url(#shadowLight)"/>
+      <text x="516" y="231" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="700" transform="rotate(90,516,231)">ToF DROIT</text>
+      <!-- Bracket -->
+      <rect x="505" y="203" width="8" height="56" rx="2" fill="#2a4a52" stroke="#58a6ff" stroke-width="1" opacity="0.8"/>
+      <!-- XSHUT badge -->
+      <rect x="548" y="215" width="18" height="32" rx="3" fill="rgba(88, 166, 255, 0.15)" stroke="#58a6ff" stroke-width="1"/>
+      <text x="557" y="235" text-anchor="middle" fill="#58a6ff" font-size="7" font-weight="600" transform="rotate(90,557,235)">XSHUT→GPIO5</text>
+
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <!-- ESP32 (green accent) -->
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <g filter="url(#shadowLight)">
+        <rect x="130" y="50" width="130" height="70" rx="6" fill="#1a3a1a" stroke="#3fb950" stroke-width="2.5"/>
+        <rect x="130" y="50" width="130" height="70" rx="6" fill="url(#esp32Grad)" opacity="0.2"/>
+      </g>
+      <text x="195" y="78" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="700">ESP32</text>
+      <text x="195" y="95" text-anchor="middle" fill="#56d364" font-size="9">WROOM-32D • 30-pin</text>
+      <text x="195" y="110" text-anchor="middle" fill="#7ee787" font-size="8">USB → bord gauche</text>
+
+      <!-- GPIO pin indicators -->
+      <g stroke="#3fb950" stroke-width="1.5" opacity="0.6">
+        <line x1="130" y1="58" x2="118" y2="58"/>
+        <line x1="130" y1="66" x2="118" y2="66"/>
+        <line x1="130" y1="74" x2="118" y2="74"/>
+        <line x1="130" y1="82" x2="118" y2="82"/>
+        <line x1="130" y1="90" x2="118" y2="90"/>
+        <line x1="130" y1="98" x2="118" y2="98"/>
+        <line x1="130" y1="106" x2="118" y2="106"/>
+      </g>
+
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <!-- PERFBOARD (90×70mm) -->
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <g filter="url(#shadowLight)">
+        <rect x="215" y="120" width="170" height="130" rx="6" fill="#0f1f1f" stroke="#3fb950" stroke-width="2"/>
+        <rect x="215" y="120" width="170" height="130" rx="6" fill="url(#perfboardGrad)" opacity="0.4"/>
+      </g>
+
+      <!-- Copper pad grid (more visible) -->
+      <g fill="#3fb950" opacity="0.4">
+        <circle cx="230" cy="138" r="2.5"/><circle cx="245" cy="138" r="2.5"/><circle cx="260" cy="138" r="2.5"/>
+        <circle cx="275" cy="138" r="2.5"/><circle cx="290" cy="138" r="2.5"/><circle cx="305" cy="138" r="2.5"/>
+        <circle cx="320" cy="138" r="2.5"/><circle cx="335" cy="138" r="2.5"/><circle cx="350" cy="138" r="2.5"/>
+        <circle cx="365" cy="138" r="2.5"/><circle cx="375" cy="138" r="2.5"/>
+
+        <circle cx="230" cy="156" r="2.5"/><circle cx="245" cy="156" r="2.5"/><circle cx="260" cy="156" r="2.5"/>
+        <circle cx="275" cy="156" r="2.5"/><circle cx="290" cy="156" r="2.5"/><circle cx="305" cy="156" r="2.5"/>
+        <circle cx="320" cy="156" r="2.5"/><circle cx="335" cy="156" r="2.5"/><circle cx="350" cy="156" r="2.5"/>
+        <circle cx="365" cy="156" r="2.5"/><circle cx="375" cy="156" r="2.5"/>
+
+        <circle cx="230" cy="174" r="2.5"/><circle cx="245" cy="174" r="2.5"/><circle cx="260" cy="174" r="2.5"/>
+        <circle cx="275" cy="174" r="2.5"/><circle cx="290" cy="174" r="2.5"/><circle cx="305" cy="174" r="2.5"/>
+        <circle cx="320" cy="174" r="2.5"/><circle cx="335" cy="174" r="2.5"/><circle cx="350" cy="174" r="2.5"/>
+        <circle cx="365" cy="174" r="2.5"/><circle cx="375" cy="174" r="2.5"/>
+
+        <circle cx="230" cy="192" r="2.5"/><circle cx="245" cy="192" r="2.5"/><circle cx="260" cy="192" r="2.5"/>
+        <circle cx="275" cy="192" r="2.5"/><circle cx="290" cy="192" r="2.5"/><circle cx="305" cy="192" r="2.5"/>
+        <circle cx="320" cy="192" r="2.5"/><circle cx="335" cy="192" r="2.5"/><circle cx="350" cy="192" r="2.5"/>
+        <circle cx="365" cy="192" r="2.5"/><circle cx="375" cy="192" r="2.5"/>
+
+        <circle cx="230" cy="210" r="2.5"/><circle cx="245" cy="210" r="2.5"/><circle cx="260" cy="210" r="2.5"/>
+        <circle cx="275" cy="210" r="2.5"/><circle cx="290" cy="210" r="2.5"/><circle cx="305" cy="210" r="2.5"/>
+        <circle cx="320" cy="210" r="2.5"/><circle cx="335" cy="210" r="2.5"/><circle cx="350" cy="210" r="2.5"/>
+        <circle cx="365" cy="210" r="2.5"/><circle cx="375" cy="210" r="2.5"/>
+
+        <circle cx="230" cy="228" r="2.5"/><circle cx="245" cy="228" r="2.5"/><circle cx="260" cy="228" r="2.5"/>
+        <circle cx="275" cy="228" r="2.5"/><circle cx="320" cy="228" r="2.5"/><circle cx="335" cy="228" r="2.5"/>
+        <circle cx="350" cy="228" r="2.5"/><circle cx="365" cy="228" r="2.5"/><circle cx="375" cy="228" r="2.5"/>
+      </g>
+
+      <text x="300" y="145" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="700">Perfboard</text>
+      <text x="300" y="162" text-anchor="middle" fill="#56d364" font-size="9">90 × 70 mm</text>
+      <text x="300" y="177" text-anchor="middle" fill="#7ee787" font-size="8">Rails 3.3V / 5V / 12V / GND</text>
+
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <!-- MPU9250 (purple accent) — CENTER OF PERFBOARD -->
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <g filter="url(#glowSmall)">
+        <rect x="273" y="210" width="54" height="40" rx="4" fill="#2a1a4a" stroke="#bc8cff" stroke-width="2.5"/>
+        <rect x="273" y="210" width="54" height="40" rx="4" fill="url(#mpu9250Grad)" opacity="0.3"/>
+      </g>
+      <text x="300" y="232" text-anchor="middle" fill="#bc8cff" font-size="11" font-weight="700">MPU9250</text>
+      <text x="300" y="248" text-anchor="middle" fill="#d8b4fe" font-size="8">GY-91 • I2C 0x68</text>
+
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <!-- CABLE SLOT (to Floor 1) -->
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <rect x="265" y="340" width="60" height="24" rx="3" fill="transparent" stroke="#30363d" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.7"/>
+      <text x="295" y="357" text-anchor="middle" fill="#8b949e" font-size="9" font-weight="500">câbles↓F1</text>
+
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <!-- M3 MOUNTING HOLES (4 corners) -->
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <g stroke="#f0883e" stroke-width="2" fill="none" opacity="0.8">
+        <circle cx="150" cy="70" r="6"/>
+        <circle cx="470" cy="70" r="6"/>
+        <circle cx="150" cy="395" r="6"/>
+        <circle cx="470" cy="395" r="6"/>
+      </g>
+
+      <!-- M3 labels -->
+      <g fill="#f0883e" font-size="8" text-anchor="middle" font-weight="600" opacity="0.9">
+        <text x="150" y="87">M3↓</text>
+        <text x="470" y="87">M3↓</text>
+        <text x="150" y="412">M3↓</text>
+        <text x="470" y="412">M3↓</text>
+      </g>
+
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <!-- LED (amber accent) — back edge center -->
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <g filter="url(#glowSmall)">
+        <circle cx="310" cy="410" r="9" fill="#3a2a00" stroke="#f0883e" stroke-width="2"/>
+      </g>
+      <text x="310" y="415" text-anchor="middle" fill="#f0883e" font-size="9" font-weight="700">LED</text>
+      <text x="310" y="432" text-anchor="middle" fill="#f0883e" font-size="8">GPIO2</text>
+
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <!-- DIMENSION ANNOTATIONS -->
+      <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+      <!-- Horizontal dimension -->
+      <g stroke="#30363d" stroke-width="1" fill="none" opacity="0.6">
+        <line x1="115" y1="510" x2="505" y2="510" stroke-width="1.5"/>
+        <line x1="115" y1="505" x2="115" y2="515"/>
+        <line x1="505" y1="505" x2="505" y2="515"/>
+      </g>
+      <text x="310" y="530" text-anchor="middle" fill="#8b949e" font-size="11" font-weight="600">150 mm</text>
+
+      <!-- Vertical dimension -->
+      <g stroke="#30363d" stroke-width="1" fill="none" opacity="0.6">
+        <line x1="585" y1="35" x2="585" y2="425" stroke-width="1.5"/>
+        <line x1="580" y1="35" x2="590" y2="35"/>
+        <line x1="580" y1="425" x2="590" y2="425"/>
+      </g>
+      <text x="620" y="233" text-anchor="middle" fill="#8b949e" font-size="11" font-weight="600" transform="rotate(90,620,233)">150 mm</text>
+
+    </svg>
+  </div>
+
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <!-- COMPONENTS TABLE -->
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <h2>Composants sur Floor 2</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Composant</th>
+          <th>Position</th>
+          <th>Fixation</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ESP32 DevKitC 30-pin</strong></td>
+          <td>Avant-gauche</td>
+          <td>Vis M2 ou foam tape</td>
+          <td>USB accessible par bord gauche</td>
+        </tr>
+        <tr>
+          <td><strong>Perfboard 90×70mm</strong></td>
+          <td>Centre</td>
+          <td>Vis M2.5 ou foam tape</td>
+          <td>Rails 3.3V / 5V / 12V / GND</td>
+        </tr>
+        <tr>
+          <td><strong>MPU9250 GY-91</strong></td>
+          <td>Centre du perfboard</td>
+          <td>Soudé sur perfboard</td>
+          <td>I2C 0x68 — centre de rotation</td>
+        </tr>
+        <tr>
+          <td><strong>VL53L0X Front</strong></td>
+          <td>Centre bord avant</td>
+          <td>Clip 3D intégré</td>
+          <td>XSHUT = GPIO15</td>
+        </tr>
+        <tr>
+          <td><strong>VL53L0X Gauche</strong></td>
+          <td>Centre bord gauche</td>
+          <td>Clip 3D intégré</td>
+          <td>XSHUT = GPIO4</td>
+        </tr>
+        <tr>
+          <td><strong>VL53L0X Droit</strong></td>
+          <td>Centre bord droit</td>
+          <td>Clip 3D intégré</td>
+          <td>XSHUT = GPIO5</td>
+        </tr>
+        <tr>
+          <td><strong>LED RGB</strong></td>
+          <td>Bord arrière centre</td>
+          <td>Trou Ø5mm</td>
+          <td>GPIO2 + résistance 220Ω</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <!-- I2C ADDRESS TABLE -->
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <h2>Bus I2C — Adresses</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Appareil</th>
+          <th>Adresse I2C</th>
+          <th>XSHUT / AD0</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>VL53L0X Front</strong></td>
+          <td><span class="mono">0x30</span></td>
+          <td>GPIO15</td>
+        </tr>
+        <tr>
+          <td><strong>VL53L0X Gauche</strong></td>
+          <td><span class="mono">0x31</span></td>
+          <td>GPIO4</td>
+        </tr>
+        <tr>
+          <td><strong>VL53L0X Droit</strong></td>
+          <td><span class="mono">0x32</span></td>
+          <td>GPIO5</td>
+        </tr>
+        <tr>
+          <td><strong>MPU9250 GY-91</strong></td>
+          <td><span class="mono">0x68</span></td>
+          <td>AD0 → GND</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <!-- ToF WIRING TABLE -->
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <h2>Câblage ToF — 5 fils par capteur</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fil</th>
+          <th>ToF → ESP32 / Perfboard</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>VCC</strong></td>
+          <td>Rail 3.3V perfboard</td>
+        </tr>
+        <tr>
+          <td><strong>GND</strong></td>
+          <td>Rail GND perfboard</td>
+        </tr>
+        <tr>
+          <td><strong>SDA</strong></td>
+          <td>GPIO21 (bus I2C commun)</td>
+        </tr>
+        <tr>
+          <td><strong>SCL</strong></td>
+          <td>GPIO22 (bus I2C commun)</td>
+        </tr>
+        <tr>
+          <td><strong>XSHUT</strong></td>
+          <td>GPIO unique par capteur (voir tableau)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <!-- WARNING & TIP BOXES -->
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <div class="info-box warn">
+    <strong>
+      <span>⚠</span> Zone libre devant chaque ToF
+    </strong>
+    Cône de détection 25°. Aucun câble, vis, ni composant ne doit passer dans ce cône, sinon le capteur lit un faux mur.
+  </div>
+
+  <div class="info-box tip">
+    <strong>
+      <span>💡</span> Avantage du layout v4
+    </strong>
+    En mettant les ToF sur le même étage que l'ESP32, les 15 câbles (5 par ToF) sont courts et organisés directement sur le perfboard. Plus de câbles longs entre étages = moins de bruit électrique et moins de débranchements.
+  </div>
+
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <!-- FOOTER -->
+  <!-- ──────────────────────────────────────────────────────────────────────────────── -->
+  <footer>
+    <p>RoboLymix v4 — Chassis Documentation</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
