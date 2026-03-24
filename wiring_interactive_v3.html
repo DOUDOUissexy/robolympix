@@ -60,7 +60,7 @@ h1 { font-size: 1.8rem; color: #f5f0e6; margin-bottom: 4px; }
     <button class="comp-btn" onclick="select('l298n')" id="btn-l298n"><span class="dot" style="background:#16a34a"></span>L298N</button>
     <button class="comp-btn" onclick="select('esp32')" id="btn-esp32"><span class="dot" style="background:#2563eb"></span>ESP32</button>
     <button class="comp-btn" onclick="select('motors')" id="btn-motors"><span class="dot" style="background:#888"></span>Moteurs (×4)</button>
-    <button class="comp-btn" onclick="select('tof')" id="btn-tof"><span class="dot" style="background:#2563eb"></span>ToF VL53L0X (×3)</button>
+    <button class="comp-btn" onclick="select('tof')" id="btn-tof"><span class="dot" style="background:#2563eb"></span>ToF VL53L0X (×4)</button>
     <button class="comp-btn" onclick="select('perfboard')" id="btn-perfboard"><span class="dot" style="background:#7c3aed"></span>Perfboard</button>
     <button class="comp-btn" onclick="select('all')" id="btn-all" style="background:#252538"><span class="dot" style="background:#aaa"></span><b>Tout afficher</b></button>
 
@@ -111,6 +111,7 @@ const comps = {
   tofF:     { x: 40,  y: 60,  w: 120, h: 45, label: 'ToF AVANT', sub: '0x30 GPIO15', color: '#2563eb', border: '#2563eb' },
   tofL:     { x: 40,  y: 120, w: 120, h: 45, label: 'ToF GAUCHE', sub: '0x31 GPIO4', color: '#2563eb', border: '#2563eb' },
   tofR:     { x: 40,  y: 180, w: 120, h: 45, label: 'ToF DROITE', sub: '0x32 GPIO5', color: '#2563eb', border: '#2563eb' },
+  tofB:     { x: 40,  y: 240, w: 120, h: 45, label: 'ToF ARRIÈRE', sub: '0x33 GPIO16', color: '#2563eb', border: '#2563eb' },
   perfboard:{ x: 580, y: 460, w: 170, h: 60, label: 'Perfboard', sub: '9×7cm', color: '#7c3aed', border: '#7c3aed' },
   gnd:      { x: 40,  y: 540, w: 720, h: 30, label: 'GND COMMUN', sub: '', color: '#aaa', border: '#aaa' }
 };
@@ -134,6 +135,7 @@ const wires = [
   ['tofF','right','esp32','left','#2563eb','SDA SCL'],
   ['tofL','right','esp32','left','#2563eb','I2C'],
   ['tofR','right','esp32','left','#2563eb','I2C'],
+  ['tofB','right','esp32','left','#2563eb','I2C'],
   // 3.3V from ESP32
   ['esp32','bottom','perfboard','top','#ca8a04','3.3V'],
   // GND (implicit — all to bottom)
@@ -145,11 +147,11 @@ const wireGroups = {
   switch: [0,1,2],
   lm2596: [2,3],
   l298n: [1,4,5,6],
-  esp32: [3,4,7,8,9,10,11,12],
+  esp32: [3,4,7,8,9,10,11,12,13],
   motors: [5,6,7,8],
-  tof: [9,10,11],
-  perfboard: [12],
-  all: Array.from({length:13},(_, i)=>i)
+  tof: [9,10,11,12],
+  perfboard: [13],
+  all: Array.from({length:14},(_, i)=>i)
 };
 
 const info = {
@@ -210,7 +212,8 @@ const info = {
       {color:'#2563eb', text:'GPIO22 → SCL (I2C, bus commun)'},
       {color:'#2563eb', text:'GPIO15 → ToF avant XSHUT'},
       {color:'#2563eb', text:'GPIO4 → ToF gauche XSHUT'},
-      {color:'#2563eb', text:'GPIO5 → ToF droite XSHUT'}
+      {color:'#2563eb', text:'GPIO5 → ToF droite XSHUT'},
+      {color:'#2563eb', text:'GPIO16 → ToF arrière XSHUT'}
     ]
   },
   motors: {
@@ -226,16 +229,17 @@ const info = {
     ]
   },
   tof: {
-    title: 'ToF VL53L0X (×3)',
+    title: 'ToF VL53L0X (×4)',
     desc: 'Partagent le même bus I2C. XSHUT permet de donner des adresses uniques.',
     wires: [
-      {color:'#ca8a04', text:'VCC → Rail 3.3V (tous les 3)'},
-      {color:'#aaa', text:'GND → Rail GND (tous les 3)'},
+      {color:'#ca8a04', text:'VCC → Rail 3.3V (tous les 4)'},
+      {color:'#aaa', text:'GND → Rail GND (tous les 4)'},
       {color:'#2563eb', text:'SDA → ESP32 GPIO21 (bus commun)'},
       {color:'#2563eb', text:'SCL → ESP32 GPIO22 (bus commun)'},
       {color:'#2563eb', text:'Avant XSHUT → GPIO15 (addr 0x30)'},
       {color:'#2563eb', text:'Gauche XSHUT → GPIO4 (addr 0x31)'},
-      {color:'#2563eb', text:'Droite XSHUT → GPIO5 (addr 0x32)'}
+      {color:'#2563eb', text:'Droite XSHUT → GPIO5 (addr 0x32)'},
+      {color:'#2563eb', text:'Arrière XSHUT → GPIO16 (addr 0x33)'}
     ]
   },
   perfboard: {
@@ -319,7 +323,7 @@ function draw() {
     if (key === 'gnd') continue;
     const isSelected = selected === 'all' ||
       (selected === 'motors' && (key === 'motorsL' || key === 'motorsR')) ||
-      (selected === 'tof' && (key === 'tofF' || key === 'tofL' || key === 'tofR')) ||
+      (selected === 'tof' && (key === 'tofF' || key === 'tofL' || key === 'tofR' || key === 'tofB')) ||
       selected === key;
     const dim = selected && !isSelected ? 0.3 : 1;
 
@@ -388,7 +392,7 @@ canvas.addEventListener('click', function(e) {
     if (mx >= c.x && mx <= c.x+c.w && my >= c.y && my <= c.y+c.h) {
       let sel = key;
       if (key === 'motorsL' || key === 'motorsR') sel = 'motors';
-      if (key === 'tofF' || key === 'tofL' || key === 'tofR') sel = 'tof';
+      if (key === 'tofF' || key === 'tofL' || key === 'tofR' || key === 'tofB') sel = 'tof';
       select(sel);
       return;
     }
