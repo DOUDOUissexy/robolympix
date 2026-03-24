@@ -398,7 +398,7 @@ svg polygon {
     <strong>
       <span>ℹ</span> Nouveau layout v4
     </strong>
-    Les capteurs ToF (×3) et le MPU9250 sont maintenant sur Floor 2 avec l'ESP32. Plus de Floor 3 — le robot est plus compact et plus bas.
+    Les capteurs ToF (×4) et le MPU9250 sont maintenant sur Floor 2 avec l'ESP32. Plus de Floor 3 — le robot est plus compact et plus bas.
   </div>
 
   <!-- ──────────────────────────────────────────────────────────────────────────────── -->
@@ -710,8 +710,14 @@ svg polygon {
           <td>XSHUT = GPIO5</td>
         </tr>
         <tr>
+          <td><strong>VL53L0X Arrière</strong></td>
+          <td>Centre bord arrière</td>
+          <td>Clip 3D intégré</td>
+          <td>XSHUT = GPIO16</td>
+        </tr>
+        <tr>
           <td><strong>LED RGB</strong></td>
-          <td>Bord arrière centre</td>
+          <td>Angle bord arrière (côté droit)</td>
           <td>Trou Ø5mm</td>
           <td>GPIO2 + résistance 220Ω</td>
         </tr>
@@ -747,6 +753,11 @@ svg polygon {
           <td><strong>VL53L0X Droit</strong></td>
           <td><span class="mono">0x32</span></td>
           <td>GPIO5</td>
+        </tr>
+        <tr>
+          <td><strong>VL53L0X Arrière</strong></td>
+          <td><span class="mono">0x33</span></td>
+          <td>GPIO16</td>
         </tr>
         <tr>
           <td><strong>MPU9250 GY-91</strong></td>
@@ -808,7 +819,7 @@ svg polygon {
     <strong>
       <span>💡</span> Avantage du layout v4
     </strong>
-    En mettant les ToF sur le même étage que l'ESP32, les 15 câbles (5 par ToF) sont courts et organisés directement sur le perfboard. Plus de câbles longs entre étages = moins de bruit électrique et moins de débranchements.
+    En mettant les ToF sur le même étage que l'ESP32, les 20 câbles (5 par ToF) sont courts et organisés directement sur le perfboard. Plus de câbles longs entre étages = moins de bruit électrique et moins de débranchements.
   </div>
 
   <!-- ──────────────────────────────────────────────────────────────────────────────── -->
