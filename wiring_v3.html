@@ -88,7 +88,7 @@ svg text { font-family: 'Segoe UI', system-ui, sans-serif; }
 <div class="container">
 
 <h1>Schéma de Câblage Complet — v3</h1>
-<p class="sub">Guide pas-à-pas pour débutant &bull; ESP32-WROOM-32D &bull; L298N &bull; 4 moteurs DC &bull; 3 capteurs ToF &bull; Batterie 3S</p>
+<p class="sub">Guide pas-à-pas pour débutant &bull; ESP32-WROOM-32D &bull; L298N &bull; 4 moteurs DC &bull; 4 capteurs ToF &bull; Batterie 3S</p>
 
 <!-- ═══ BEGINNER INTRO ═══ -->
 <div class="intro-box">
@@ -252,6 +252,7 @@ svg text { font-family: 'Segoe UI', system-ui, sans-serif; }
   <text x="870" y="380" fill="#2563eb" font-size="8.5" font-family="monospace" text-anchor="end">GPIO15 XSHUT_F</text>
   <text x="870" y="393" fill="#2563eb" font-size="8.5" font-family="monospace" text-anchor="end">GPIO4 XSHUT_L</text>
   <text x="870" y="406" fill="#2563eb" font-size="8.5" font-family="monospace" text-anchor="end">GPIO5 XSHUT_R</text>
+  <text x="870" y="419" fill="#2563eb" font-size="8.5" font-family="monospace" text-anchor="end">GPIO16 XSHUT_B</text>
   <text x="870" y="428" fill="#8a8578" font-size="8.5" font-family="monospace" text-anchor="end">GPIO2 LED</text>
 
   <!-- 5V → ESP32 VIN -->
@@ -303,12 +304,18 @@ svg text { font-family: 'Segoe UI', system-ui, sans-serif; }
   <text x="105" y="268" text-anchor="middle" fill="#e8a435" font-size="9">VL53L0X • addr 0x32</text>
   <text x="105" y="282" text-anchor="middle" fill="#8a8578" font-size="8">XSHUT → GPIO5</text>
 
+  <rect x="30" y="305" width="150" height="60" rx="8" fill="#222" stroke="#2563eb" stroke-width="2"/>
+  <text x="105" y="329" text-anchor="middle" fill="#d4d0c8" font-size="12" font-weight="700">ToF ARRIÈRE</text>
+  <text x="105" y="343" text-anchor="middle" fill="#e8a435" font-size="9">VL53L0X • addr 0x33</text>
+  <text x="105" y="357" text-anchor="middle" fill="#8a8578" font-size="8">XSHUT → GPIO16</text>
+
   <!-- I2C bus from ToFs to ESP32 -->
   <line x1="180" y1="110" x2="260" y2="110" stroke="#2563eb" stroke-width="1.5"/>
   <line x1="180" y1="185" x2="260" y2="185" stroke="#2563eb" stroke-width="1.5"/>
   <line x1="180" y1="260" x2="260" y2="260" stroke="#2563eb" stroke-width="1.5"/>
+  <line x1="180" y1="335" x2="260" y2="335" stroke="#2563eb" stroke-width="1.5"/>
   <!-- vertical bus line -->
-  <line x1="260" y1="110" x2="260" y2="315" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="260" y1="110" x2="260" y2="335" stroke="#2563eb" stroke-width="2.5"/>
   <line x1="260" y1="315" x2="700" y2="315" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowB)"/>
   <text x="380" y="308" fill="#2563eb" font-size="9" font-weight="700">I2C : SDA (GPIO21) + SCL (GPIO22)</text>
   <!-- I2C label -->
@@ -360,8 +367,9 @@ svg text { font-family: 'Segoe UI', system-ui, sans-serif; }
   <tr><td><span class="gpio">5</span></td><td>XSHUT Right</td><td>VL53L0X Droite</td><td><span class="wire w-blue">bleu</span></td><td>Contrôle l'allumage du capteur droit. Adresse I2C = 0x32.</td></tr>
   <tr><td><span class="gpio">14</span></td><td>ENA (PWM)</td><td>L298N ENA</td><td><span class="wire w-green">vert</span></td><td>Contrôle la <b>vitesse</b> des moteurs gauche. Le PWM envoie des impulsions rapides — plus c'est large, plus le moteur tourne vite.</td></tr>
   <tr><td><span class="gpio">15</span></td><td>XSHUT Front</td><td>VL53L0X Avant</td><td><span class="wire w-blue">bleu</span></td><td>Contrôle l'allumage du capteur avant. Adresse I2C = 0x30.</td></tr>
-  <tr><td><span class="gpio">21</span></td><td>SDA</td><td>Bus I2C (3× ToF)</td><td><span class="wire w-blue">bleu</span></td><td>Fil de <b>données</b> I2C. Les 3 capteurs ToF partagent ce même fil. Besoin d'une résistance pull-up 4.7kΩ vers 3.3V.</td></tr>
-  <tr><td><span class="gpio">22</span></td><td>SCL</td><td>Bus I2C (3× ToF)</td><td><span class="wire w-blue">bleu</span></td><td>Fil d'<b>horloge</b> I2C. Aussi partagé par les 3 capteurs. Besoin d'une résistance pull-up 4.7kΩ vers 3.3V.</td></tr>
+  <tr><td><span class="gpio">16</span></td><td>XSHUT Rear</td><td>VL53L0X Arrière</td><td><span class="wire w-blue">bleu</span></td><td>Contrôle l'allumage du capteur arrière. Adresse I2C = 0x33.</td></tr>
+  <tr><td><span class="gpio">21</span></td><td>SDA</td><td>Bus I2C (4× ToF)</td><td><span class="wire w-blue">bleu</span></td><td>Fil de <b>données</b> I2C. Les 4 capteurs ToF partagent ce même fil. Besoin d'une résistance pull-up 4.7kΩ vers 3.3V.</td></tr>
+  <tr><td><span class="gpio">22</span></td><td>SCL</td><td>Bus I2C (4× ToF)</td><td><span class="wire w-blue">bleu</span></td><td>Fil d'<b>horloge</b> I2C. Aussi partagé par les 4 capteurs. Besoin d'une résistance pull-up 4.7kΩ vers 3.3V.</td></tr>
   <tr><td><span class="gpio">25</span></td><td>IN3</td><td>L298N IN3</td><td><span class="wire w-green">vert</span></td><td>Direction moteurs droite (signal A). IN3 + IN4 ensemble déterminent si le côté droit avance ou recule.</td></tr>
   <tr><td><span class="gpio">26</span></td><td>IN1</td><td>L298N IN1</td><td><span class="wire w-green">vert</span></td><td>Direction moteurs gauche (signal A). IN1 + IN2 ensemble déterminent si le côté gauche avance ou recule.</td></tr>
   <tr><td><span class="gpio">27</span></td><td>IN2</td><td>L298N IN2</td><td><span class="wire w-green">vert</span></td><td>Direction moteurs gauche (signal B).</td></tr>
@@ -475,9 +483,9 @@ svg text { font-family: 'Segoe UI', system-ui, sans-serif; }
 <!-- STEP 6: ToF sensors -->
 <div class="step-section">
   <h3><span class="step-num">6</span> Capteurs ToF VL53L0X (I2C)</h3>
-  <p style="margin-bottom:12px">Les 3 capteurs de distance partagent le même bus I2C (SDA + SCL). On les différencie grâce à la broche XSHUT.</p>
+  <p style="margin-bottom:12px">Les 4 capteurs de distance partagent le même bus I2C (SDA + SCL). On les différencie grâce à la broche XSHUT.</p>
 
-  <h3>Fils communs (les 3 capteurs) :</h3>
+  <h3>Fils communs (les 4 capteurs) :</h3>
   <div class="conn-row"><span class="wire w-yellow">Jaune</span> ToF VCC <span class="arrow">→</span> Rail 3.3V du perfboard</div>
   <div class="conn-row"><span class="wire w-black">Noir</span> ToF GND <span class="arrow">→</span> Rail GND du perfboard</div>
   <div class="conn-row"><span class="wire w-blue">Bleu</span> ToF SDA <span class="arrow">→</span> ESP32 GPIO21 (SDA)</div>
@@ -489,10 +497,11 @@ svg text { font-family: 'Segoe UI', system-ui, sans-serif; }
     <tr><td><b>ToF Avant</b></td><td><span class="gpio">GPIO15</span></td><td>0x30</td><td>Pointe devant le robot</td></tr>
     <tr><td><b>ToF Gauche</b></td><td><span class="gpio">GPIO4</span></td><td>0x31</td><td>Pointe à 90° vers la gauche</td></tr>
     <tr><td><b>ToF Droite</b></td><td><span class="gpio">GPIO5</span></td><td>0x32</td><td>Pointe à 90° vers la droite</td></tr>
+    <tr><td><b>ToF Arrière</b></td><td><span class="gpio">GPIO16</span></td><td>0x33</td><td>Pointe derrière le robot</td></tr>
   </table>
 
   <div class="explanation">
-    <b>Pourquoi XSHUT ?</b> Les 3 capteurs VL53L0X ont tous la même adresse I2C par défaut (0x29). On ne peut pas avoir 3 composants avec la même adresse sur le même bus ! La broche XSHUT permet d'allumer les capteurs un par un : on allume le premier, on lui donne l'adresse 0x30, puis le deuxième (0x31), puis le troisième (0x32).<br><br>
+    <b>Pourquoi XSHUT ?</b> Les 4 capteurs VL53L0X ont tous la même adresse I2C par défaut (0x29). On ne peut pas avoir 4 composants avec la même adresse sur le même bus ! La broche XSHUT permet d'allumer les capteurs un par un : on allume le premier, on lui donne l'adresse 0x30, puis le deuxième (0x31), le troisième (0x32), et le quatrième (0x33).<br><br>
     <b>Pull-ups I2C :</b> Le bus I2C a besoin de 2 résistances de 4.7kΩ (une sur SDA, une sur SCL) connectées vers 3.3V. Elles sont sur le perfboard.
   </div>
 </div>
