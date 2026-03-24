@@ -572,7 +572,7 @@ footer strong { color: #e8a435; }
     <div class="phase-num">2</div>
     <div class="phase-title">
       <h3>Floor 2 — Cerveau + Capteurs</h3>
-      <p>Étapes 7–15 · ESP32, perfboard, MPU9250, ToF ×3, LED</p>
+      <p>Étapes 7–15 · ESP32, perfboard, MPU9250, ToF ×4, LED</p>
     </div>
   </div>
   <div class="steps">
@@ -580,7 +580,7 @@ footer strong { color: #e8a435; }
       <div class="step-n">7</div>
       <div class="step-body">
         <strong>Imprimer Floor 2 (150×150×3mm)</strong>
-        <span>Avec clips ToF intégrés au centre des 3 bords (avant, gauche, droit), trous M3 bas (depuis F1) et haut (vers F3), fente câbles, trou LED arrière.</span>
+        <span>Avec clips ToF intégrés au centre des 4 bords (avant, gauche, droit, arrière), trous M3 bas (depuis F1) et haut (vers F3), fente câbles, trou LED angle arrière.</span>
       </div>
     </div>
     <div class="step-item">
@@ -607,15 +607,15 @@ footer strong { color: #e8a435; }
     <div class="step-item">
       <div class="step-n">11</div>
       <div class="step-body">
-        <strong>Clipser les 3 VL53L0X dans leurs clips</strong>
-        <span>Front : centre bord avant. Gauche : centre bord gauche. Droit : centre bord droit. Vérifier que chaque capteur est bien enclipsé et orienté face vers l'extérieur.</span>
+        <strong>Clipser les 4 VL53L0X dans leurs clips</strong>
+        <span>Front : centre bord avant. Gauche : centre bord gauche. Droit : centre bord droit. Arrière : centre bord arrière. Vérifier que chaque capteur est bien enclipsé et orienté face vers l'extérieur.</span>
       </div>
     </div>
     <div class="step-item">
       <div class="step-n">12</div>
       <div class="step-body">
-        <strong>Câbler les 3 ToF vers le perfboard/ESP32</strong>
-        <span>5 fils par capteur : VCC→3.3V, GND→GND, SDA→GPIO21, SCL→GPIO22, XSHUT→GPIO unique. Front=GPIO15, Gauche=GPIO4, Droit=GPIO5. Utilise des couleurs différentes par capteur.</span>
+        <strong>Câbler les 4 ToF vers le perfboard/ESP32</strong>
+        <span>5 fils par capteur : VCC→3.3V, GND→GND, SDA→GPIO21, SCL→GPIO22, XSHUT→GPIO unique. Front=GPIO15, Gauche=GPIO4, Droit=GPIO5, Arrière=GPIO16. Utilise des couleurs différentes par capteur.</span>
       </div>
     </div>
     <div class="step-item">
@@ -639,7 +639,7 @@ footer strong { color: #e8a435; }
         <span>Aligner les 4 trous M3 avec les entretoises. Passer les câbles F1→F2 par la fente. Fixer avec écrous M3 nylon.</span>
       </div>
     </div>
-    <div class="checkpoint">✅ Checkpoint : Allumer → I2C scan dans Arduino IDE → 4 adresses ? (0x30, 0x31, 0x32, 0x68) Si oui → Floor 2 validé.</div>
+    <div class="checkpoint">✅ Checkpoint : Allumer → I2C scan dans Arduino IDE → 5 adresses ? (0x30, 0x31, 0x32, 0x33, 0x68) Si oui → Floor 2 validé.</div>
   </div>
 </div>
 
@@ -657,7 +657,7 @@ footer strong { color: #e8a435; }
       <div class="step-n">16</div>
       <div class="step-body">
         <strong>Imprimer Floor 3 (150×150×3mm)</strong>
-        <span>Avec 3 ouvertures rectangulaires alignées avec les ToF de Floor 2 (avant 20×12mm, gauche/droit 12×20mm), trou LED Ø5mm, 4 trous M3.</span>
+        <span>Avec 4 ouvertures rectangulaires alignées avec les ToF de Floor 2 (avant 20×12mm, gauche/droit 12×20mm, arrière 20×12mm), trou LED Ø5mm, 4 trous M3.</span>
       </div>
     </div>
     <div class="step-item">
@@ -709,7 +709,7 @@ footer strong { color: #e8a435; }
         <span>Toutes vis serrées ? Loctite sur vis moteur ? Câbles fixés ? LED visible ? Multimètre : 12V et 5V OK ? Flash le code v3 et vérifie le Serial Monitor.</span>
       </div>
     </div>
-    <div class="checkpoint">✅ Checkpoint final : Robot posé sur le sol → interrupteur ON → Serial Monitor : ToF OK (×3) + MPU9250 OK. Pose une main devant chaque ToF → la valeur distance change. RoboLymix prêt ! 🏆</div>
+    <div class="checkpoint">✅ Checkpoint final : Robot posé sur le sol → interrupteur ON → Serial Monitor : ToF OK (×4) + MPU9250 OK. Pose une main devant chaque ToF → la valeur distance change. RoboLymix prêt ! 🏆</div>
   </div>
 </div>
 
@@ -751,7 +751,7 @@ footer strong { color: #e8a435; }
     </tr>
     <tr>
       <td>VL53L0X GY-530</td>
-      <td>3</td>
+      <td>4</td>
       <td>Pin XSHUT accessible</td>
     </tr>
     <tr>
