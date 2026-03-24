@@ -165,7 +165,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
     <div class="spec"><b>ESP32</b> WROOM-32D</div>
     <div class="spec"><b>4×</b> JGB37-520</div>
     <div class="spec"><b>L298N</b> Dual H-Bridge</div>
-    <div class="spec"><b>3×</b> VL53L0X ToF</div>
+    <div class="spec"><b>4×</b> VL53L0X ToF</div>
     <div class="spec"><b>MPU9250</b> 9-axis</div>
     <div class="spec"><b>Flood Fill</b> Algorithm</div>
     <div class="spec"><b>150×150mm</b> Chassis</div>
@@ -187,7 +187,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
 
     <div class="step"><div class="step-check"><input type="checkbox" data-i="0"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-buy">Achat</span> Commander les composants principaux</div>
-      <div class="step-desc">ESP32 DevKitC 30-pin, L298N, 3× VL53L0X GY-530, 1× MPU9250 GY-91. Vérifie que chaque VL53L0X a le pin XSHUT accessible.</div>
+      <div class="step-desc">ESP32 DevKitC 30-pin, L298N, 4× VL53L0X GY-530, 1× MPU9250 GY-91. Vérifie que chaque VL53L0X a le pin XSHUT accessible.</div>
       <div class="files"><a class="file-link" href="liste_pieces_v3.html"><span class="icon">📋</span> liste_pieces_v3.html</a></div>
       <div class="step-time">⏱ 1-2 jours (local) ou 15-30 jours (AliExpress)</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
@@ -196,7 +196,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
         <ul>
           <li><b>ESP32 DevKitC 30-pin</b> : c'est le cerveau du robot. Il a le Wi-Fi, le Bluetooth, assez de GPIO pour tout connecter, et 2 cœurs pour gérer les encodeurs en temps réel. Le modèle 30-pin (pas 38-pin) car il rentre mieux dans notre châssis 150mm.</li>
           <li><b>L298N</b> : pont H double — il permet de contrôler 2 groupes de moteurs (gauche et droit) en vitesse et en direction. Il supporte jusqu'à 2A par canal, parfait pour nos JGB37-520.</li>
-          <li><b>VL53L0X (×3)</b> : capteurs laser Time-of-Flight. Ils mesurent la distance aux murs avec une précision de ~3mm sur 0-120cm. On en met 3 : devant, gauche, droite.</li>
+          <li><b>VL53L0X (×4)</b> : capteurs laser Time-of-Flight. Ils mesurent la distance aux murs avec une précision de ~3mm sur 0-120cm. On en met 4 : devant, gauche, droite, arrière.</li>
           <li><b>MPU9250 GY-91</b> : 9 axes (gyroscope + accéléromètre + magnétomètre). Le gyroscope corrige les dérives de cap pendant les virages, et le magnétomètre donne un cap absolu.</li>
         </ul>
         <h4>Où acheter en Tunisie ?</h4>
@@ -287,7 +287,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
         <h4>Connecteurs (rend le robot 10× plus facile)</h4>
         <ul>
           <li><b>4× bornier à vis 2 pôles (5.08mm)</b> : pour les entrées/sorties d'alimentation (12V IN, 12V OUT, 5V IN, 5V OUT). Tu visses les fils au lieu de les souder — beaucoup plus facile à modifier et debugger.</li>
-          <li><b>4× JST-XH 4-pin (header PCB)</b> : pour les 3 capteurs ToF + le MPU9250. Tu soudes le header au perfboard, puis tu branches/débranches les capteurs avec un câble JST. Plus besoin de souder les capteurs directement !</li>
+          <li><b>5× JST-XH 4-pin (header PCB)</b> : pour les 4 capteurs ToF + le MPU9250. Tu soudes le header au perfboard, puis tu branches/débranches les capteurs avec un câble JST. Plus besoin de souder les capteurs directement !</li>
           <li><b>4× JST-XH 3-pin (header PCB)</b> : pour les 4 encodeurs moteur. Même principe plug-and-play.</li>
         </ul>
         <h4>Kit soudure minimum</h4>
@@ -397,7 +397,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
 
     <div class="step"><div class="step-check"><input type="checkbox" data-i="7"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-print">3D</span> Imprimer Floor 2 (150×150mm)</div>
-      <div class="step-desc">Avec clips ToF intégrés aux 3 bords (avant/gauche/droit), 2 jeux de trous M3 (4 pour F1, 4 pour F3), fente câbles vers F1, trou LED arrière.</div>
+      <div class="step-desc">Avec clips ToF intégrés aux 4 bords (avant/gauche/droit/arrière), 2 jeux de trous M3 (4 pour F1, 4 pour F3), fente câbles vers F1, trou LED arrière.</div>
       <div class="files"><a class="file-link" href="chassis/chassis_floor2_v4.html"><span class="icon">📐</span> floor2_v4</a></div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
       <div class="step-detail"><div class="step-detail-inner">
@@ -429,7 +429,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
 
     <div class="step"><div class="step-check"><input type="checkbox" data-i="8"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-print">3D</span> Imprimer Floor 3 (150×150mm)</div>
-      <div class="step-desc">Couvercle de protection. Avec 3 ouvertures rectangulaires pour les faisceaux ToF (avant, gauche, droite), trou LED Ø5mm, 4 trous M3.</div>
+      <div class="step-desc">Couvercle de protection. Avec 4 ouvertures rectangulaires pour les faisceaux ToF (avant, gauche, droite, arrière), trou LED Ø5mm, 4 trous M3.</div>
       <div class="files"><a class="file-link" href="chassis/chassis_floor3_v4.html"><span class="icon">📐</span> floor3_v4</a></div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
       <div class="step-detail"><div class="step-detail-inner">
@@ -509,7 +509,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
 
     <div class="step"><div class="step-check"><input type="checkbox" data-i="11"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-build">Build</span> Assembler Floor 2 + Floor 3</div>
-      <div class="step-desc">Floor 2 sur entretoises → ESP32 + perfboard + MPU9250 → ToF clipsés sur F2 (avant/gauche/droit) → entretoises M3×20mm → Floor 3 (couvercle) aligné avec les ouvertures ToF.</div>
+      <div class="step-desc">Floor 2 sur entretoises → ESP32 + perfboard + MPU9250 → ToF clipsés sur F2 (avant/gauche/droit/arrière) → entretoises M3×20mm → Floor 3 (couvercle) aligné avec les ouvertures ToF.</div>
       <div class="files"><a class="file-link" href="chassis/chassis_profile_v4.html"><span class="icon">📐</span> profil latéral</a></div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
       <div class="step-detail"><div class="step-detail-inner">
@@ -520,13 +520,13 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
           <li><b>3.</b> Monte l'ESP32 côté avant — le port USB doit être accessible par le bord pour programmer sans démonter</li>
           <li><b>4.</b> Fixe le perfboard au centre (foam tape ou vis M2 si tu as des trous prévus)</li>
           <li><b>5.</b> Le MPU9250 est déjà soudé au centre du perfboard</li>
-          <li><b>6.</b> Clipse les 3 VL53L0X dans leurs clips sur Floor 2 : Front (centre bord avant), Left (centre bord gauche), Right (centre bord droit)</li>
+          <li><b>6.</b> Clipse les 4 VL53L0X dans leurs clips sur Floor 2 : Front (centre bord avant), Left (centre bord gauche), Right (centre bord droit), Rear (centre bord arrière)</li>
           <li><b>7.</b> Place la LED dans son trou au bord arrière de Floor 2</li>
         </ul>
         <h4>Montage Floor 3 (couvercle)</h4>
         <ul>
           <li><b>8.</b> Visse 4 entretoises M3×20mm sur Floor 2 (trous "haut")</li>
-          <li><b>9.</b> Pose Floor 3 (couvercle) et vérifie que les 3 ouvertures sont alignées avec les capteurs ToF sur Floor 2</li>
+          <li><b>9.</b> Pose Floor 3 (couvercle) et vérifie que les 4 ouvertures sont alignées avec les capteurs ToF sur Floor 2</li>
           <li><b>10.</b> Fixe avec écrous M3 nylon</li>
         </ul>
         <div class="detail-tip">💡 Consulte le diagramme profil latéral pour voir la vue de côté de l'assemblage complet. La hauteur totale doit être ~92mm.</div>
@@ -626,6 +626,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
           <li><b>J1 (ToF Front)</b> : VCC, GND, SDA, XSHUT (GPIO15)</li>
           <li><b>J2 (ToF Left)</b> : VCC, GND, SDA, XSHUT (GPIO4)</li>
           <li><b>J3 (ToF Right)</b> : VCC, GND, SDA, XSHUT (GPIO5)</li>
+          <li><b>J4 (ToF Rear)</b> : VCC, GND, SDA, XSHUT (GPIO16)</li>
           <li><b>J4 (MPU9250)</b> : VCC, GND, SDA, SCL — si le MPU9250 est sur un breakout séparé</li>
         </ul>
         <h4>Connecteurs JST-XH 3-pin (J5-J8)</h4>
@@ -872,8 +873,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
     </div></div>
 
     <div class="step"><div class="step-check"><input type="checkbox" data-i="23"></div><div class="step-content">
-      <div class="step-title"><span class="tag tag-build">Câble</span> Câbler les 3 capteurs ToF</div>
-      <div class="step-desc">Chaque ToF a 5 fils : VCC→3.3V, GND→GND, SDA→GPIO21, SCL→GPIO22, XSHUT→unique. Front XSHUT=GPIO15, Left XSHUT=GPIO4, Right XSHUT=GPIO5.</div>
+      <div class="step-title"><span class="tag tag-build">Câble</span> Câbler les 4 capteurs ToF</div>
+      <div class="step-desc">Chaque ToF a 5 fils : VCC→3.3V, GND→GND, SDA→GPIO21, SCL→GPIO22, XSHUT→unique. Front XSHUT=GPIO15, Left XSHUT=GPIO4, Right XSHUT=GPIO5, Rear XSHUT=GPIO16.</div>
       <div class="step-warn">⚠ Les ToF sont sur Floor 2 — câblage court directement vers le perfboard et l'ESP32</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
       <div class="step-detail"><div class="step-detail-inner">
@@ -892,13 +893,15 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
           <li>Puis il allume le capteur Front (XSHUT HIGH), lui change l'adresse à <code>0x30</code></li>
           <li>Puis allume Left, adresse → <code>0x31</code></li>
           <li>Puis allume Right, adresse → <code>0x32</code></li>
-          <li>Maintenant les 3 capteurs ont des adresses différentes et fonctionnent sur le même bus</li>
+          <li>Puis allume Rear, adresse → <code>0x33</code></li>
+          <li>Maintenant les 4 capteurs ont des adresses différentes et fonctionnent sur le même bus</li>
         </ul>
         <h4>Table XSHUT</h4>
         <ul>
           <li><b>Front</b> : XSHUT = <code>GPIO15</code>, adresse finale = <code>0x30</code></li>
           <li><b>Left</b> : XSHUT = <code>GPIO4</code>, adresse finale = <code>0x31</code></li>
           <li><b>Right</b> : XSHUT = <code>GPIO5</code>, adresse finale = <code>0x32</code></li>
+          <li><b>Rear</b> : XSHUT = <code>GPIO16</code>, adresse finale = <code>0x33</code></li>
         </ul>
         <div class="detail-tip">💡 Les 3 ToF sont sur Floor 2, donc les câbles sont courts et directs vers le perfboard. Utilise des couleurs différentes par capteur (ex: rouge=Front, bleu=Left, vert=Right) pour faciliter le debug.</div>
       </div></div>
@@ -1026,7 +1029,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
           <li><b>maze_robot_v3.ino</b> : fichier principal — machine à états (EXPLORE → RETURN → DONE), setup(), loop()</li>
           <li><b>config.h</b> : toutes les constantes : pins GPIO, vitesses, taille des cellules, seuils. C'est LE fichier à modifier pour calibrer.</li>
           <li><b>motors.h</b> : contrôle des moteurs, PID, ISR des encodeurs. Fonctions : <code>driveForward()</code>, <code>turnLeft()</code>, <code>turnRight()</code></li>
-          <li><b>sensors.h</b> : initialisation et lecture des 3 VL53L0X, séquençage XSHUT, retry en cas d'erreur</li>
+          <li><b>sensors.h</b> : initialisation et lecture des 4 VL53L0X, séquençage XSHUT, retry en cas d'erreur</li>
           <li><b>flood_fill.h</b> : algorithme BFS, carte des murs, calcul du chemin optimal, gestion des impasses</li>
           <li><b>movement.h</b> : commandes de haut niveau — avancer d'une cellule, tourner de 90°, correction de trajectoire</li>
         </ul>
@@ -1036,7 +1039,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
 
     <div class="step"><div class="step-check"><input type="checkbox" data-i="28"></div><div class="step-content">
       <div class="step-title"><span class="tag tag-code">Code</span> Flasher un sketch de test I2C</div>
-      <div class="step-desc">Avant le code final, flashe un simple I2C scanner. Tu dois voir : 0x30 (ToF F), 0x31 (ToF L), 0x32 (ToF R), 0x68 (MPU9250). Si un appareil manque, vérifie son câble.</div>
+      <div class="step-desc">Avant le code final, flashe un simple I2C scanner. Tu dois voir : 0x30 (ToF F), 0x31 (ToF L), 0x32 (ToF R), 0x33 (ToF Rear), 0x68 (MPU9250). Si un appareil manque, vérifie son câble.</div>
       <div class="expand-hint">▸ Cliquer pour plus de détails</div>
       <div class="step-detail"><div class="step-detail-inner">
         <h4>Le sketch I2C Scanner</h4>
@@ -1048,9 +1051,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
         <h4>Ce que tu dois voir dans le Serial Monitor</h4>
         <ul>
           <li><code>0x29</code> → un VL53L0X (adresse par défaut — normal si tu n'as pas encore changé les adresses)</li>
-          <li>OU si le code d'init ToF a déjà tourné : <code>0x30</code>, <code>0x31</code>, <code>0x32</code></li>
+          <li>OU si le code d'init ToF a déjà tourné : <code>0x30</code>, <code>0x31</code>, <code>0x32</code>, <code>0x33</code></li>
           <li><code>0x68</code> → MPU9250</li>
-          <li>Tu dois voir <b>4 adresses</b> au total (3 ToF + 1 MPU9250)</li>
+          <li>Tu dois voir <b>5 adresses</b> au total (4 ToF + 1 MPU9250)</li>
         </ul>
         <h4>Si un capteur manque</h4>
         <ul>
@@ -1083,6 +1086,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
           <li><code>[INIT] ToF Front OK at 0x30</code></li>
           <li><code>[INIT] ToF Left OK at 0x31</code></li>
           <li><code>[INIT] ToF Right OK at 0x32</code></li>
+          <li><code>[INIT] ToF Rear OK at 0x33</code></li>
           <li><code>[INIT] Encoders ready</code></li>
           <li><code>[INIT] Flood fill grid initialized (16x16)</code></li>
           <li><code>[READY] Waiting for start...</code></li>
@@ -1382,7 +1386,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#1a1a1a;color:#d4d0c
         <h4>Ce que le robot doit faire</h4>
         <ul>
           <li><b>Phase EXPLORE</b> : le robot part du coin (0,0), explore méthodiquement le labyrinthe en utilisant Flood Fill, et se dirige vers le centre (cellules 1,1 / 1,2 / 2,1 / 2,2 dans un 4×4)</li>
-          <li>À chaque cellule, il lit les 3 capteurs ToF, met à jour la carte des murs, recalcule le Flood Fill, et avance vers la cellule avec la valeur la plus basse</li>
+          <li>À chaque cellule, il lit les 4 capteurs ToF, met à jour la carte des murs, recalcule le Flood Fill, et avance vers la cellule avec la valeur la plus basse</li>
           <li><b>Phase RETURN</b> : une fois au centre, le robot connaît le chemin optimal. Il revient au départ en suivant ce chemin à vitesse rapide.</li>
         </ul>
         <h4>Vérification via Serial Monitor</h4>
