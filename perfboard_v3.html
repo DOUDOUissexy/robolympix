@@ -104,7 +104,7 @@ tr:hover { background: #262626; }
   <tr><td><b>Fil de cuivre nu</b></td><td>4 rails</td><td>Distribue 3.3V, 5V, 12V, et GND à tout le circuit</td><td>—</td></tr>
   <tr><td><b>Résistance 4.7kΩ</b></td><td>2</td><td>Pull-ups pour le bus I2C (SDA et SCL)</td><td>Non (pas de sens)</td></tr>
   <tr><td><b>Condensateur 100µF 16V</b></td><td>1</td><td>Filtre les variations du 12V (lissage moteurs)</td><td><b>OUI ! + et −</b></td></tr>
-  <tr><td><b>Condensateur 100nF céramique</b></td><td>2</td><td>Filtre les parasites sur le 5V et le 3.3V</td><td>Non (pas de sens)</td></tr>
+  <tr><td><b>Condensateur 100nF céramique</b></td><td>4</td><td>Filtre les parasites sur le 5V, 3.3V, et les 4 capteurs ToF</td><td>Non (pas de sens)</td></tr>
   <tr><td><b>Bornier à vis 2-pin (5.08mm)</b></td><td>4</td><td>Connecteurs robustes pour alimentation (TB1-TB4)</td><td>Non (marqué + et −)</td></tr>
   <tr><td><b>En-tête JST-XH 2.54mm</b></td><td>8 × (3–4 pins)</td><td>Connecteurs détachables pour capteurs I2C et encodeurs</td><td>Non (pins marquées)</td></tr>
 </table>
@@ -299,38 +299,44 @@ tr:hover { background: #262626; }
   <circle cx="425" cy="319" r="2" fill="#4acfb0"/><circle cx="435" cy="319" r="2" fill="#4acfb0"/>
   <text x="420" y="341" text-anchor="middle" fill="#4acfb0" font-size="8" font-weight="700">J3 (ToF Droit)</text>
 
-  <!-- J4: MPU9250 (4-pin, R5-R6, cols 5-8) -->
+  <!-- J4: ToF Rear (4-pin, R11-R12, cols 12-15) -->
+  <rect x="397" y="373" width="62" height="16" rx="3" fill="#f5f5f5" stroke="#4acfb0" stroke-width="1.5"/>
+  <circle cx="405" cy="381" r="2" fill="#4acfb0"/><circle cx="415" cy="381" r="2" fill="#4acfb0"/>
+  <circle cx="425" cy="381" r="2" fill="#4acfb0"/><circle cx="435" cy="381" r="2" fill="#4acfb0"/>
+  <text x="420" y="403" text-anchor="middle" fill="#4acfb0" font-size="8" font-weight="700">J4 (ToF Arrière)</text>
+
+  <!-- J5: MPU9250 (4-pin, R5-R6, cols 5-8) -->
   <rect x="187" y="187" width="62" height="16" rx="3" fill="#f5f5f5" stroke="#c27db5" stroke-width="1.5"/>
   <circle cx="195" cy="195" r="2" fill="#c27db5"/><circle cx="205" cy="195" r="2" fill="#c27db5"/>
   <circle cx="215" cy="195" r="2" fill="#c27db5"/><circle cx="225" cy="195" r="2" fill="#c27db5"/>
-  <text x="206" y="217" text-anchor="middle" fill="#c27db5" font-size="8" font-weight="700">J4 (MPU9250)</text>
+  <text x="206" y="217" text-anchor="middle" fill="#c27db5" font-size="8" font-weight="700">J5 (MPU9250)</text>
 
-  <!-- J5-J8: Encoders (3-pin each, right edge R5-R11, cols 16-18) -->
-  <!-- J5: Encoder 1 -->
+  <!-- J6-J9: Encoders (3-pin each, right edge R5-R11, cols 16-18) -->
+  <!-- J6: Encoder 1 -->
   <rect x="541" y="187" width="46" height="16" rx="3" fill="#f5f5f5" stroke="#7cc47c" stroke-width="1.5"/>
   <circle cx="548" cy="195" r="2" fill="#7cc47c"/><circle cx="558" cy="195" r="2" fill="#7cc47c"/>
   <circle cx="568" cy="195" r="2" fill="#7cc47c"/>
-  <text x="557" y="217" text-anchor="middle" fill="#7cc47c" font-size="7" font-weight="700">J5 Enc1</text>
+  <text x="557" y="217" text-anchor="middle" fill="#7cc47c" font-size="7" font-weight="700">J6 Enc1</text>
 
-  <!-- J6: Encoder 2 -->
+  <!-- J7: Encoder 2 -->
   <rect x="541" y="249" width="46" height="16" rx="3" fill="#f5f5f5" stroke="#7cc47c" stroke-width="1.5"/>
   <circle cx="548" cy="257" r="2" fill="#7cc47c"/><circle cx="558" cy="257" r="2" fill="#7cc47c"/>
   <circle cx="568" cy="257" r="2" fill="#7cc47c"/>
-  <text x="557" y="279" text-anchor="middle" fill="#7cc47c" font-size="7" font-weight="700">J6 Enc2</text>
+  <text x="557" y="279" text-anchor="middle" fill="#7cc47c" font-size="7" font-weight="700">J7 Enc2</text>
 
-  <!-- J7: Encoder 3 -->
+  <!-- J8: Encoder 3 -->
   <rect x="541" y="311" width="46" height="16" rx="3" fill="#f5f5f5" stroke="#7cc47c" stroke-width="1.5"/>
   <circle cx="548" cy="319" r="2" fill="#7cc47c"/><circle cx="558" cy="319" r="2" fill="#7cc47c"/>
   <circle cx="568" cy="319" r="2" fill="#7cc47c"/>
-  <text x="557" y="341" text-anchor="middle" fill="#7cc47c" font-size="7" font-weight="700">J7 Enc3</text>
+  <text x="557" y="341" text-anchor="middle" fill="#7cc47c" font-size="7" font-weight="700">J8 Enc3</text>
 
-  <!-- J8: Encoder 4 -->
+  <!-- J9: Encoder 4 -->
   <rect x="541" y="373" width="46" height="16" rx="3" fill="#f5f5f5" stroke="#7cc47c" stroke-width="1.5"/>
   <circle cx="548" cy="381" r="2" fill="#7cc47c"/><circle cx="558" cy="381" r="2" fill="#7cc47c"/>
   <circle cx="568" cy="381" r="2" fill="#7cc47c"/>
-  <text x="557" y="403" text-anchor="middle" fill="#7cc47c" font-size="7" font-weight="700">J8 Enc4</text>
+  <text x="557" y="403" text-anchor="middle" fill="#7cc47c" font-size="7" font-weight="700">J9 Enc4</text>
 
-  <!-- ═══ XSHUT PADS (3 solder pads, near ToF area, cols 9-10) ═══ -->
+  <!-- ═══ XSHUT PADS (4 solder pads, near ToF area, cols 9-10) ═══ -->
   <circle cx="315" cy="197" r="3.5" fill="none" stroke="#ca8a04" stroke-width="1.5" stroke-dasharray="2,2"/>
   <text x="315" y="220" text-anchor="middle" fill="#ca8a04" font-size="7" font-weight="700">XSHUT-F</text>
   <text x="315" y="230" text-anchor="middle" fill="#8a8578" font-size="6">(GPIO15)</text>
@@ -342,6 +348,10 @@ tr:hover { background: #262626; }
   <circle cx="315" cy="321" r="3.5" fill="none" stroke="#ca8a04" stroke-width="1.5" stroke-dasharray="2,2"/>
   <text x="315" y="344" text-anchor="middle" fill="#ca8a04" font-size="7" font-weight="700">XSHUT-R</text>
   <text x="315" y="354" text-anchor="middle" fill="#8a8578" font-size="6">(GPIO5)</text>
+
+  <circle cx="315" cy="383" r="3.5" fill="none" stroke="#ca8a04" stroke-width="1.5" stroke-dasharray="2,2"/>
+  <text x="315" y="406" text-anchor="middle" fill="#ca8a04" font-size="7" font-weight="700">XSHUT-B</text>
+  <text x="315" y="416" text-anchor="middle" fill="#8a8578" font-size="6">(GPIO16)</text>
 
   <!-- Mounting holes -->
   <circle cx="62" cy="62" r="6" fill="none" stroke="#666" stroke-width="1.5"/>
@@ -393,8 +403,8 @@ tr:hover { background: #262626; }
 <div class="comp-card" style="border-left-color:#e8a435;">
   <h3>Rail R1 — 3.3V</h3>
   <p><b>Colonne :</b> Toute la rangée 1, du haut en bas (cols 1-18)</p>
-  <p><b>Rôle :</b> Fournit 3.3V à tous les capteurs I2C (ToF, MPU9250) et aux encodeurs. La tension 3.3V vient du régulateur interne de l'ESP32.</p>
-  <p><b>Composants connectés :</b> Pull-up R1 (SDA), Pull-up R2 (SCL), Capacité C3 (filtre), J1-J4 (JST des capteurs), J5-J8 (JST des encodeurs)</p>
+  <p><b>Rôle :</b> Fournit 3.3V à tous les capteurs I2C (4× ToF, MPU9250) et aux encodeurs. La tension 3.3V vient du régulateur interne de l'ESP32.</p>
+  <p><b>Composants connectés :</b> Pull-up R1 (SDA), Pull-up R2 (SCL), Capacités C3-C4 (filtres), J1-J4 (JST des ToF), J5 (JST du MPU9250), J6-J9 (JST des encodeurs)</p>
 </div>
 
 <div class="comp-card" style="border-left-color:#dc2626;">
@@ -455,8 +465,8 @@ tr:hover { background: #262626; }
 </div>
 
 <div class="comp-card" style="border-left-color:#4acfb0;">
-  <h3>J1-J3 — Connecteurs JST-XH ToF (capteurs de distance)</h3>
-  <p><b>J1 (Avant) — Pos :</b> R5-R6, cols 12-15 &nbsp; | &nbsp; <b>J2 (Gauche) — Pos :</b> R7-R8, cols 12-15 &nbsp; | &nbsp; <b>J3 (Droit) — Pos :</b> R9-R10, cols 12-15</p>
+  <h3>J1-J4 — Connecteurs JST-XH ToF (capteurs de distance)</h3>
+  <p><b>J1 (Avant) — Pos :</b> R5-R6, cols 12-15 &nbsp; | &nbsp; <b>J2 (Gauche) — Pos :</b> R7-R8, cols 12-15 &nbsp; | &nbsp; <b>J3 (Droit) — Pos :</b> R9-R10, cols 12-15 &nbsp; | &nbsp; <b>J4 (Arrière) — Pos :</b> R11-R12, cols 12-15</p>
   <p><b>4 pins chacun :</b></p>
   <ul class="info-list">
     <li><b>Pin 1 (VCC) :</b> Vers le rail 3.3V (fil jaune du capteur)</li>
@@ -468,7 +478,7 @@ tr:hover { background: #262626; }
 </div>
 
 <div class="comp-card" style="border-left-color:#c27db5;">
-  <h3>J4 — Connecteur JST-XH MPU9250 (accéléromètre + gyro + magnéto)</h3>
+  <h3>J5 — Connecteur JST-XH MPU9250 (accéléromètre + gyro + magnéto)</h3>
   <p><b>Position :</b> R5-R6, cols 5-8</p>
   <p><b>4 pins :</b></p>
   <ul class="info-list">
@@ -481,9 +491,9 @@ tr:hover { background: #262626; }
 </div>
 
 <div class="comp-card" style="border-left-color:#7cc47c;">
-  <h3>J5-J8 — Connecteurs JST-XH Encodeurs (4 pièces)</h3>
-  <p><b>Positions :</b> Bord droit, colonnes 16-18, rangées R5→R11</p>
-  <p><b>J5 (Encodeur 1) — R5-R6</b> &nbsp; | &nbsp; <b>J6 (Encodeur 2) — R7-R8</b> &nbsp; | &nbsp; <b>J7 (Encodeur 3) — R9-R10</b> &nbsp; | &nbsp; <b>J8 (Encodeur 4) — R11</b></p>
+  <h3>J6-J9 — Connecteurs JST-XH Encodeurs (4 pièces)</h3>
+  <p><b>Positions :</b> Bord droit, colonnes 16-18, rangées R5→R12</p>
+  <p><b>J6 (Encodeur 1) — R5-R6</b> &nbsp; | &nbsp; <b>J7 (Encodeur 2) — R7-R8</b> &nbsp; | &nbsp; <b>J8 (Encodeur 3) — R9-R10</b> &nbsp; | &nbsp; <b>J9 (Encodeur 4) — R11-R12</b></p>
   <p><b>3 pins chacun :</b></p>
   <ul class="info-list">
     <li><b>Pin 1 (Signal/Data) :</b> Vers un GPIO de l'ESP32 (encodeur 1→GPIO35, encodeur 2→GPIO34, etc.)</li>
@@ -494,16 +504,17 @@ tr:hover { background: #262626; }
 </div>
 
 <div class="comp-card" style="border-left-color:#e8a435;">
-  <h3>XSHUT Bus (3 pads de soudure)</h3>
-  <p><b>Position :</b> Cols 9-10, entre les Pads (rangées R5, R7, R9)</p>
+  <h3>XSHUT Bus (4 pads de soudure)</h3>
+  <p><b>Position :</b> Cols 9-10, entre les Pads (rangées R5, R7, R9, R11)</p>
   <p><b>Rôle :</b> Permet de redémarrer individuellement chaque capteur ToF (pour changer son adresse I2C)</p>
-  <p><b>3 fils :</b></p>
+  <p><b>4 fils :</b></p>
   <ul class="info-list">
     <li><b>XSHUT-F (ToF Avant) :</b> GPIO15</li>
     <li><b>XSHUT-L (ToF Gauche) :</b> GPIO4</li>
     <li><b>XSHUT-R (ToF Droit) :</b> GPIO5</li>
+    <li><b>XSHUT-B (ToF Arrière) :</b> GPIO16</li>
   </ul>
-  <p><b>Comment :</b> Soude 3 fils fins vers ces pastilles. Chaque fil va vers un GPIO de l'ESP32 (ou tu peux d'abord les tester avec des cavaliers).</p>
+  <p><b>Comment :</b> Soude 4 fils fins vers ces pastilles. Chaque fil va vers un GPIO de l'ESP32 (ou tu peux d'abord les tester avec des cavaliers).</p>
 </div>
 
 <!-- ═══ SOLDERING ORDER ═══ -->
@@ -527,12 +538,12 @@ tr:hover { background: #262626; }
 
 <div class="step-section">
   <div class="step-num">4</div>
-  <div class="step-text"><b>Condensateurs (C1, C2, C3)</b> — Fais très attention à la polarité du 100µF ! Le − doit aller vers GND. Les 100nF peuvent aller n'importe comment (pas de polarité).</div>
+  <div class="step-text"><b>Condensateurs (C1, C2, C3, C4)</b> — Fais très attention à la polarité du 100µF ! Le − doit aller vers GND. Les quatre 100nF peuvent aller n'importe comment (pas de polarité).</div>
 </div>
 
 <div class="step-section">
   <div class="step-num">5</div>
-  <div class="step-text"><b>Connecteurs JST-XH (J1-J8)</b> — Soude les 4 pattes (ou 3 pour les encodeurs). Attention à l'ordre des pins ! Soude lentement pour ne pas faire fondre le plastique blanc.</div>
+  <div class="step-text"><b>Connecteurs JST-XH (J1-J9)</b> — Soude les 4 pattes (J1-J5) ou 3 pour les encodeurs (J6-J9). Attention à l'ordre des pins ! Soude lentement pour ne pas faire fondre le plastique blanc.</div>
 </div>
 
 <div class="step-section">
@@ -594,7 +605,7 @@ tr:hover { background: #262626; }
 
 <div class="warn-box">
   <div class="title">⚠ Attention — Polarité des condensateurs</div>
-  <div class="desc">Le condensateur C1 (100µF) <b>DOIT</b> avoir son + vers 12V et son − vers GND. Si tu le mets à l'envers, il va exploser ! Les deux 100nF (C2, C3) n'ont PAS de polarité — tu peux les mettre n'importe comment.</div>
+  <div class="desc">Le condensateur C1 (100µF) <b>DOIT</b> avoir son + vers 12V et son − vers GND. Si tu le mets à l'envers, il va exploser ! Les quatre 100nF (C2, C3, C4, et un supplémentaire pour le 4e ToF) n'ont PAS de polarité — tu peux les mettre n'importe comment.</div>
 </div>
 
 <div class="warn-box">
