@@ -369,7 +369,7 @@ footer strong {
     <div class="info-box-icon">ℹ️</div>
     <div class="info-box-content">
       <strong>Rôle du Floor 3</strong>
-      <p>Plaque de protection supérieure qui couvre l'électronique de Floor 2 contre les chocs et les murs du labyrinthe. Les 3 ouvertures rectangulaires laissent passer les faisceaux laser des capteurs VL53L0X. Cette plaque ne contient aucun composant électronique — c'est uniquement une structure mécanique avec des découpes précises.</p>
+      <p>Plaque de protection supérieure qui couvre l'électronique de Floor 2 contre les chocs et les murs du labyrinthe. Les 4 ouvertures rectangulaires laissent passer les faisceaux laser des capteurs VL53L0X. Cette plaque ne contient aucun composant électronique — c'est uniquement une structure mécanique avec des découpes précises.</p>
     </div>
   </div>
 
@@ -481,6 +481,22 @@ footer strong {
         <text x="509" y="242" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="700" transform="rotate(90, 509, 242)">ToF Droit</text>
       </g>
 
+      <!-- =============== REAR ToF OPENING =============== -->
+      <g>
+        <!-- Opening rectangle: 12×20mm → 31×52px -->
+        <rect x="294" y="398" width="52" height="22" rx="3" fill="#0d1117" stroke="#58a6ff" stroke-width="2.5" filter="url(#toFGlow)"/>
+
+        <!-- Glow effect -->
+        <rect x="294" y="398" width="52" height="22" rx="3" fill="none" stroke="#58a6ff" stroke-width="1" opacity="0.3"/>
+
+        <!-- Laser cone visualization -->
+        <polygon points="304,398 336,398 356,420 284,420" fill="none" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.5"/>
+
+        <!-- Labels -->
+        <text x="320" y="442" text-anchor="middle" fill="#8b949e" font-size="9">20×12mm</text>
+        <text x="320" y="428" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="700">ToF Arrière</text>
+      </g>
+
       <!-- =============== LED HOLE =============== -->
       <g>
         <!-- LED circle: Ø 5mm → ~13px -->
@@ -583,8 +599,14 @@ footer strong {
           <td>Faisceau laser VL53L0X droit</td>
         </tr>
         <tr>
-          <td>Trou LED</td>
+          <td>Ouverture ToF Arrière</td>
           <td>Centre bord arrière</td>
+          <td><span class="mono">20 × 12 mm</span></td>
+          <td>Faisceau laser VL53L0X arrière</td>
+        </tr>
+        <tr>
+          <td>Trou LED</td>
+          <td>Angle bord arrière (côté droit)</td>
           <td><span class="mono">Ø 5 mm</span></td>
           <td>Laisser passer la lumière LED RGB</td>
         </tr>
@@ -603,7 +625,7 @@ footer strong {
     <div class="info-box-icon">⚠️</div>
     <div class="info-box-content">
       <strong>Alignement critique</strong>
-      <p>Les ouvertures ToF doivent être parfaitement alignées avec les capteurs VL53L0X sur Floor 2. Avant d'assembler définitivement, imprime Floor 3 et pose-la sur Floor 2 pour vérifier l'alignement des trois ouvertures laser.</p>
+      <p>Les ouvertures ToF doivent être parfaitement alignées avec les capteurs VL53L0X sur Floor 2. Avant d'assembler définitivement, imprime Floor 3 et pose-la sur Floor 2 pour vérifier l'alignement des quatre ouvertures laser.</p>
     </div>
   </div>
 
@@ -611,7 +633,7 @@ footer strong {
     <div class="info-box-icon">💡</div>
     <div class="info-box-content">
       <strong>Hauteur totale avec 3 étages</strong>
-      <p>F1 (3mm) + entretoise 30mm + F2 (3mm) + entretoise 20mm + F3 (3mm) = <strong>~59mm</strong> pour les étages. Avec les roues (~33mm), la hauteur totale atteint <strong>~92mm</strong>, ce qui reste bien sous la hauteur des murs du labyrinthe (50mm). Les capteurs ToF restent optimalement positionnés.</p>
+      <p>F1 (3mm) + entretoise 30mm + F2 (3mm) + entretoise 20mm + F3 (3mm) = <strong>~59mm</strong> pour les étages. Avec les roues (~33mm), la hauteur totale atteint <strong>~92mm</strong>, ce qui reste bien sous la hauteur des murs du labyrinthe (50mm). Les quatre capteurs ToF (avant, gauche, droit, arrière) restent optimalement positionnés.</p>
     </div>
   </div>
 
